@@ -203,7 +203,7 @@ def login():
         db = get_db_connection()
         user = db.execute("SELECT * FROM usuarios WHERE email = ?", (request.form['email'],)).fetchone()
         db.close()
-        if user and user['password'] == request.form['password']:
+        if user and check_password_hash(user['password'], request.form['password']):
             session['user_id'] = user['id']
             session['user_name'] = user['nombre']
             return redirect(url_for('dashboard'))
