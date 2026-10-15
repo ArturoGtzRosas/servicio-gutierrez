@@ -38,26 +38,19 @@ def get_db_connection():
     conn.row_factory = sqlite3.Row
     return conn
 
+import os
+
 def init_db():
     conn = get_db_connection()
-    conn.execute("""
-    CREATE TABLE IF NOT EXISTS usuarios (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        nombre TEXT NOT NULL,
-        email TEXT UNIQUE NOT NULL,
-        password TEXT NOT NULL
-    )
-    """)
-    admin_pass = generate_password_hash("admin123")
-    conn.execute("""
-    INSERT INTO usuarios (nombre, email, password)
-    VALUES (?, ?, ?)
-    ON CONFLICT(email) DO UPDATE SET password=excluded.password
-    """, ("Arturo", "arturo@servicio.com", admin_pass))
+    # Verifica si la tabla cotizaciones ya existe; si no, carga todo el respaldo inicial
+    tabla_check = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='cotizaciones'").fetchone()
+    if not tabla_check and os.path.exists('datos_iniciales.sql'):
+        with open('datos_iniciales.sql', 'r', encoding='utf-8') as f:
+            conn.executescript(f.read())
+        print("✅ Base de datos restaurada con tablas y registros iniciales.")
     conn.commit()
     conn.close()
 
-# Se ejecuta al arrancar el servidor
 init_db()
 
 def enviar_presupuesto_correo(destinatario, cliente, equipo, total, folio, pdf_bytes):
