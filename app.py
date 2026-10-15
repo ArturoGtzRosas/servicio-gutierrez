@@ -225,6 +225,7 @@ def login():
         if user and check_password_hash(user['password'], request.form['password']):
             session['user_id'] = user['id']
             session['user_name'] = user['nombre']
+            session['user_rol'] = user['rol'] if 'rol' in user.keys() and user['rol'] else 'usuario'
             return redirect(url_for('dashboard'))
     return render_template('login.html')
 
@@ -777,6 +778,75 @@ def borrar_nota(id):
     db.close()
     flash("Nota eliminada correctamente.")
     return redirect(url_for('ver_notas'))
+
+# ---------------- GESTIÓN DE USUARIOS ----------------
+
+@app.route('/admin_usuarios')
+def admin_usuarios():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    # Solo administradores pueden gestionar usuarios
+    if session.get('user_rol') != 'admin':
+        flash("Acceso denegado. Se requieren permisos de administrador.")
+        return redirect(url_for('dashboard'))
+
+    db = get_db_connection()
+    usuarios = db.execute("SELECT id, nombre, email, rol FROM usuarios ORDER BY id ASC").fetchall()
+    db.close()
+    return render_template('admin_usuarios.html', usuarios=usuarios)
+
+
+@app.route('/crear_usuario_admin', methods=['POST'])
+def crear_usuario_admin():
+    if 'user_id' not in session or session.get('user_rol') != 'admin':
+        flash("Acceso denegado.")
+        return redirect(url_for('dashboard'))
+
+    nombre = request.form.get('nombre', '').strip()
+    email = request.form.get('email', '').strip()
+    password = request.form.get('password', '').strip()
+    rol = request.form.get('rol', 'usuario').strip()
+
+    if not nombre or not email or not password:
+        flash("Todos los campos son obligatorios.")
+        return redirect(url_for('admin_usuarios'))
+
+    db = get_db_connection()
+    # Verificar si el correo ya existe
+    existe = db.execute("SELECT id FROM usuarios WHERE email = ?", (email,)).fetchone()
+    if existe:
+        db.close()
+        flash("El correo electrónico ya está registrado.")
+        return redirect(url_for('admin_usuarios'))
+
+    hash_pass = generate_password_hash(password, method="pbkdf2:sha256")
+    db.execute(
+        "INSERT INTO usuarios (nombre, email, password, rol) VALUES (?, ?, ?, ?)",
+        (nombre, email, hash_pass, rol)
+    )
+    db.commit()
+    db.close()
+    flash(f"Usuario {nombre} ({rol}) creado exitosamente.")
+    return redirect(url_for('admin_usuarios'))
+
+
+@app.route('/borrar_usuario/<int:id>')
+def borrar_usuario(id):
+    if 'user_id' not in session or session.get('user_rol') != 'admin':
+        flash("Acceso denegado.")
+        return redirect(url_for('dashboard'))
+
+    # Evitar que el administrador logueado se borre a sí mismo
+    if id == session.get('user_id'):
+        flash("No puedes eliminar tu propio usuario en sesión.")
+        return redirect(url_for('admin_usuarios'))
+
+    db = get_db_connection()
+    db.execute("DELETE FROM usuarios WHERE id = ?", (id,))
+    db.commit()
+    db.close()
+    flash("Usuario eliminado correctamente.")
+    return redirect(url_for('admin_usuarios'))
 
 if __name__ == '__main__':
     app.run(debug=True, use_reloader=False)
