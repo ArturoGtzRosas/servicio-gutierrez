@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡Solicitud Recibida! - Servicio Gutiérrez</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/unam.png') }}" type="image/x-icon">
+    <style>
+        :root { --azul: #1f3a5f; --oro: #c5a356; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background-color: #f4f4f4; 
+            margin: 0; 
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100vh; 
+            text-align: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            padding: 40px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+            max-width: 500px;
+            width: 90%;
+            border-top: 10px solid var(--oro);
+        }
+        .icon-check { font-size: 50px; color: #27ae60; margin-bottom: 20px; }
+        h2 { color: var(--azul); margin-bottom: 10px; }
+        p { color: #555; line-height: 1.6; font-size: 1.1em; }
+        .cliente-nombre { color: var(--oro); font-weight: bold; text-transform: uppercase; }
+        .btn-group { display: flex; flex-direction: column; gap: 10px; margin-top: 25px; }
+        .btn { padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; transition: 0.3s; cursor: pointer; border: none; font-size: 1em; }
+        .btn-print { background: #27ae60; color: white; }
+        .btn-home { background: var(--azul); color: white; }
+        .unam-logo { max-width: 80px; margin-top: 20px; opacity: 0.8; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon-check">✔</div>
+        <h2>¡Gracias, <span class="cliente-nombre">{{ nombre }}</span>!</h2>
+        <p>Tu solicitud de reparación para el equipo <strong>{{ modelo }}</strong> ha sido registrada exitosamente.</p>
+        <p>En breve, un técnico revisará los detalles del servicio de <strong>{{ servicio }}</strong> y se pondrá en contacto contigo.</p>
+        
+        <div class="btn-group">
+            <button onclick="generarPDF()" class="btn btn-print">🖨️ Descargar Comprobante PDF</button>
+            <a href="{{ url_for('index') }}" class="btn btn-home">Volver al Inicio</a>
+        </div>
+        
+        <br>
+        <img src="{{ url_for('static', filename='img/unam.png') }}" alt="Logo UNAM" class="unam-logo">
+    </div>
+
+    <script>
+        function generarPDF() {
+            const nombre = "{{ nombre }}";
+            const modelo = "{{ modelo }}";
+            const servicio = "{{ servicio }}";
+            const fecha = new Date().toLocaleDateString();
+
+            const v = window.open('', '_blank');
+            if (!v) {
+                alert("Por favor, permite las ventanas emergentes para descargar tu comprobante.");
+                return;
+            }
+
+            v.document.write(`
+                <html>
+                <head>
+                    <title>Comprobante - Servicio Gutiérrez</title>
+                    <style>
+                        body { font-family: sans-serif; padding: 40px; color: #333; line-height: 1.5; }
+                        .header { border-bottom: 3px solid #c5a356; text-align: center; padding-bottom: 20px; }
+                        .box { background: #f9f9f9; padding: 20px; border-radius: 10px; margin: 20px 0; border: 1px solid #ddd; }
+                        .legal { font-size: 0.8em; color: #444; text-align: justify; margin-top: 30px; border-top: 1px solid #eee; padding-top: 20px; }
+                        .footer { margin-top: 40px; font-size: 0.85em; color: #666; text-align: center; }
+                        h4 { color: #1f3a5f; margin-bottom: 5px; text-transform: uppercase; }
+                    </style>
+                </head>
+                <body>
+                    <div class="header">
+                        <h1 style="color: #1f3a5f; margin: 0;">SERVICIO GUTIÉRREZ</h1>
+                        <p>Soporte Técnico Profesional | Ixtapaluca, Edo. Méx.</p>
+                    </div>
+                    <h2 style="text-align:center;">Orden de Recepción Preliminar</h2>
+                    <p><strong>Fecha de solicitud:</strong> ${fecha}</p>
+                    <div class="box">
+                        <p><strong>Cliente:</strong> ${nombre}</p>
+                        <p><strong>Equipo:</strong> ${modelo}</p>
+                        <p><strong>Servicio solicitado:</strong> ${servicio}</p>
+                    </div>
+                    <div class="legal">
+                        <h4>Términos y Condiciones del Servicio:</h4>
+                        <p>1. Naturaleza del Presupuesto: Los costos mencionados son estimaciones preliminares.</p>
+                        <p>2. Respaldo: El cliente es responsable de su información antes de la entrega.</p>
+                        <p>3. Garantía: 30 días en mano de obra y componentes instalados.</p>
+                    </div>
+                    <div class="footer">
+                        <p><strong>Orgullosamente UNAM | Tel: 55 4031 3150</strong></p>
+                    </div>
+                    <script>
+                        window.onload = function() {
+                            window.print();
+                            window.onafterprint = function() { window.close(); };
+                        };
+                    <\/script>
+                </body>
+                </html>
+            `);
+            v.document.close();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Admin - Servicio Gutiérrez</title>
+    <style>
+        :root { --azul: #1f3a5f; --oro: #c5a356; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background-color: #f4f4f4; 
+            margin: 0; 
+            display: flex; 
+            align-items: center; 
+            justify-content: center; 
+            min-height: 100vh;
+        }
+        
+        .login-container {
+            width: 90%;
+            max-width: 400px;
+            background: white;
+            padding: 40px 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+            border-top: 8px solid var(--azul);
+            text-align: center;
+            box-sizing: border-box;
+        }
+
+        h2 { color: var(--azul); margin-bottom: 25px; }
+        
+        .form-group { text-align: left; margin-bottom: 20px; }
+        label { display: block; color: var(--azul); font-weight: bold; margin-bottom: 8px; font-size: 0.9em; }
+        
+        input { 
+            width: 100%; 
+            padding: 14px; 
+            border: 1px solid #ddd; 
+            border-radius: 6px; 
+            box-sizing: border-box; 
+            font-size: 16px; /* Evita zoom automático */
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 15px;
+            background-color: var(--azul);
+            color: var(--oro);
+            border: none;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-login:hover { background-color: #162a45; }
+        
+        .back-home { display: block; margin-top: 25px; color: #888; text-decoration: none; font-size: 0.85em; }
+        
+        /* Estilo para mensajes de error */
+        .flash-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+            font-size: 0.9em;
+        }
+    </style>
+</head>
+<body>
+
+<div class="login-container">
+    <h2>Acceso Técnico</h2>
+    
+    {% with messages

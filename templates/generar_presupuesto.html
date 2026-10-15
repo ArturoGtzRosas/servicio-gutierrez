@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Generar Presupuesto - Servicio Gutiérrez</title>
+    <style>
+        :root { --azul: #1f3a5f; --oro: #c5a356; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f4; padding: 20px; }
+        .container { max-width: 900px; margin: auto; background: white; padding: 25px; border-radius: 10px; border-top: 5px solid var(--oro); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        h2 { color: var(--azul); margin-top: 0; }
+        .row { display: flex; gap: 15px; margin-bottom: 15px; }
+        .col { flex: 1; display: flex; flex-direction: column; }
+        label { font-weight: bold; font-size: 13px; margin-bottom: 5px; color: #333; }
+        input { padding: 9px 12px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; box-sizing: border-box; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { background: var(--azul); color: white; padding: 10px; text-align: left; font-size: 13px; }
+        td { padding: 8px; border-bottom: 1px solid #eee; }
+        .btn-add { background: var(--oro); color: white; border: none; padding: 9px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 12px; }
+        .btn-del { background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .btn-submit { background: #27ae60; color: white; border: none; padding: 14px 20px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; margin-top: 20px; }
+        .resumen { text-align: right; margin-top: 20px; font-size: 18px; font-weight: bold; color: var(--azul); }
+        .aviso { background: #fff3cd; color: #856404; padding: 12px; border-radius: 5px; font-size: 13px; margin-top: 15px; border: 1px solid #ffeeba; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>📄 Generar Presupuesto Técnico</h2>
+    <form method="POST">
+        <div class="row">
+            <div class="col">
+                <label>Nombre del Cliente:</label>
+                <input type="text" name="cliente" required placeholder="Ej. Maestra Kari">
+            </div>
+            <div class="col">
+                <label>Teléfono de Contacto:</label>
+                <input type="text" name="telefono" placeholder="Ej. 55 4031 3150">
+            </div>
+            <div class="col">
+                <label>Equipo / Modelo:</label>
+                <input type="text" name="equipo" placeholder="Ej. Laptop HP 15-dy5009la">
+            </div>
+        </div>
+
+        <table id="tabla-items">
+            <thead>
+                <tr>
+                    <th style="width: 10%;">Cant.</th>
+                    <th style="width: 55%;">Producto o Servicio</th>
+                    <th style="width: 25%;">Costo / Precio ($)</th>
+                    <th style="width: 10%; text-align: center;">Acción</th>
+                </tr>
+            </thead>
+            <tbody id="cuerpo-items">
+                <tr>
+                    <td><input type="number" name="cantidad[]" value="1" min="1" style="width: 100%;" onchange="calcularTotal()"></td>
+                    <td><input type="text" name="descripcion[]" required placeholder="Ej. Mantenimiento Preventivo / Antivirus" style="width: 100%;"></td>
+                    <td><input type="number" step="0.01" name="precio[]" required placeholder="0.00" class="input-precio" style="width: 100%;" oninput="calcularTotal()"></td>
+                    <td style="text-align: center;"><button type="button" class="btn-del" onclick="eliminarFila(this)">✕</button></td>
+                </tr>
+            </tbody>
+        </table>
+
+        <button type="button" class="btn-add" onclick="agregarFila()">+ Agregar otro concepto</button>
+
+        <div class="resumen">
+            <span>Total Presupuestado: $<span id="lblTotal">0.00</span> MXN</span>
+        </div>
+
+        <div class="aviso">
+            ⚠️ <strong>Aviso:</strong> El documento PDF generado incluirá automáticamente la leyenda: <em>"Este presupuesto puede cambiar sin previo aviso y tiene una vigencia de 15 días a partir de su emisión."</em>
+        </div>
+
+        <button type="submit" class="btn-submit">📥 Generar y Descargar Presupuesto en PDF</button>
+    </form>
+    <br>
+    <a href="{{ url_for('dashboard') }}" style="text-decoration:none; color:var(--azul); font-weight:bold;">← Volver al Panel</a>
+</div>
+
+<script>
+function agregarFila() {
+    const tbody = document.getElementById('cuerpo-items');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+        <td><input type="number" name="cantidad[]" value="1" min="1" style="width: 100%;" onchange="calcularTotal()"></td>
+        <td><input type="text" name="descripcion[]" required placeholder="Servicio o refacción" style="width: 100%;"></td>
+        <td><input type="number" step="0.01" name="precio[]" required placeholder="0.00" class="input-precio" style="width: 100%;" oninput="calcularTotal()"></td>
+        <td style="text-align: center;"><button type="button" class="btn-del" onclick="eliminarFila(this)">✕</button></td>
+    `;
+    tbody.appendChild(tr);
+}
+
+function eliminarFila(btn) {
+    const filas = document.querySelectorAll('#cuerpo-items tr');
+    if (filas.length > 1) {
+        btn.closest('tr').remove();
+        calcularTotal();
+    }
+}
+
+function calcularTotal() {
+    let total = 0;
+    const filas = document.querySelectorAll('#cuerpo-items tr');
+    filas.forEach(f => {
+        const cant = parseFloat(f.querySelector('input[name="cantidad[]"]').value) || 0;
+        const precio = parseFloat(f.querySelector('.input-precio').value) || 0;
+        total += cant * precio;
+    });
+    document.getElementById('lblTotal').innerText = total.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+</script>
+</body>
+</html>

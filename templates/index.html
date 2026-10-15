@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Servicio Gutiérrez - Expertos en Computación</title>
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/unam.png') }}" type="image/x-icon">
+    
+    <style>
+        :root { --azul: #1f3a5f; --oro: #c5a356; }
+        
+        html, body { height: 100%; margin: 0; }
+        body { font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; background-color: #f4f4f4; }
+        .main-content { flex: 1; }
+
+        /* NAVEGACIÓN */
+        nav { 
+            background: var(--azul); 
+            padding: 15px; 
+            text-align: center; 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+            border-bottom: 4px solid var(--oro);
+        }
+        nav a { color: white; margin: 0 10px; text-decoration: none; font-weight: bold; font-size: 0.9em; transition: 0.3s; }
+        nav a:hover { color: var(--oro); }
+
+        /* SECCIÓN HERO */
+        .hero { 
+            background: linear-gradient(rgba(31,58,95,0.7), rgba(31,58,95,0.7)), 
+                        url('https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'); 
+            min-height: 500px; 
+            background-size: cover; 
+            background-position: center; 
+            color: white; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            text-align: center; 
+            padding: 40px 20px; 
+        }
+
+        .logo-hero {
+            max-width: 160px;
+            height: auto;
+            background: white;
+            padding: 12px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            margin-bottom: 25px;
+            transition: 0.3s;
+        }
+
+        .hero h1 { color: var(--oro); font-size: 3.5em; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); text-transform: uppercase; }
+        .hero p { max-width: 700px; font-size: 1.3em; line-height: 1.6; margin-top: 15px; }
+        
+        .btn-container { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+        
+        .btn-cta { 
+            padding: 15px 30px; 
+            text-decoration: none; 
+            border-radius: 6px; 
+            font-weight: bold; 
+            transition: 0.3s; 
+            min-width: 200px; 
+            display: inline-block;
+        }
+        .btn-agenda { background: var(--oro); color: var(--azul); }
+        .btn-calcula { background: white; color: var(--azul); }
+        .btn-cta:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
+
+        /* SECCIÓN SERVICIOS */
+        .servicios { display: flex; justify-content: center; padding: 50px 10px; flex-wrap: wrap; gap: 30px; }
+        .card { background: white; width: 300px; border-radius: 12px; overflow: hidden; box-shadow: 0 6px 12px rgba(0,0,0,0.1); transition: 0.3s; border-bottom: 5px solid transparent; }
+        .card:hover { transform: translateY(-10px); border-color: var(--oro); }
+        .card img { width: 100%; height: 200px; object-fit: cover; }
+        .card-info { padding: 25px; text-align: center; }
+        .card-info h3 { color: var(--azul); margin: 0 0 10px 0; }
+        .card-info p { color: #666; font-size: 0.95em; margin-bottom: 20px; min-height: 45px; }
+
+        /* BOTONES DE LAS TARJETAS - CORRECCIÓN DE CLIC */
+        .btn-card {
+            background: var(--azul);
+            color: white;
+            text-decoration: none !important;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: inline-block;
+            transition: 0.3s;
+            border: 2px solid var(--azul);
+            cursor: pointer;
+            position: relative;
+            z-index: 10;
+        }
+        .btn-card:hover {
+            background: white;
+            color: var(--azul);
+        }
+
+        .admin-footer-section {
+            background: #eee;
+            padding: 40px 20px;
+            text-align: center;
+            border-top: 1px solid #ddd;
+        }
+        .btn-admin {
+            display: inline-block;
+            margin-top: 10px;
+            color: var(--azul);
+            text-decoration: none;
+            font-weight: bold;
+            border: 2px solid var(--azul);
+            padding: 10px 25px;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        .btn-admin:hover { background: var(--azul); color: var(--oro); }
+
+        footer { background: var(--azul); color: white; text-align: center; padding: 25px; border-top: 3px solid var(--oro); }
+
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 2.2em; }
+            .card { width: 95%; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="main-content">
+    <nav>
+        <a href="{{ url_for('index') }}">INICIO</a>
+        <a href="{{ url_for('cotizar_cliente') }}">COTIZA</a>
+        <a href="{{ url_for('cotizador') }}">PRESUPUESTO</a>
+        <a href="{{ url_for('contacto') }}">CONTACTO</a>
+        <a href="{{ url_for('login') }}" style="color: var(--oro);">ADMIN</a>
+    </nav>
+
+    <section class="hero">
+       <img src="{{ url_for('static', filename='img/logo_nuevo.png') }}" alt="Logo Servicio Gutiérrez" style="max-width: 240px; width: 100%; height: auto; margin-bottom: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.3);">
+        <h1>SERVICIO GUTIÉRREZ</h1>
+        <p>Soluciones tecnológicas con la pasión y garra de la UNAM.</p>
+        <div class="btn-container">
+            <a href="{{ url_for('cotizar_cliente') }}" class="btn-cta btn-agenda">Solicitar Reparación</a>
+            <a href="{{ url_for('cotizador') }}" class="btn-cta btn-calcula">Calcular Costo Rápido</a>
+        </div>
+    </section>
+
+    <h2 style="text-align: center; color: var(--azul); margin-top: 50px; font-size: 2em;">¿Qué necesita tu equipo hoy?</h2>
+    
+    <section class="servicios" id="servicios">
+        <div class="card">
+            <img src="{{ url_for('static', filename='img/ram.jpg') }}" alt="RAM">
+            <div class="card-info">
+                <h3>Aumento de RAM y SSD</h3>
+                <p>Mejora la velocidad de tu equipo hasta 10 veces más.</p>
+                <a href="{{ url_for('cotizar_cliente') }}" class="btn-card">Cotizar</a>
+            </div>
+        </div>
+        <div class="card">
+            <img src="{{ url_for('static', filename='img/pantalla.jpg') }}" alt="Pantalla">
+            <div class="card-info">
+                <h3>Cambio de Pantalla</h3>
+                <p>Reparación de displays y fallas de imagen.</p>
+                <a href="{{ url_for('cotizar_cliente') }}" class="btn-card">Cotizar</a>
+            </div>
+        </div>
+        <div class="card">
+            <img src="{{ url_for('static', filename='img/mantenimiento.jpg') }}" alt="Mantenimiento">
+            <div class="card-info">
+                <h3>Limpieza y Pasta</h3>
+                <p>Evita sobrecalentamientos y alarga la vida de tu procesador.</p>
+                <a href="{{ url_for('cotizar_cliente') }}" class="btn-card">Cotizar</a>
+            </div>
+        </div>
+        <div class="card">
+            <img src="{{ url_for('static', filename='img/software.jpg') }}" alt="Software">
+            <div class="card-info">
+                <h3>Instalación de Software</h3>
+                <p>Formateo, paquetería Office y optimización de sistema operativo.</p>
+                <a href="{{ url_for('cotizar_cliente') }}" class="btn-card">Cotizar</a>
+            </div>
+        </div>
+    </section>
+
+    <section class="admin-footer-section">
+        <p>¿Eres parte del equipo?</p>
+        <a href="{{ url_for('login') }}" class="btn-admin">Inicia sesión aquí</a>
+    </section>
+</div>
+
+<footer>Servicio Gutiérrez &copy; 2026 | Orgullosamente UNAM</footer>
+
+</body>
+</html>

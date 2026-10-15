@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Historial de Notas de Venta - Servicio Gutiérrez</title>
+    <style>
+        :root { --azul: #1b305b; --oro: #c5a059; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f4; padding: 20px; }
+        .container { max-width: 1100px; margin: auto; background: white; padding: 25px; border-radius: 10px; border-top: 5px solid var(--oro); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        h2 { color: var(--azul); margin: 0; }
+        .btn-nuevo { background: #27ae60; color: white; padding: 9px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 14px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { background: var(--azul); color: white; padding: 12px; text-align: left; font-size: 14px; }
+        td { padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; }
+        tr:hover { background-color: #f9fbfd; }
+        .folio-tag { color: #c0392b; font-weight: bold; }
+        .btn-pdf { background: #2980b9; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; display: inline-block; }
+        .btn-del { color: #e74c3c; margin-left: 12px; text-decoration: none; font-weight: bold; font-size: 13px; }
+        .monto { font-weight: bold; color: var(--azul); }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header-top">
+        <h2>🧾 Historial de Notas de Venta</h2>
+        <a href="{{ url_for('crear_nota') }}" class="btn-nuevo">+ Nueva Nota de Venta</a>
+    </div>
+
+    {% with messages = get_flashed_messages() %}
+      {% if messages %}
+        <div style="background-color: #e8f4fd; border-left: 5px solid #2980b9; padding: 12px; margin-bottom: 15px; border-radius: 4px; color: #1b305b; font-weight: bold;">
+          {% for message in messages %}
+            <p style="margin: 0;">ℹ️ {{ message }}</p>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <table>
+        <thead>
+            <tr>
+                <th>Folio</th>
+                <th>Fecha</th>
+                <th>Cliente</th>
+                <th>Equipo</th>
+                <th>Total</th>
+                <th style="text-align: center;">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for n in notas %}
+            <tr>
+                <td><span class="folio-tag">#{{ 1000 + n.id }}</span></td>
+                <td>{{ n.fecha }}</td>
+                <td><strong>{{ n.cliente }}</strong></td>
+                <td>{{ n.equipo }}</td>
+                <td><span class="monto">${{ "{:,.2f}".format(n.total) }}</span></td>
+                <td style="text-align: center;">
+                    <a href="{{ url_for('descargar_nota', id=n.id) }}" class="btn-pdf">📰 PDF</a>
+                    <a href="{{ url_for('borrar_nota', id=n.id) }}" class="btn-del" onclick="return confirm('¿Seguro que deseas eliminar esta nota?');">🗑️</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="6" style="text-align: center; color: #777; padding: 25px;">No hay notas de venta registradas todavía.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br><br>
+    <a href="{{ url_for('dashboard') }}" style="text-decoration:none; color:var(--azul); font-weight:bold;">← Volver al Panel</a>
+</div>
+</body>
+</html>

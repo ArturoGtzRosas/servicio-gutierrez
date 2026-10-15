@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Calculadora - Servicio Gutiérrez</title>
+    <style>
+        :root { --azul: #1f3a5f; --oro: #c5a356; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f4; margin: 0; padding-bottom: 50px; text-align: center; }
+        nav { background: var(--azul); padding: 15px; display: flex; justify-content: center; gap: 20px; }
+        nav a { color: white; text-decoration: none; font-weight: bold; }
+        .box { width: 95%; max-width: 550px; margin: 30px auto; background: white; padding: 25px; border-radius: 10px; border-top: 6px solid var(--oro); box-shadow: 0 4px 10px rgba(0,0,0,0.1); box-sizing: border-box; }
+        .row { margin-bottom: 15px; text-align: left; }
+        label { display: block; color: var(--azul); font-weight: bold; margin-bottom: 5px; font-size: 0.9em; }
+        select, textarea { width: 100%; padding: 10px; border-radius: 5px; border: 1px solid #ccc; font-size: 1em; box-sizing: border-box; }
+        textarea { resize: vertical; min-height: 70px; font-family: inherit; }
+        
+        .urgente-box { 
+            background: #fff9e6; border: 2px dashed var(--oro); padding: 15px; 
+            border-radius: 8px; margin: 20px 0; display: flex; align-items: center; justify-content: space-between;
+        }
+        .urgente-box label { display: inline; color: #856404; cursor: pointer; font-size: 0.9em; margin: 0; }
+        .urgente-box input { width: 22px; height: 22px; cursor: pointer; accent-color: var(--oro); }
+
+        .btn-calc { width: 100%; background: var(--oro); color: var(--azul); border: none; padding: 15px; font-weight: bold; border-radius: 5px; cursor: pointer; font-size: 1.1em; transition: 0.3s; }
+        .btn-calc:hover { background: #b08d3e; }
+        
+        .res { background: #eef7ff; padding: 20px; margin-top: 20px; border-radius: 5px; text-align: left; border-left: 5px solid var(--azul); }
+        .btn-pdf { width: 100%; background: #27ae60; color: white; border: none; padding: 12px; margin-top: 15px; border-radius: 5px; cursor: pointer; font-weight: bold; }
+    </style>
+</head>
+<body>
+<nav>
+    <a href="{{ url_for('index') }}">VOLVER AL INICIO</a>
+    {% if session.get('user_id') %}
+    <a href="{{ url_for('dashboard') }}" style="color: var(--oro);">VOLVER AL PANEL</a>
+    {% endif %}
+</nav>
+
+<div class="box">
+    <h2>Calculadora de Servicios</h2>
+    <form method="POST">
+        <div class="row">
+            <label>Mantenimiento:</label>
+            <select name="mantenimiento">
+                <option value="">-- Seleccionar --</option>
+                <option value="Limpieza Básica">Básica ($450)</option>
+                <option value="Limpieza Profunda">Profunda ($650)</option>
+            </select>
+        </div>
+        <div class="row">
+            <label>Sistema Operativo:</label>
+            <select name="sistema">
+                <option value="">-- Seleccionar --</option>
+                <option value="S.O. Estándar">Estándar ($400)</option>
+                <option value="S.O. + Respaldo">Con Respaldo ($600)</option>
+            </select>
+        </div>
+        <div class="row">
+            <label>Disco SSD:</label>
+            <select name="ssd">
+                <option value="">-- Seleccionar --</option>
+                <option value="SSD 240GB">SSD 240GB ($1,200)</option>
+                <option value="SSD 480GB">SSD 480GB ($1,600)</option>
+            </select>
+        </div>
+        <div class="row">
+            <label>Memoria RAM:</label>
+            <select name="ram">
+                <option value="">-- Seleccionar --</option>
+                <option value="RAM 8GB">8GB DDR4 ($850)</option>
+                <option value="RAM 16GB">16GB DDR4 ($1,500)</option>
+            </select>
+        </div>
+
+        <div class="row">
+            <label>Fallas u Observaciones:</label>
+            <textarea name="observaciones" placeholder="Describe brevemente el problema de tu equipo..."></textarea>
+        </div>
+
+        <div class="urgente-box">
+            <label for="urgente"><strong>¿Reparación Urgente?</strong><br><small>Prioridad express (Cargo extra $250)</small></label>
+            <input type="checkbox" name="urgente" id="urgente">
+        </div>
+
+        <button type="submit" class="btn-calc">GENERAR PRESUPUESTO</button>
+    </form>
+
+    {% if total > 0 %}
+    <div class="res">
+        <h3 style="margin:0; color: #27ae60;">Total Estimado: ${{ total }} MXN</h3>
+        <p style="font-size: 0.85em; margin: 10px 0;"><strong>Servicios:</strong> {{ seleccion|join(' + ') }}</p>
+        {% if notas %}
+        <p style="font-size: 0.85em; color: #555; font-style: italic;"><strong>Tus notas:</strong> {{ notas }}</p>
+        {% endif %}
+        <button class="btn-pdf" onclick="imprimirPDF('{{ seleccion|join(', ') }}', '{{ total }}', '{{ notas }}')">🖨️ DESCARGAR PDF</button>
+    </div>
+    {% endif %}
+</div>
+
+<script>
+function imprimirPDF(servs, total, notas) {
+    const v = window.open('', '_blank');
+    const hoy = new Date().toLocaleDateString();
+    
+    v.document.write(`<html><head><style>
+        body{font-family:'Segoe UI',sans-serif;padding:40px;color:#333;}
+        .header{border-bottom:3px solid #c5a356;text-align:center;padding-bottom:15px;margin-bottom:20px;}
+        .sec{margin:15px 0; padding:15px; background:#f9f9f9; border-radius:8px; border:1px solid #eee;}
+        .total-box{text-align:center; background:#1f3a5f; color:white; padding:20px; border-radius:10px; margin:20px 0;}
+        .aviso{font-size:0.8em; color:#666; text-align:justify; line-height:1.4;}
+    </style></head>
+    <body>
+        <div class="header">
+            <h1 style="margin:0;color:#1f3a5f;">SERVICIO GUTIÉRREZ</h1>
+            <p>Ixtapaluca, Edo. de México | Tel: 55 4031 3150</p>
+            <p><strong>Fecha:</strong> ${hoy}</p>
+        </div>
+        <h2 style="text-align:center;">Presupuesto de Servicio</h2>
+        <div class="sec"><strong>Conceptos:</strong><br>${servs}</div>
+        ${notas ? `<div class="sec"><strong>Observaciones del Cliente:</strong><br>${notas}</div>` : ''}
+        <div class="total-box"><h1 style="margin:0;">TOTAL: $${total} MXN</h1></div>
+        <div class="aviso">
+            <strong>TÉRMINOS Y CONDICIONES:</strong> Este documento es un presupuesto preliminar basado en la información proporcionada. 
+            El costo final y el tiempo de entrega se confirmarán únicamente tras el diagnóstico físico del equipo en nuestro local. 
+            Los precios incluyen refacciones básicas según lo seleccionado.
+        </div>
+        <script>window.print();window.close();<\/script>
+    </body></html>`);
+    v.document.close();
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contacto - Servicio Gutiérrez</title>
+    <style>
+        :root { --azul: #1f3a5f; --oro: #c5a356; }
+        body { font-family: 'Segoe UI', sans-serif; margin: 0; background-color: #f4f4f4; }
+        
+        /* NAV RESPONSIVO */
+        nav { background: var(--azul); padding: 15px; text-align: center; }
+        nav a { color: white; margin: 0 10px; text-decoration: none; font-weight: bold; font-size: 0.9em; }
+        
+        .container {
+            width: 95%;           /* Ocupa casi todo el ancho en móvil */
+            max-width: 500px;     /* Límite para PC */
+            margin: 30px auto; 
+            background: white;
+            padding: 30px 20px;   /* Más aire por dentro */
+            border-radius: 10px; 
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); 
+            border-top: 5px solid var(--oro);
+            box-sizing: border-box; 
+        }
+
+        h2 { color: var(--azul); text-align: center; margin-top: 0; }
+        
+        label { display: block; margin-top: 15px; color: var(--azul); font-weight: bold; font-size: 0.9em; }
+        
+        /* Ajuste de inputs para que no se desborden */
+        input, textarea, select { 
+            width: 100%; 
+            padding: 12px; 
+            margin-top: 5px; 
+            border: 1px solid #ccc; 
+            border-radius: 5px; 
+            box-sizing: border-box; 
+            font-size: 16px; /* Evita el zoom automático en iPhone/Android al escribir */
+        }
+        
+        button { 
+            width: 100%; 
+            background: var(--azul); 
+            color: var(--oro); 
+            border: none; 
+            padding: 15px; 
+            margin-top: 25px; 
+            border-radius: 5px; 
+            font-weight: bold; 
+            cursor: pointer; 
+            font-size: 1.1em; 
+            transition: 0.3s;
+        }
+        
+        button:hover { background: #162a45; }
+
+        /* Ajuste para pantallas pequeñas */
+        @media (max-width: 600px) {
+            nav { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+            nav a { margin: 5px; font-size: 0.8em; }
+            .container { margin: 15px auto; padding: 20px 15px; }
+            h2 { font-size: 1.4em; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="/">INICIO</a>
+    <a href="/#servicios">SERVICIOS</a>
+    <a href="/cotizar_cliente">COTIZA TU SERVICIO</a>
+    <a href="/contacto">CONTACTO</a>
+</nav>
+
+<div class="container">
+    <h2>Solicitar Información</h2>
+    <form action="/contacto" method="POST">
+        <label>Nombre Completo:</label>
+        <input type="text" name="nombre" placeholder="Ej. Juan Pérez" required>
+        
+        <label>Correo Electrónico:</label>
+        <input type="email" name="email" placeholder="correo@ejemplo.com" required>
+        
+        <label>Asunto:</label>
+        <select name="asunto">
+            <option value="Mantenimiento">Mantenimiento</option>
+            <option value="Actualizacion">Actualización de Hardware</option>
+            <option value="Compra">Compra de Equipo</option>
+            <option value="Otro">Otro</option>
+        </select>
+        
+        <label>Mensaje / Dudas:</label>
+        <textarea name="mensaje" rows="4" placeholder="¿En qué podemos ayudarte?" required></textarea>
+        
+        <button type="submit">Enviar Solicitud</button>
+    </form>
+</div>
+
+</body>
+</html>

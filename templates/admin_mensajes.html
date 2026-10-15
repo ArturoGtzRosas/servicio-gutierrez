@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Mensajes - Servicio Gutiérrez</title>
+    <style>
+        :root { --azul: #1f3a5f; --oro: #c5a356; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f4; padding: 20px; }
+        .container { max-width: 1000px; margin: auto; background: white; padding: 20px; border-radius: 10px; border-top: 5px solid var(--oro); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th { background: var(--azul); color: white; padding: 12px; text-align: left; }
+        td { padding: 12px; border-bottom: 1px solid #eee; font-size: 0.9em; }
+        .btn-borrar { background: #e74c3c; color: white; text-decoration: none; padding: 5px 10px; border-radius: 4px; }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Mensajes de Clientes</h2>
+    <table>
+        <thead>
+            <tr><th>Nombre</th><th>Email</th><th>Asunto</th><th>Mensaje</th><th>Acción</th></tr>
+        </thead>
+        <tbody>
+            {% for m in mensajes %}
+            <tr>
+                <td>{{ m.nombre }}</td>
+                <td>{{ m.email }}</td>
+                <td style="color: var(--oro); font-weight: bold;">{{ m.asunto }}</td>
+                <td>{{ m.mensaje }}</td>
+                <td>
+                    <a href="{{ url_for('borrar_mensaje', id=m.id) }}" class="btn-borrar" onclick="return confirm('¿Eliminar?')">Borrar</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr><td colspan="5" style="text-align:center;">No hay mensajes registrados.</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br>
+    <a href="{{ url_for('dashboard') }}" style="text-decoration:none; color:var(--azul); font-weight:bold;">← Volver al Panel</a>
+</div>
+</body>
+</html>

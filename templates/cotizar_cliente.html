@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solicitar Cotización - Servicio Gutiérrez</title>
+    <style>
+        :root { --azul: #1f3a5f; --oro: #c5a356; }
+        body { 
+            font-family: 'Segoe UI', sans-serif; 
+            background: #f4f4f4; 
+            margin: 0; 
+            display: flex; 
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        
+        nav { background: var(--azul); padding: 15px; display: flex; justify-content: center; gap: 20px; border-bottom: 4px solid var(--oro); }
+        nav a { color: white; text-decoration: none; font-weight: bold; font-size: 0.9em; }
+
+        .container-flex { flex: 1; display: flex; align-items: center; justify-content: center; padding: 20px; }
+
+        .box { 
+            width: 100%; 
+            max-width: 500px; 
+            background: white; 
+            padding: 40px; 
+            border-radius: 15px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
+            box-sizing: border-box;
+            text-align: center;
+            border-top: 5px solid var(--oro);
+        }
+
+        h2 { color: var(--azul); margin-top: 0; font-size: 1.8em; margin-bottom: 10px; }
+        p.subtitle { color: #888; font-size: 0.95em; margin-bottom: 25px; }
+
+        .form-group { text-align: left; margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; color: var(--azul); font-weight: bold; font-size: 0.9em; }
+        
+        input, select { 
+            width: 100%; padding: 12px; border: 1px solid #ddd; 
+            border-radius: 8px; box-sizing: border-box; font-size: 16px; 
+            background-color: #fff;
+        }
+
+        input:focus, select:focus { outline: none; border-color: var(--oro); }
+
+        .btn-enviar { 
+            width: 100%; background: var(--azul); color: var(--oro); 
+            padding: 15px; border: none; border-radius: 8px; 
+            font-weight: bold; font-size: 1em; cursor: pointer; 
+            transition: 0.3s; margin-top: 10px; text-transform: uppercase;
+        }
+
+        .btn-enviar:hover { background: #162a45; transform: translateY(-2px); }
+
+        .leyenda-legal {
+            margin-top: 25px;
+            padding: 15px;
+            background: #fff9eb;
+            border-radius: 8px;
+            font-size: 0.8em;
+            color: #7d6608;
+            text-align: left;
+            border: 1px solid #ffeeba;
+        }
+
+        .back-link { display: block; margin-top: 20px; color: var(--azul); text-decoration: none; font-size: 0.9em; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="{{ url_for('index') }}">INICIO</a>
+    <a href="{{ url_for('cotizador') }}">CALCULADORA</a>
+</nav>
+
+<div class="container-flex">
+    <div class="box">
+        <h2>Solicitud de Cotización</h2>
+        <p class="subtitle">Déjanos tus datos y el equipo que deseas reparar.</p>
+        
+        <form action="{{ url_for('procesar_cotizacion') }}" method="POST">
+            <div class="form-group">
+                <label>Nombre Completo:</label>
+                <input type="text" name="nombre" required placeholder="Ej: Juan Pérez">
+            </div>
+            
+            <div class="form-group">
+                <label>Servicio de interés:</label>
+                <select name="servicio">
+                    <option value="Limpieza y Pasta Térmica">Limpieza y Pasta Térmica</option>
+                    <option value="Instalación de Sistema Operativo">Instalación de Sistema Operativo</option>
+                    <option value="Instalación de Software">Instalación de Software</option>
+                    <option value="Aumento de Memoria RAM">Aumento de Memoria RAM</option>
+                    <option value="Instalación de Disco SSD">Instalación de Disco SSD</option>
+                    <option value="Cambio de Batería">Cambio de Batería</option>
+                    <option value="Cambio de Display / Pantalla">Cambio de Display / Pantalla</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label>Modelo del Equipo:</label>
+                <input type="text" name="modelo" required placeholder="Ej: Laptop HP / MacBook Air">
+            </div>
+            
+            <button type="submit" class="btn-enviar">Enviar y Obtener Comprobante</button>
+        </form>
+
+        <div class="leyenda-legal">
+            <strong>Nota importante:</strong> Este registro es informativo para agendar tu recepción. El costo final será confirmado únicamente tras el diagnóstico físico del equipo por nuestros técnicos.
+        </div>
+
+        <a href="{{ url_for('index') }}" class="back-link">← Volver al Inicio</a>
+    </div>
+</div>
+
+</body>
+</html>
