@@ -39,15 +39,18 @@ def get_db_connection():
     return conn
 
 import os
+import sqlite3
 
 def init_db():
     conn = get_db_connection()
-    # Verifica si la tabla cotizaciones ya existe; si no, carga todo el respaldo inicial
     tabla_check = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='cotizaciones'").fetchone()
     if not tabla_check and os.path.exists('datos_iniciales.sql'):
         with open('datos_iniciales.sql', 'r', encoding='utf-8') as f:
-            conn.executescript(f.read())
-        print("✅ Base de datos restaurada con tablas y registros iniciales.")
+            try:
+                conn.executescript(f.read())
+                print("✅ Base de datos restaurada con tablas y registros iniciales.")
+            except sqlite3.OperationalError as e:
+                print(f"⚠️ Aviso en inicialización SQL: {e}")
     conn.commit()
     conn.close()
 
