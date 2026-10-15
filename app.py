@@ -10,6 +10,7 @@ from email import encoders
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # Parche de compatibilidad para ReportLab en Python 3.8
 _orig_md5 = hashlib.md5
@@ -36,6 +37,28 @@ def get_db_connection():
     conn = sqlite3.connect(DATABASE)
     conn.row_factory = sqlite3.Row
     return conn
+
+def init_db():
+    conn = get_db_connection()
+    conn.execute("""
+    CREATE TABLE IF NOT EXISTS usuarios (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nombre TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL
+    )
+    """)
+    admin_pass = generate_password_hash("admin123")
+    conn.execute("""
+    INSERT INTO usuarios (nombre, email, password)
+    VALUES (?, ?, ?)
+    ON CONFLICT(email) DO UPDATE SET password=excluded.password
+    """, ("Arturo", "arturo@servicio.com", admin_pass))
+    conn.commit()
+    conn.close()
+
+# Se ejecuta al arrancar el servidor
+init_db()
 
 def enviar_presupuesto_correo(destinatario, cliente, equipo, total, folio, pdf_bytes):
     try:
