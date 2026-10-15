@@ -29,9 +29,11 @@ INSERT INTO "sqlite_sequence" VALUES('presupuestos',4);
 INSERT INTO "sqlite_sequence" VALUES('notas_venta',3);
 INSERT INTO "sqlite_sequence" VALUES('mensajes',3);
 CREATE TABLE usuarios (
-                    id INTEGER PRIMARY KEY AUTOINCREMENT,
-                    nombre TEXT,
-                    email TEXT UNIQUE,
-                    password TEXT);
-INSERT INTO "usuarios" VALUES(1,'Arturo','arturo@servicio.com','1234');
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    nombre TEXT,
+    email TEXT UNIQUE,
+    password TEXT,
+    rol TEXT DEFAULT 'usuario'
+);
+INSERT INTO "usuarios" VALUES(1,'Arturo','arturo@servicio.com','pbkdf2:sha256:260000$tVv21uK8$38bb10901e6878b668ba01b7a64cebb43e2e9c15d4825920367dca2066fa19b0','admin');
 COMMIT;
