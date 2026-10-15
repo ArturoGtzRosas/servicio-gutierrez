@@ -1,38 +1,36 @@
+import sqlite3
 from werkzeug.security import generate_password_hash
-import mysql.connector
 
-try:
-    print("--- Intentando conectar con la base de datos ---")
-    db = mysql.connector.connect(
-        host="localhost",
-        user="root",
-        password="", 
-        database="servicio_gutierrez"
+DB_NAME = "servicio_gutierrez.db"
+
+def inicializar_admin():
+    print("--- Conectando a SQLite ---")
+    conn = sqlite3.connect(DB_NAME)
+    cursor = conn.cursor()
+
+    # 1. Crear tabla usuarios si no existe
+    cursor.execute("""
+    CREATE TABLE IF NOT EXISTS usuarios (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        nombre TEXT NOT NULL,
+        email TEXT UNIQUE NOT NULL,
+        password TEXT NOT NULL
     )
-    cursor = db.cursor()
+    """)
 
-    print("--- Generando contraseña encriptada ---")
-    # Usamos pbkdf2:sha256 para que sea compatible con tu Python 3.8
-    password_encriptada = generate_password_hash("admin123", method='pbkdf2:sha256')
+    # 2. Generar contraseña encriptada
+    password_hash = generate_password_hash("admin123")
 
-    print("--- Insertando al usuario Arturo ---")
-    sql = "INSERT INTO usuarios (nombre, email, password) VALUES (%s, %s, %s)"
-    valores = ("Arturo", "arturo@servicio.com", password_encriptada)
-    
-    cursor.execute(sql, valores)
-    db.commit()
+    # 3. Insertar o actualizar el usuario administrador
+    cursor.execute("""
+    INSERT INTO usuarios (nombre, email, password)
+    VALUES (?, ?, ?)
+    ON CONFLICT(email) DO UPDATE SET password=excluded.password
+    """, ("Arturo", "arturo@servicio.com", password_hash))
 
-    print("✅ ¡EXITO TOTAL! El usuario ha sido creado.")
-    print("Email: arturo@servicio.com")
-    print("Password: admin123")
+    conn.commit()
+    conn.close()
+    print("✅ Tabla creada y usuario 'arturo@servicio.com' listo con password 'admin123'")
 
-except mysql.connector.Error as err:
-    print(f"❌ Error de MySQL: {err}")
-except Exception as e:
-    print(f"❌ Error de Python: {e}")
-finally:
-    # Esta parte cierra la conexión de forma segura
-    if 'db' in locals() and db.is_connected():
-        cursor.close()
-        db.close()
-        print("--- Conexión cerrada correctamente ---")
+if __name__ == "__main__":
+    inicializar_admin()
