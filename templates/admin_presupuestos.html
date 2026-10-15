@@ -57,7 +57,7 @@
                 <td>{{ p.equipo if p.equipo else 'General' }}</td>
                 <td><span class="monto">${{ "{:,.2f}".format(p.total) if p.total else '0.00' }}</span></td>
                 <td style="text-align: center;">
-                    <a href="{{ url_for('descargar_presupuesto', id=p.id) }}" class="btn-pdf">📰 PDF</a>
+                    <a href="{{ url_for('descargar_presupuesto', id=p.id) }}" target="_blank" class="btn-pdf">🖹 PDF</a>
                     
                     <a href="https://api.whatsapp.com/send?phone=52{{ p.telefono|string|replace(' ', '')|replace('-', '') }}&text=Hola%20*{{ p.cliente }}*,%20le%20compartimos%20su%20presupuesto%20de%20*Servicio%20Gutiérrez*%20para%20su%20equipo%20*{{ p.equipo }}*%20por%20un%20total%20de%20*%24{{ '{:,.2f}'.format(p.total) if p.total else '0.00' }}*.%20¡Quedamos%20a%20sus%20órdenes!" 
                        target="_blank" 

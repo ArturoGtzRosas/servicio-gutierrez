@@ -57,7 +57,7 @@
                 <td>{{ n.equipo }}</td>
                 <td><span class="monto">${{ "{:,.2f}".format(n.total) }}</span></td>
                 <td style="text-align: center;">
-                    <a href="{{ url_for('descargar_nota', id=n.id) }}" class="btn-pdf">📰 PDF</a>
+                    <a href="{{ url_for('descargar_nota', id=n.id) }}" target="_blank" class="btn-pdf">🖹 PDF</a>
                     <a href="{{ url_for('borrar_nota', id=n.id) }}" class="btn-del" onclick="return confirm('¿Seguro que deseas eliminar esta nota?');">🗑️</a>
                 </td>
             </tr>

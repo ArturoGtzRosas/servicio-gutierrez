@@ -288,12 +288,9 @@ def descargar_presupuesto(id):
             
     pdf_buffer = generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total)
     
-    return send_file(
-        pdf_buffer,
-        as_attachment=True,
-        download_name=f"Presupuesto_{cliente.replace(' ', '_')}_{folio}.pdf",
-        mimetype='application/pdf'
-    )
+    response = send_file(pdf_buffer, mimetype='application/pdf')
+    response.headers["Content-Disposition"] = f"inline; filename=Presupuesto_{cliente.replace(' ', '_')}_{folio}.pdf"
+    return response
 
 @app.route('/enviar_presupuesto_email/<int:id>', methods=['GET', 'POST'])
 def enviar_presupuesto_email(id):
@@ -430,12 +427,9 @@ def crear_presupuesto():
 
         pdf_buffer = generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total)
         
-        return send_file(
-            pdf_buffer,
-            as_attachment=True,
-            download_name=f"Presupuesto_{cliente.replace(' ', '_')}_{folio}.pdf",
-            mimetype='application/pdf'
-        )
+    response = send_file(pdf_buffer, mimetype='application/pdf')
+    response.headers["Content-Disposition"] = f"inline; filename=Presupuesto_{cliente.replace(' ', '_')}_{folio}.pdf"
+    return response
 
     return render_template('generar_presupuesto.html')
 
@@ -747,12 +741,9 @@ def crear_nota():
         db.close()
         
         pdf_buf = generar_pdf_nota_binario(folio, cliente, direccion, telefono, equipo, items, total, observaciones)
-        return send_file(
-            pdf_buf,
-            as_attachment=True,
-            download_name=f"Nota_{cliente.replace(' ', '_')}_{folio}.pdf",
-            mimetype='application/pdf'
-        )
+        response = send_file(pdf_buf, mimetype='application/pdf')
+        response.headers["Content-Disposition"] = f"inline; filename=Nota_{cliente.replace(' ', '_')}_{folio}.pdf"
+        return response
 
     return render_template('generar_nota.html')
 
@@ -773,12 +764,9 @@ def descargar_nota(id):
             items.append({'desc': s, 'precio': n['total']})
             
     pdf_buf = generar_pdf_nota_binario(folio, n['cliente'], n['direccion'], n['telefono'], n['equipo'], items, float(n['total']), n['observaciones'])
-    return send_file(
-        pdf_buf,
-        as_attachment=True,
-        download_name=f"Nota_{n['cliente'].replace(' ', '_')}_{folio}.pdf",
-        mimetype='application/pdf'
-    )
+    response = send_file(pdf_buf, mimetype='application/pdf')
+    response.headers["Content-Disposition"] = f"inline; filename=Nota_{n['cliente'].replace(' ', '_')}_{folio}.pdf"
+    return response
 
 @app.route('/borrar_nota/<int:id>')
 def borrar_nota(id):
