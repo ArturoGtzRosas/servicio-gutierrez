@@ -1,6 +1,7 @@
 Flask
 gunicorn
 requests
+psycopg2-binary
 fpdf
 reportlab
 Pillow
