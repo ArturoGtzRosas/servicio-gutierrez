@@ -667,22 +667,22 @@ def generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total):
         qr.make(fit=True)
         img_qr = qr.make_image(fill_color="black", back_color="white")
         
-        qr_io = io.BytesIO()
-        img_qr.save(qr_io, format='PNG')
-        qr_io.seek(0)
+        # Guardar en archivo temporal en disco (compatible con fpdf)
+        ruta_qr = f"qr_temp_{folio}.png"
+        img_qr.save(ruta_qr)
         
-        # Posicionar el QR en la parte inferior izquierda
-        pdf.image(qr_io, x=15, y=pdf.get_y() - 15, w=28, h=28)
-        pdf.set_xy(15, pdf.get_y() + 14)
+        # Posición a la izquierda de la tabla de totales
+        pos_y_actual = pdf.get_y()
+        pdf.image(ruta_qr, x=15, y=pos_y_actual - 20, w=25, h=25)
+        pdf.set_xy(15, pos_y_actual + 6)
         pdf.set_font('Arial', '', 7)
-        pdf.cell(28, 4, 'Escanear presupuesto', 0, 0, 'C')
+        pdf.cell(25, 4, 'Escanear presupuesto', 0, 0, 'C')
+        
+        # Eliminar el archivo temporal tras estamparlo
+        if os.path.exists(ruta_qr):
+            os.remove(ruta_qr)
     except Exception as e:
         print(f"[QR ERROR]: {e}")
-    
-    pdf_bytes = pdf.output(dest='S')
-    if isinstance(pdf_bytes, str):
-        pdf_bytes = pdf_bytes.encode('latin-1')
-    return io.BytesIO(pdf_bytes)
 
 # =====================================================
 # MÓDULO DE NOTAS DE VENTA (INTEGRACIÓN)
