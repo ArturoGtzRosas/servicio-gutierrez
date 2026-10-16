@@ -836,7 +836,6 @@ def borrar_usuario(id):
         flash("Acceso denegado.")
         return redirect(url_for('dashboard'))
 
-    # Evitar que el administrador logueado se borre a sí mismo
     if id == session.get('user_id'):
         flash("No puedes eliminar tu propio usuario en sesión.")
         return redirect(url_for('admin_usuarios'))
@@ -848,5 +847,33 @@ def borrar_usuario(id):
     flash("Usuario eliminado correctamente.")
     return redirect(url_for('admin_usuarios'))
 
-if __name__ == '__main__':
-    app.run(debug=True, use_reloader=False)
+
+# ---------------- AUTO-INICIALIZACIÓN ADMIN ----------------
+
+def asegurar_admin_en_arranque():
+    try:
+        conn = get_db_connection()
+        try:
+            conn.execute("ALTER TABLE usuarios ADD COLUMN rol TEXT DEFAULT 'usuario'")
+            conn.commit()
+        except Exception:
+            pass
+
+        hash_pw = generate_password_hash("admin123", method="pbkdf2:sha256")
+        
+        conn.execute("""
+        INSERT INTO usuarios (nombre, email, password, rol)
+        VALUES (?, ?, ?, 'admin')
+        ON CONFLICT(email) DO UPDATE SET 
+            password=excluded.password,
+            rol='admin'
+        """, ("Arturo", "arturo@servicio.com", hash_pw))
+        
+        conn.commit()
+        conn.close()
+        print(">>> [ADMIN LISTO] arturo@servicio.com configurado con rol admin <<<")
+    except Exception as e:
+        print("Error asegurando admin:", e)
+
+# Ejecutar al iniciar la aplicacion
+asegurar_admin_en_arranque()
