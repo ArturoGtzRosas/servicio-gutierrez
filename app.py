@@ -121,15 +121,75 @@ def enviar_presupuesto_correo(destinatario, cliente, equipo, total, folio, pdf_b
         }
 
         cuerpo_html = f"""
-        <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
-            <h2 style="color: #0f3d64;">Presupuesto Folio #{folio}</h2>
-            <p>Estimado(a) <strong>{cliente}</strong>,</p>
-            <p>Le enviamos adjunto el presupuesto formal correspondiente al servicio de su equipo: <strong>{equipo}</strong>.</p>
-            <p><strong>Total:</strong> ${total:,.2f} MXN</p>
-            <br>
-            <p>Quedamos a sus órdenes para cualquier duda o aclaración.</p>
-            <p>Atentamente,<br><strong>Servicio Gutiérrez</strong></p>
-        </div>
+        <!DOCTYPE html>
+        <html lang="es">
+        <head>
+            <meta charset="UTF-8">
+        </head>
+        <body style="margin: 0; padding: 20px; background-color: #f4f6f9; font-family: 'Segoe UI', Arial, sans-serif;">
+            <table align="center" border="0" cellpadding="0" cellspacing="0" width="100%" style="max-width: 600px; background-color: #ffffff; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 12px rgba(0,0,0,0.08); border-top: 6px solid #c5a356;">
+                <!-- Encabezado -->
+                <tr>
+                    <td style="background-color: #0f3d64; padding: 25px 30px; text-align: center;">
+                        <h1 style="color: #ffffff; margin: 0; font-size: 22px; letter-spacing: 0.5px;">SERVICIO GUTIÉRREZ</h1>
+                        <p style="color: #c5a356; margin: 5px 0 0 0; font-size: 14px; font-weight: bold;">Mantenimiento y Soluciones Informáticas</p>
+                    </td>
+                </tr>
+                
+                <!-- Cuerpo principal -->
+                <tr>
+                    <td style="padding: 30px;">
+                        <h2 style="color: #0f3d64; margin-top: 0; font-size: 18px;">Presupuesto Folio #{folio}</h2>
+                        <p style="color: #444; font-size: 15px; margin-bottom: 20px;">
+                            Estimado(a) <strong>{cliente}</strong>,
+                        </p>
+                        <p style="color: #555; font-size: 14px; line-height: 1.5;">
+                            Le compartimos adjunto a este correo el presupuesto detallado para la atención de su equipo. A continuación el resumen:
+                        </p>
+
+                        <!-- Tabla de resumen -->
+                        <table width="100%" cellpadding="8" cellspacing="0" style="margin: 20px 0; border: 1px solid #e1e8ed; border-radius: 6px; font-size: 14px;">
+                            <tr style="background-color: #f8fafc;">
+                                <td style="color: #666; border-bottom: 1px solid #e1e8ed; width: 35%;"><strong>Equipo:</strong></td>
+                                <td style="color: #222; border-bottom: 1px solid #e1e8ed;">{equipo}</td>
+                            </tr>
+                            <tr>
+                                <td style="color: #666; border-bottom: 1px solid #e1e8ed;"><strong>Folio:</strong></td>
+                                <td style="color: #c0392b; font-weight: bold; border-bottom: 1px solid #e1e8ed;">#{folio}</td>
+                            </tr>
+                            <tr style="background-color: #f8fafc;">
+                                <td style="color: #666;"><strong>Importe Total:</strong></td>
+                                <td style="color: #0f3d64; font-size: 18px; font-weight: bold;">${total:,.2f} MXN</td>
+                            </tr>
+                        </table>
+
+                        <p style="color: #666; font-size: 13px; line-height: 1.4; margin: 15px 0 25px 0;">
+                            📎 <em>El archivo formal en formato PDF se encuentra adjunto al pie de este mensaje para su descarga e impresión.</em>
+                        </p>
+
+                        <!-- Botón de contacto -->
+                        <div style="text-align: center; margin: 30px 0 10px 0;">
+                            <a href="https://wa.me/525548372108?text=Hola,%20recibí%20el%20presupuesto%20Folio%20%23{folio}%20para%20el%20equipo%20{equipo}%20y%20deseo%20darle%20seguimiento." 
+                               target="_blank" 
+                               style="background-color: #25D366; color: #ffffff; text-decoration: none; padding: 12px 24px; border-radius: 6px; font-weight: bold; font-size: 14px; display: inline-block;">
+                                📲 Responder por WhatsApp
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- Pie de correo -->
+                <tr>
+                    <td style="background-color: #f8fafc; padding: 18px 30px; text-align: center; border-top: 1px solid #e1e8ed;">
+                        <p style="color: #777; font-size: 12px; margin: 0; line-height: 1.4;">
+                            <strong>Servicio Gutiérrez</strong><br>
+                            Atención técnica y soporte especializado
+                        </p>
+                    </td>
+                </tr>
+            </table>
+        </body>
+        </html>
         """
 
         payload = {
@@ -300,8 +360,6 @@ def ver_presupuestos():
 
 @app.route('/descargar_presupuesto/<int:id>')
 def descargar_presupuesto(id):
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
         
     db = get_db_connection()
     p = db.execute("SELECT * FROM presupuestos WHERE id = ?", (id,)).fetchone()
