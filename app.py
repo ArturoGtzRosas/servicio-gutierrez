@@ -26,7 +26,7 @@ app = Flask(__name__)
 app.secret_key = 'servicio_gutierrez_master_key_2026'
 
 MAIL_SERVER = 'smtp.gmail.com'
-MAIL_PORT = 587
+MAIL_PORT = 465
 MAIL_USERNAME = 'serviciogutierrezpc@gmail.com'
 MAIL_PASSWORD = 'sondiuxeuddmtspx'
 
@@ -136,10 +136,8 @@ def enviar_presupuesto_correo(destinatario, cliente, equipo, total, folio, pdf_b
         adjunto.add_header('Content-Disposition', 'attachment', filename=f"Presupuesto_{folio}.pdf")
         msg.attach(adjunto)
 
-        print("[CORREO] 4. Conectando a smtp.gmail.com:587...")
-        servidor = smtplib.SMTP('smtp.gmail.com', 587, timeout=15)
-        servidor.ehlo()
-        servidor.starttls()
+        print("[CORREO] 4. Conectando a smtp.gmail.com:465 (SSL)...")
+        servidor = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=15)
         servidor.ehlo()
 
         print("[CORREO] 5. Autenticando con Gmail...")
