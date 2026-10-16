@@ -247,6 +247,7 @@ def login():
 
         print(f">>> INTENTO LOGIN: email={email} | user_encontrado={bool(user)}")
         if user:
+            print(f">>> PW_ENVIADA: '{password}' | HASH_EN_BD: '{user['password']}'")
             coincide = check_password_hash(user['password'], password)
             print(f">>> PASSWORD MATCH: {coincide}")
             if coincide:
