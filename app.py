@@ -904,4 +904,4 @@ def asegurar_admin_en_arranque():
         print("Error asegurando admin:", e)
 
 # Ejecutar al iniciar la aplicacion
-asegurar_admin_en_arranque()
+# asegurar_admin_en_arranque()
