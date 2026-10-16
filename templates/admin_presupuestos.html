@@ -75,7 +75,9 @@
                         </button>
                     </form>
                     
+                    {% if session.get('user_rol') == 'admin' %}
                     <a href="{{ url_for('borrar_presupuesto', id=p.id) }}" class="btn-del" onclick="return confirm('¿Seguro que deseas eliminar este presupuesto?');">🗑️</a>
+                    {% endif %}
                 </td>
             </tr>
             {% else %}
