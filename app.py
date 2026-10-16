@@ -378,11 +378,13 @@ def descargar_presupuesto(id):
         
     db = get_db_connection()
     p = db.execute("SELECT * FROM presupuestos WHERE id = ?", (id,)).fetchone()
+    # Si no lo encuentra directo y es un folio (>1000), busca por su ID real
+    if not p and id >= 1000:
+        p = db.execute("SELECT * FROM presupuestos WHERE id = ?", (id - 1000,)).fetchone()
     db.close()
-    
+
     if not p:
-        flash('Presupuesto no encontrado.')
-        return redirect(url_for('ver_presupuestos'))
+        return "<h3>Presupuesto no disponible o enlace incorrecto.</h3>", 404
         
     folio = 1000 + p['id']
     cliente = p['cliente'] if p['cliente'] else 'Cliente'
@@ -540,7 +542,7 @@ def crear_presupuesto():
         folio = 1000 + cursor.lastrowid
         db.close()
 
-        pdf_buffer = generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total)
+        pdf_buffer = generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total, id_presupuesto=cursor.lastrowid)
         response = send_file(pdf_buffer, mimetype='application/pdf')
         response.headers["Content-Disposition"] = f"inline; filename=Presupuesto_{cliente.replace(' ', '_')}_{folio}.pdf"
         return response
@@ -600,7 +602,7 @@ class PDFPresupuesto(FPDF):
         self.cell(0, 5, 'Servicio Gutiérrez - Calidad y Honestidad en cada reparación', align='C')
 
 
-def generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total):
+def generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total, id_presupuesto=None):
     subtotal = total / 1.16
     iva = total - subtotal
     
@@ -661,29 +663,25 @@ def generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total):
 
     # Generación e inserción de Código QR dinámico
     try:
-        url_qr = f"https://servicio-gutierrez.onrender.com/descargar_presupuesto/{folio}"
+        id_qr = id_presupuesto if id_presupuesto else folio
+        url_qr = f"https://servicio-gutierrez.onrender.com/descargar_presupuesto/{id_qr}"
+
         qr = qrcode.QRCode(box_size=3, border=1)
         qr.add_data(url_qr)
         qr.make(fit=True)
         img_qr = qr.make_image(fill_color="black", back_color="white")
-        
-        # Ruta en la carpeta temporal del sistema operativo
+
         ruta_qr = f"/tmp/qr_{folio}.png"
         img_qr.save(ruta_qr)
-        
-        # Posicionar el QR a la izquierda de los totales
+
+        # Posición a la izquierda de la tabla de totales sin encimarse
         pos_y_actual = pdf.get_y()
-        pdf.image(ruta_qr, x=15, y=pos_y_actual - 22, w=22, h=22)
-        pdf.set_xy(15, pos_y_actual)
+        pdf.image(ruta_qr, x=15, y=pos_y_actual - 26, w=22, h=22)
+        pdf.set_xy(15, pos_y_actual - 3)
         pdf.set_font('Arial', '', 7)
         pdf.cell(22, 4, 'Escanear presupuesto', 0, 0, 'C')
     except Exception as e:
         print(f"[QR ERROR]: {e}")
-
-    pdf_bytes = pdf.output(dest='S')
-    if isinstance(pdf_bytes, str):
-        pdf_bytes = pdf_bytes.encode('latin1')
-    return io.BytesIO(pdf_bytes)
 
 # =====================================================
 # MÓDULO DE NOTAS DE VENTA (INTEGRACIÓN)
