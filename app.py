@@ -88,10 +88,14 @@ def get_db_connection():
         conn.row_factory = sqlite3.Row
         return DBConnectionWrapper(conn, is_pg=False)
 
+import base64
+import os
+import requests
+
 def enviar_presupuesto_correo(destinatario, cliente, equipo, total, folio, pdf_bytes):
     try:
-        print(f"[CORREO] 1. Preparando envío vía Resend hacia: {destinatario}...")
-        
+        print(f"[CORREO] Preparando envio via Brevo hacia: {destinatario}...")
+
         # Procesar bytes del PDF
         if isinstance(pdf_bytes, (bytes, bytearray)):
             contenido_pdf = pdf_bytes
@@ -103,53 +107,62 @@ def enviar_presupuesto_correo(destinatario, cliente, equipo, total, folio, pdf_b
         else:
             contenido_pdf = str(pdf_bytes).encode('latin-1', errors='ignore')
 
-        print(f"[CORREO] 2. PDF procesado ({len(contenido_pdf)} bytes). Codificando base64...")
         pdf_b64 = base64.b64encode(contenido_pdf).decode('utf-8')
 
-        # Contenido HTML del correo
+        api_key = os.environ.get("BREVO_API_KEY")
+        if not api_key:
+            return False, "No se encontró la variable BREVO_API_KEY en Render."
+
+        url = "https://api.brevo.com/v3/smtp/email"
+        headers = {
+            "accept": "application/json",
+            "api-key": api_key,
+            "content-type": "application/json"
+        }
+
         cuerpo_html = f"""
         <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
-            <h2 style="color: #0b3c5d;">Presupuesto Folio #{folio}</h2>
+            <h2 style="color: #0f3d64;">Presupuesto Folio #{folio}</h2>
             <p>Estimado(a) <strong>{cliente}</strong>,</p>
             <p>Le enviamos adjunto el presupuesto formal correspondiente al servicio de su equipo: <strong>{equipo}</strong>.</p>
-            <p style="font-size: 16px;"><strong>Total:</strong> ${total:,.2f} MXN</p>
-            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+            <p><strong>Total:</strong> ${total:,.2f} MXN</p>
+            <br>
             <p>Quedamos a sus órdenes para cualquier duda o aclaración.</p>
             <p>Atentamente,<br><strong>Servicio Gutiérrez</strong></p>
         </div>
         """
 
-        url = "https://api.resend.com/emails"
-        headers = {
-            "Authorization": f"Bearer {RESEND_API_KEY}",
-            "Content-Type": "application/json"
-        }
-        
-        # Remitente de prueba oficial de Resend
-        remitente = "onboarding@resend.dev"
-
         payload = {
-            "from": f"Servicio Gutiérrez <{remitente}>",
-            "to": [destinatario],
-            "subject": f"Presupuesto #{folio} - Servicio Gutiérrez",
-            "html": cuerpo_html,
-            "attachments": [
+            "sender": {
+                "name": "Servicio Gutiérrez",
+                "email": "serviciogutierrezpc@gmail.com"
+            },
+            "to": [
                 {
-                    "filename": f"Presupuesto_{folio}.pdf",
-                    "content": pdf_b64
+                    "email": destinatario,
+                    "name": cliente if cliente else "Cliente"
+                }
+            ],
+            "subject": f"Presupuesto #{folio} - Servicio Gutiérrez",
+            "htmlContent": cuerpo_html,
+            "attachment": [
+                {
+                    "content": pdf_b64,
+                    "name": f"Presupuesto_{folio}.pdf"
                 }
             ]
         }
 
-        print("[CORREO] 3. Realizando petición HTTPS a la API de Resend...")
-        response = requests.post(url, json=payload, headers=headers, timeout=15)
-
-        if response.status_code in [200, 201]:
-            print(f"[CORREO] 4. ¡Envío exitoso vía Resend! Respuesta: {response.json()}")
-            return True, "Correo enviado correctamente."
+        resp = requests.post(url, json=payload, headers=headers, timeout=20)
+        
+        if resp.status_code in (200, 201):
+            return True, "Correo enviado exitosamente."
         else:
-            print(f"[CORREO ERROR] Respuesta de Resend: {response.status_code} - {response.text}")
-            return False, f"Error en proveedor de correo: {response.text}"
+            return False, f"Error en proveedor de correo: {resp.text}"
+
+    except Exception as e:
+        print(f"[CORREO] Error al enviar: {str(e)}")
+        return False, f"Error al procesar el correo: {str(e)}"
 
     except Exception as e:
         print(f"[CORREO ERROR] Falló en: {e}")
