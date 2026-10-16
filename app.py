@@ -238,14 +238,19 @@ def cotizador():
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
+        email = request.form.get('email', '').strip()
+        password = request.form.get('password', '')
+
         db = get_db_connection()
-        user = db.execute("SELECT * FROM usuarios WHERE email = ?", (request.form['email'],)).fetchone()
+        user = db.execute("SELECT * FROM usuarios WHERE LOWER(email) = LOWER(?)", (email,)).fetchone()
         db.close()
-        if user and check_password_hash(user['password'], request.form['password']):
+
+        if user and check_password_hash(user['password'], password):
             session['user_id'] = user['id']
             session['user_name'] = user['nombre']
-            session['user_rol'] = user['rol'] if 'rol' in user.keys() and user['rol'] else 'usuario'
+            session['user_rol'] = user['rol'] if 'rol' in user and user['rol'] else 'usuario'
             return redirect(url_for('dashboard'))
+
     return render_template('login.html')
 
 @app.route('/dashboard')
