@@ -14,6 +14,8 @@ from werkzeug.security import generate_password_hash, check_password_hash
 import os
 import requests
 import base64
+import qrcode
+import io
 
 RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
 
@@ -656,6 +658,26 @@ def generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total):
     pdf.set_fill_color(230, 230, 230)
     pdf.cell(155, 9, 'TOTAL PRESUPUESTADO (IVA inc):', 1, 0, 'R', True)
     pdf.cell(35, 9, f'${total:,.2f}', 1, 1, 'R', True)
+
+    # Generación e inserción de Código QR dinámico
+    try:
+        url_qr = f"https://servicio-gutierrez.onrender.com/descargar_presupuesto/{folio}"
+        qr = qrcode.QRCode(box_size=4, border=1)
+        qr.add_data(url_qr)
+        qr.make(fit=True)
+        img_qr = qr.make_image(fill_color="black", back_color="white")
+        
+        qr_io = io.BytesIO()
+        img_qr.save(qr_io, format='PNG')
+        qr_io.seek(0)
+        
+        # Posicionar el QR en la parte inferior izquierda
+        pdf.image(qr_io, x=15, y=pdf.get_y() - 15, w=28, h=28)
+        pdf.set_xy(15, pdf.get_y() + 14)
+        pdf.set_font('Arial', '', 7)
+        pdf.cell(28, 4, 'Escanear presupuesto', 0, 0, 'C')
+    except Exception as e:
+        print(f"[QR ERROR]: {e}")
     
     pdf_bytes = pdf.output(dest='S')
     if isinstance(pdf_bytes, str):
