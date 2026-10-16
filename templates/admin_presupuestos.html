@@ -59,11 +59,14 @@
                 <td style="text-align: center;">
                     <a href="{{ url_for('descargar_presupuesto', id=p.id) }}" target="_blank" class="btn-pdf">🖹 PDF</a>
                     
-                    <a href="https://api.whatsapp.com/send?phone=52{{ p.telefono|string|replace(' ', '')|replace('-', '') }}&text=Hola%20*{{ p.cliente }}*,%20le%20compartimos%20su%20presupuesto%20de%20*Servicio%20Gutiérrez*%20para%20su%20equipo%20*{{ p.equipo }}*%20por%20un%20total%20de%20*%24{{ '{:,.2f}'.format(p.total) if p.total else '0.00' }}*.%20¡Quedamos%20a%20sus%20órdenes!" 
-                       target="_blank" 
-                       style="background-color: #25D366; color: white; text-decoration: none; padding: 6px 10px; border-radius: 4px; font-weight: bold; font-size: 13px; display: inline-flex; align-items: center; gap: 4px; margin: 0 4px;">
-                       📲 WhatsApp
-                    </a>
+                {% set url_pdf = url_for('descargar_presupuesto', id=p.id, _external=True) %}
+                {% set mensaje_w = "Hola *" ~ (p.cliente if p.cliente else 'Cliente') ~ "*, le compartimos el presupuesto formal de *Servicio Gutiérrez* para su equipo *" ~ (p.equipo if p.equipo else 'General') ~ "* por un total de *$" ~ ('{:,.2f}'.format(p.total) if p.total else '0.00') ~ " MXN*.\n\nPuede consultar y descargar su presupuesto en PDF aquí:\n" ~ url_pdf ~ "\n\nQuedamos a sus órdenes para cualquier duda o autorización." %}
+
+                <a href="https://api.whatsapp.com/send?phone=52{{ p.telefono|string|replace(' ', '')|replace('-', '') if p.telefono else '' }}&text={{ mensaje_w|urlencode }}" 
+                target="_blank" 
+                 style="background-color: #25D366; color: white; text-decoration: none; padding: 6px 10px; border-radius: 4px; font-weight: bold; font-size: 13px; display: inline-flex; align-items: center; gap: 4px; margin: 0 4px;">
+                 📲 WhatsApp
+                </a>    
 
                    <!-- Formulario directo para enviar por correo -->
                     <form action="{{ url_for('enviar_presupuesto_email', id=p.id) }}" method="POST" style="display: inline-flex; align-items: center; gap: 4px; margin: 0 4px;">
