@@ -11,6 +11,12 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 from werkzeug.security import generate_password_hash, check_password_hash
+import os
+import requests
+import base64
+
+RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
+
 
 # Parche de compatibilidad para ReportLab en Python 3.8
 _orig_md5 = hashlib.md5
@@ -84,36 +90,9 @@ def get_db_connection():
 
 def enviar_presupuesto_correo(destinatario, cliente, equipo, total, folio, pdf_bytes):
     try:
-        print(f"\n[CORREO] 1. Preparando cabeceras para: {destinatario}...")
-        msg = MIMEMultipart()
-        msg['From'] = f"Servicio Gutiérrez <{MAIL_USERNAME}>"
-        msg['To'] = destinatario
-        msg['Subject'] = f"Presupuesto de Servicio #{folio} - Servicio Gutiérrez"
-
-        print("[CORREO] 2. Generando cuerpo HTML...")
-        cuerpo_html = f"""
-        <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
-            <div style="background-color: #1f3a5f; color: white; padding: 20px; text-align: center;">
-                <h2 style="margin: 0; color: white;">Servicio Gutiérrez</h2>
-                <p style="margin: 5px 0 0; font-size: 14px; color: #c5a356;">Mantenimiento y Reparación de Equipos</p>
-            </div>
-            <div style="padding: 25px;">
-                <p>Estimado/a <strong>{cliente}</strong>,</p>
-                <p>Esperamos que se encuentre muy bien. Le hacemos llegar la cotización formal para su equipo <strong>{equipo}</strong> (Folio #{folio}).</p>
-                <div style="background-color: #f8f9fa; border-left: 4px solid #1f3a5f; padding: 12px 15px; margin: 20px 0;">
-                    <p style="margin: 0; font-size: 16px;"><strong>Monto Total:</strong> ${total:,.2f} MXN</p>
-                </div>
-                <p>Adjunto a este correo encontrará el archivo PDF con el desglose detallado de los conceptos.</p>
-                <p>Cualquier duda o aclaración, quedamos a sus órdenes.</p>
-                <br>
-                <p style="margin-bottom: 2px;">Atentamente,</p>
-                <p style="margin: 0; font-weight: bold; color: #1f3a5f;">Servicio Gutiérrez</p>
-            </div>
-        </div>
-        """
-        msg.attach(MIMEText(cuerpo_html, 'html', 'utf-8'))
-
-        print("[CORREO] 3. Procesando adjunto PDF...")
+        print(f"[CORREO] 1. Preparando envío vía Resend hacia: {destinatario}...")
+        
+        # Procesar bytes del PDF
         if isinstance(pdf_bytes, (bytes, bytearray)):
             contenido_pdf = pdf_bytes
         elif hasattr(pdf_bytes, 'getvalue'):
@@ -124,31 +103,53 @@ def enviar_presupuesto_correo(destinatario, cliente, equipo, total, folio, pdf_b
         else:
             contenido_pdf = str(pdf_bytes).encode('latin-1', errors='ignore')
 
-        print(f"[CORREO] 3.1 Bytes obtenidos: {len(contenido_pdf)}. Empaquetando...")
-        import base64
+        print(f"[CORREO] 2. PDF procesado ({len(contenido_pdf)} bytes). Codificando base64...")
+        pdf_b64 = base64.b64encode(contenido_pdf).decode('utf-8')
+
+        # Contenido HTML del correo
+        cuerpo_html = f"""
+        <div style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+            <h2 style="color: #0b3c5d;">Presupuesto Folio #{folio}</h2>
+            <p>Estimado(a) <strong>{cliente}</strong>,</p>
+            <p>Le enviamos adjunto el presupuesto formal correspondiente al servicio de su equipo: <strong>{equipo}</strong>.</p>
+            <p style="font-size: 16px;"><strong>Total:</strong> ${total:,.2f} MXN</p>
+            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+            <p>Quedamos a sus órdenes para cualquier duda o aclaración.</p>
+            <p>Atentamente,<br><strong>Servicio Gutiérrez</strong></p>
+        </div>
+        """
+
+        url = "https://api.resend.com/emails"
+        headers = {
+            "Authorization": f"Bearer {RESEND_API_KEY}",
+            "Content-Type": "application/json"
+        }
         
-        # Codificación ultra rápida directa en C (milisegundos)
-        pdf_b64 = base64.b64encode(contenido_pdf).decode('ascii')
-        
-        adjunto = MIMEBase('application', 'pdf')
-        adjunto.set_payload(pdf_b64)
-        adjunto['Content-Transfer-Encoding'] = 'base64'
-        adjunto.add_header('Content-Disposition', 'attachment', filename=f"Presupuesto_{folio}.pdf")
-        msg.attach(adjunto)
+        # Remitente de prueba oficial de Resend
+        remitente = "onboarding@resend.dev"
 
-        print("[CORREO] 4. Conectando a smtp.gmail.com:465 (SSL)...")
-        servidor = smtplib.SMTP_SSL('smtp.gmail.com', 465, timeout=15)
-        servidor.ehlo()
+        payload = {
+            "from": f"Servicio Gutiérrez <{remitente}>",
+            "to": [destinatario],
+            "subject": f"Presupuesto #{folio} - Servicio Gutiérrez",
+            "html": cuerpo_html,
+            "attachments": [
+                {
+                    "filename": f"Presupuesto_{folio}.pdf",
+                    "content": pdf_b64
+                }
+            ]
+        }
 
-        print("[CORREO] 5. Autenticando con Gmail...")
-        servidor.login(MAIL_USERNAME, MAIL_PASSWORD)
+        print("[CORREO] 3. Realizando petición HTTPS a la API de Resend...")
+        response = requests.post(url, json=payload, headers=headers, timeout=15)
 
-        print("[CORREO] 6. Enviando...")
-        servidor.sendmail(MAIL_USERNAME, destinatario, msg.as_string())
-        servidor.quit()
-
-        print("[CORREO] 7. ¡Envío completado exitosamente!")
-        return True, "Correo enviado correctamente."
+        if response.status_code in [200, 201]:
+            print(f"[CORREO] 4. ¡Envío exitoso vía Resend! Respuesta: {response.json()}")
+            return True, "Correo enviado correctamente."
+        else:
+            print(f"[CORREO ERROR] Respuesta de Resend: {response.status_code} - {response.text}")
+            return False, f"Error en proveedor de correo: {response.text}"
 
     except Exception as e:
         print(f"[CORREO ERROR] Falló en: {e}")
