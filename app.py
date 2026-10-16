@@ -662,27 +662,28 @@ def generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total):
     # Generación e inserción de Código QR dinámico
     try:
         url_qr = f"https://servicio-gutierrez.onrender.com/descargar_presupuesto/{folio}"
-        qr = qrcode.QRCode(box_size=4, border=1)
+        qr = qrcode.QRCode(box_size=3, border=1)
         qr.add_data(url_qr)
         qr.make(fit=True)
         img_qr = qr.make_image(fill_color="black", back_color="white")
         
-        # Guardar en archivo temporal en disco (compatible con fpdf)
-        ruta_qr = f"qr_temp_{folio}.png"
+        # Ruta en la carpeta temporal del sistema operativo
+        ruta_qr = f"/tmp/qr_{folio}.png"
         img_qr.save(ruta_qr)
         
-        # Posición a la izquierda de la tabla de totales
+        # Posicionar el QR a la izquierda de los totales
         pos_y_actual = pdf.get_y()
-        pdf.image(ruta_qr, x=15, y=pos_y_actual - 20, w=25, h=25)
-        pdf.set_xy(15, pos_y_actual + 6)
+        pdf.image(ruta_qr, x=15, y=pos_y_actual - 22, w=22, h=22)
+        pdf.set_xy(15, pos_y_actual)
         pdf.set_font('Arial', '', 7)
-        pdf.cell(25, 4, 'Escanear presupuesto', 0, 0, 'C')
-        
-        # Eliminar el archivo temporal tras estamparlo
-        if os.path.exists(ruta_qr):
-            os.remove(ruta_qr)
+        pdf.cell(22, 4, 'Escanear presupuesto', 0, 0, 'C')
     except Exception as e:
         print(f"[QR ERROR]: {e}")
+
+    pdf_bytes = pdf.output(dest='S')
+    if isinstance(pdf_bytes, str):
+        pdf_bytes = pdf_bytes.encode('latin1')
+    return io.BytesIO(pdf_bytes)
 
 # =====================================================
 # MÓDULO DE NOTAS DE VENTA (INTEGRACIÓN)
