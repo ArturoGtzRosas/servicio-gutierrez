@@ -539,10 +539,9 @@ def crear_presupuesto():
         db.close()
 
         pdf_buffer = generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total)
-        
-    response = send_file(pdf_buffer, mimetype='application/pdf')
-    response.headers["Content-Disposition"] = f"inline; filename=Presupuesto_{cliente.replace(' ', '_')}_{folio}.pdf"
-    return response
+        response = send_file(pdf_buffer, mimetype='application/pdf')
+        response.headers["Content-Disposition"] = f"inline; filename=Presupuesto_{cliente.replace(' ', '_')}_{folio}.pdf"
+        return response
 
     return render_template('generar_presupuesto.html')
 
