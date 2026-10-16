@@ -245,11 +245,15 @@ def login():
         user = db.execute("SELECT * FROM usuarios WHERE LOWER(email) = LOWER(?)", (email,)).fetchone()
         db.close()
 
-        if user and check_password_hash(user['password'], password):
-            session['user_id'] = user['id']
-            session['user_name'] = user['nombre']
-            session['user_rol'] = user['rol'] if 'rol' in user and user['rol'] else 'usuario'
-            return redirect(url_for('dashboard'))
+        print(f">>> INTENTO LOGIN: email={email} | user_encontrado={bool(user)}")
+        if user:
+            coincide = check_password_hash(user['password'], password)
+            print(f">>> PASSWORD MATCH: {coincide}")
+            if coincide:
+                session['user_id'] = user['id']
+                session['user_name'] = user['nombre']
+                session['user_rol'] = user['rol'] if 'rol' in user and user['rol'] else 'usuario'
+                return redirect(url_for('dashboard'))
 
     return render_template('login.html')
 
@@ -879,29 +883,7 @@ def borrar_usuario(id):
 # ---------------- AUTO-INICIALIZACIÓN ADMIN ----------------
 
 def asegurar_admin_en_arranque():
-    try:
-        conn = get_db_connection()
-        try:
-            conn.execute("ALTER TABLE usuarios ADD COLUMN rol TEXT DEFAULT 'usuario'")
-            conn.commit()
-        except Exception:
-            pass
-
-        hash_pw = generate_password_hash("admin123", method="pbkdf2:sha256")
-        
-        conn.execute("""
-        INSERT INTO usuarios (nombre, email, password, rol)
-        VALUES (?, ?, ?, 'admin')
-        ON CONFLICT(email) DO UPDATE SET 
-            password=excluded.password,
-            rol='admin'
-        """, ("Arturo", "arturo@servicio.com", hash_pw))
-        
-        conn.commit()
-        conn.close()
-        print(">>> [ADMIN LISTO] arturo@servicio.com configurado con rol admin <<<")
-    except Exception as e:
-        print("Error asegurando admin:", e)
+    return
 
 # Ejecutar al iniciar la aplicacion
 # asegurar_admin_en_arranque()
