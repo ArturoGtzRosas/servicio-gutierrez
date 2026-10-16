@@ -353,12 +353,14 @@ def enviar_presupuesto_email(id):
 def borrar_presupuesto(id):
     if 'user_id' not in session:
         return redirect(url_for('login'))
-        
+    if session.get('user_rol') != 'admin':
+        flash("Acceso denegado: Solo administradores pueden eliminar presupuestos.")
+        return redirect(url_for('ver_presupuestos'))
+
     db = get_db_connection()
     db.execute("DELETE FROM presupuestos WHERE id = ?", (id,))
     db.commit()
     db.close()
-    
     return redirect(url_for('ver_presupuestos'))
 
 @app.route('/borrar_mensaje/<int:id>')
@@ -371,6 +373,12 @@ def borrar_mensaje(id):
 
 @app.route('/borrar_cotizacion/<int:id>')
 def borrar_cotizacion(id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    if session.get('user_rol') != 'admin':
+        flash("Acceso denegado: Solo administradores pueden eliminar cotizaciones.")
+        return redirect(url_for('ver_cotizaciones'))
+    
     db = get_db_connection()
     db.execute("DELETE FROM cotizaciones WHERE id = ?", (id,))
     db.commit()
@@ -771,12 +779,16 @@ def descargar_nota(id):
 
 @app.route('/borrar_nota/<int:id>')
 def borrar_nota(id):
-    if 'user_id' not in session: return redirect(url_for('login'))
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    if session.get('user_rol') != 'admin':
+        flash("Acceso denegado: Solo administradores pueden eliminar notas.")
+        return redirect(url_for('ver_notas'))
+
     db = get_db_connection()
     db.execute("DELETE FROM notas_venta WHERE id = ?", (id,))
     db.commit()
     db.close()
-    flash("Nota eliminada correctamente.")
     return redirect(url_for('ver_notas'))
 
 # ---------------- GESTIÓN DE USUARIOS ----------------

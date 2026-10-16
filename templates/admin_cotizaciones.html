@@ -28,7 +28,9 @@
                 <td>{{ c.modelo }}</td>
                 <td>
                     <button class="btn-pdf" onclick="imprimirPDF('{{ c.nombre }}', '{{ c.servicio }}', '{{ c.modelo }}')">🖨️ PDF</button>
-                    <a href="{{ url_for('borrar_cotizacion', id=c.id) }}" style="color:red; margin-left:10px; text-decoration:none; font-weight:bold;" onclick="return confirm('¿Finalizar servicio?')">Finalizar</a>
+                    {% if session.get('user_rol') == 'admin' %}
+                    <a href="{{ url_for('borrar_cotizacion', id=c.id) }}" class="btn-del" onclick="return confirm('¿Seguro que deseas eliminar esta cotización?');">🗑️</a>
+                    {% endif %}
                 </td>
             </tr>
             {% endfor %}
