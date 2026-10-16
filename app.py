@@ -187,14 +187,7 @@ def contacto():
         asunto = request.form.get('asunto', '').strip()
         mensaje = request.form.get('mensaje', '').strip()
         
-        db = get_db_connection()
-        db.execute('''CREATE TABLE IF NOT EXISTS mensajes 
-                      (id INTEGER PRIMARY KEY AUTOINCREMENT, fecha TEXT, nombre TEXT, email TEXT, telefono TEXT, asunto TEXT, mensaje TEXT, leido INTEGER DEFAULT 0)''')
-        try:
-            db.execute("ALTER TABLE mensajes ADD COLUMN asunto TEXT")
-        except:
-            pass
-            
+                  
         db.execute('''INSERT INTO mensajes (fecha, nombre, email, telefono, asunto, mensaje) 
                       VALUES (?, ?, ?, ?, ?, ?)''',
                    (datetime.now().strftime("%d/%m/%Y %H:%M"), nombre, email, telefono, asunto, mensaje))
@@ -272,10 +265,6 @@ def ver_cotizaciones():
 def ver_mensajes():
     if 'user_id' not in session: return redirect(url_for('login'))
     db = get_db_connection()
-    # Asegura que la tabla exista antes de consultarla
-    db.execute('''CREATE TABLE IF NOT EXISTS mensajes 
-                  (id INTEGER PRIMARY KEY AUTOINCREMENT, fecha TEXT, nombre TEXT, email TEXT, telefono TEXT, mensaje TEXT, leido INTEGER DEFAULT 0)''')
-    db.commit()
     datos = db.execute("SELECT * FROM mensajes ORDER BY id DESC").fetchall()
     db.close()
     return render_template('admin_mensajes.html', mensajes=datos)
@@ -447,10 +436,6 @@ def crear_presupuesto():
                 total += cant * precio
         
         db = get_db_connection()
-        db.execute('''CREATE TABLE IF NOT EXISTS presupuestos 
-                      (id INTEGER PRIMARY KEY AUTOINCREMENT, fecha TEXT, cliente TEXT, 
-                       telefono TEXT, equipo TEXT, servicios TEXT, total REAL)''')
-        
         servicios_resumen = ", ".join([f"(x{it['cant']}) {it['desc']}" for it in items])
         cursor = db.execute('''INSERT INTO presupuestos (fecha, cliente, telefono, equipo, servicios, total)
                                VALUES (?, ?, ?, ?, ?, ?)''',
@@ -588,16 +573,6 @@ def generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total):
 # =====================================================
 # MÓDULO DE NOTAS DE VENTA (INTEGRACIÓN)
 # =====================================================
-
-def init_tabla_notas():
-    conn = get_db_connection()
-    conn.execute('''CREATE TABLE IF NOT EXISTS notas_venta 
-                    (id INTEGER PRIMARY KEY AUTOINCREMENT, fecha TEXT, cliente TEXT, 
-                     direccion TEXT, telefono TEXT, equipo TEXT, servicio TEXT, total REAL, observaciones TEXT)''')
-    conn.commit()
-    conn.close()
-
-init_tabla_notas()
 
 class PDFNotaVenta(FPDF):
     def rotate(self, angle, x=None, y=None):
