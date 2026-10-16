@@ -31,30 +31,56 @@ MAIL_USERNAME = 'serviciogutierrezpc@gmail.com'
 MAIL_PASSWORD = 'sondiuxeuddmtspx'
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-DATABASE = os.path.join(BASE_DIR, 'servicio_gutierrez.db')
+
+try:
+    import psycopg2
+    from psycopg2.extras import RealDictCursor
+except ImportError:
+    psycopg2 = None
+    RealDictCursor = None
+
+DATABASE_URL = os.environ.get('DATABASE_URL')
+DATABASE_SQLITE = os.path.join(BASE_DIR, 'servicio_gutierrez.db')
+
+class DBConnectionWrapper:
+    """Adaptador para que la conexion a PostgreSQL se comporte igual que SQLite."""
+    def __init__(self, conn, is_pg=False):
+        self.conn = conn
+        self.is_pg = is_pg
+
+    def cursor(self):
+        return self.conn.cursor()
+
+    def execute(self, query, params=None):
+        cur = self.conn.cursor()
+        if self.is_pg:
+            query = query.replace('?', '%s')
+        if params is not None:
+            cur.execute(query, params)
+        else:
+            cur.execute(query)
+        return cur
+
+    def commit(self):
+        self.conn.commit()
+
+    def rollback(self):
+        self.conn.rollback()
+
+    def close(self):
+        self.conn.close()
+
 
 def get_db_connection():
-    conn = sqlite3.connect(DATABASE)
-    conn.row_factory = sqlite3.Row
-    return conn
-
-import os
-import sqlite3
-
-def init_db():
-    conn = get_db_connection()
-    tabla_check = conn.execute("SELECT name FROM sqlite_master WHERE type='table' AND name='cotizaciones'").fetchone()
-    if not tabla_check and os.path.exists('datos_iniciales.sql'):
-        with open('datos_iniciales.sql', 'r', encoding='utf-8') as f:
-            try:
-                conn.executescript(f.read())
-                print("✅ Base de datos restaurada con tablas y registros iniciales.")
-            except sqlite3.OperationalError as e:
-                print(f"⚠️ Aviso en inicialización SQL: {e}")
-    conn.commit()
-    conn.close()
-
-init_db()
+    if DATABASE_URL and psycopg2:
+        # Conexion a PostgreSQL en Render (Neon)
+        conn = psycopg2.connect(DATABASE_URL, cursor_factory=RealDictCursor)
+        return DBConnectionWrapper(conn, is_pg=True)
+    else:
+        # Respaldo SQLite en local si no existe DATABASE_URL o psycopg2
+        conn = sqlite3.connect(DATABASE_SQLITE)
+        conn.row_factory = sqlite3.Row
+        return DBConnectionWrapper(conn, is_pg=False)
 
 def enviar_presupuesto_correo(destinatario, cliente, equipo, total, folio, pdf_bytes):
     try:
