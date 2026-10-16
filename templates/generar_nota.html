@@ -53,6 +53,20 @@
 <div class="container">
     <h2>🧾 Emitir Nota de Venta</h2>
     <form method="POST">
+        <!-- Selector de Cliente del Catálogo -->
+        <div style="background: #f8f9fa; border: 1px solid #dcdcdc; border-left: 4px solid var(--oro); padding: 12px 15px; border-radius: 6px; margin-bottom: 20px;">
+            <label style="color: var(--azul); font-weight: bold; margin-bottom: 6px; display: block;">
+                👥 Seleccionar Cliente del Catálogo:
+            </label>
+            <select id="select_catalogo_clientes" onchange="autocompletarCliente(this)" style="width: 100%; padding: 9px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; background: white;">
+                <option value="" data-dir="" data-tel="">-- Cliente Nuevo / Escribir Manualmente --</option>
+                {% for cl in clientes_registrados %}
+                <option value="{{ cl.cliente }}" data-dir="{{ cl.direccion or '' }}" data-tel="{{ cl.telefono or '' }}">
+                    {{ cl.cliente }}{% if cl.telefono %} (Tel: {{ cl.telefono }}){% endif %}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
         <div class="grid">
             <div>
                 <label>Cliente:</label>
@@ -145,7 +159,31 @@ function limpiarFormulario() {
             </div>
         `;
         calcularTotal();
+        const sel = document.getElementById('select_catalogo_clientes');
+        if (sel) sel.selectedIndex = 0;
         document.querySelector('input[name="cliente"]').focus();
+    }
+}
+
+function autocompletarCliente(select) {
+    const opcion = select.options[select.selectedIndex];
+    const nombre = select.value;
+    const direccion = opcion.getAttribute('data-dir') || '';
+    const telefono = opcion.getAttribute('data-tel') || '';
+
+    const inputCliente = document.querySelector('input[name="cliente"]');
+    const inputDireccion = document.querySelector('input[name="direccion"]');
+    const inputTelefono = document.querySelector('input[name="telefono"]');
+
+    if (nombre) {
+        inputCliente.value = nombre;
+        inputDireccion.value = direccion;
+        inputTelefono.value = telefono;
+    } else {
+        inputCliente.value = '';
+        inputDireccion.value = '';
+        inputTelefono.value = '';
+        inputCliente.focus();
     }
 }
 

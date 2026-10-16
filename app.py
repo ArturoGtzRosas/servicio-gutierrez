@@ -754,8 +754,18 @@ def crear_nota():
         response.headers["Content-Disposition"] = f"inline; filename=Nota_{cliente.replace(' ', '_')}_{folio}.pdf"
         return response
 
-    return render_template('generar_nota.html')
+    db = get_db_connection()
+    clientes_registrados = db.execute("""
+        SELECT cliente, direccion, telefono 
+        FROM notas_venta 
+        WHERE cliente IS NOT NULL AND TRIM(cliente) != ''
+        GROUP BY cliente 
+        ORDER BY id DESC
+    """).fetchall()
+    db.close()
 
+    return render_template('generar_nota.html', clientes_registrados=clientes_registrados)
+    
 @app.route('/descargar_nota/<int:id>')
 def descargar_nota(id):
     if 'user_id' not in session: return redirect(url_for('login'))
