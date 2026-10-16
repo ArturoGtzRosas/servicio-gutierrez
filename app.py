@@ -88,6 +88,19 @@ def get_db_connection():
         conn.row_factory = sqlite3.Row
         return DBConnectionWrapper(conn, is_pg=False)
 
+def migrar_db_email():
+    try:
+        db = get_db_connection()
+        db.execute("ALTER TABLE presupuestos ADD COLUMN email TEXT")
+        if hasattr(db.conn, 'commit'):
+            db.conn.commit()
+        db.close()
+    except Exception:
+        # Si la columna ya existe o falla el alter, continúa con normalidad
+        pass
+
+migrar_db_email()
+
 import base64
 import os
 import requests
@@ -493,6 +506,7 @@ def crear_presupuesto():
         cliente = request.form.get('cliente', '').strip()
         telefono = request.form.get('telefono', '').strip()
         equipo = request.form.get('equipo', '').strip()
+        email = request.form.get('email', '').strip()
         
         cantidades = request.form.getlist('cantidad[]')
         descripciones = request.form.getlist('descripcion[]')
@@ -516,9 +530,9 @@ def crear_presupuesto():
         
         db = get_db_connection()
         servicios_resumen = ", ".join([f"(x{it['cant']}) {it['desc']}" for it in items])
-        cursor = db.execute('''INSERT INTO presupuestos (fecha, cliente, telefono, equipo, servicios, total)
-                               VALUES (?, ?, ?, ?, ?, ?)''',
-                            (datetime.now().strftime("%d/%m/%Y %H:%M"), cliente, telefono, equipo, servicios_resumen, total))
+        cursor = db.execute('''INSERT INTO presupuestos (fecha, cliente, telefono, email, equipo, servicios, total)
+                               VALUES (?, ?, ?, ?, ?, ?, ?)''',
+                            (datetime.now().strftime("%d/%m/%Y %H:%M"), cliente, telefono, email, equipo, servicios_resumen, total))
         db.commit()
         
         folio = 1000 + cursor.lastrowid

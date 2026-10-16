@@ -70,7 +70,7 @@
 
                    <!-- Formulario directo para enviar por correo -->
                     <form action="{{ url_for('enviar_presupuesto_email', id=p.id) }}" method="POST" style="display: inline-flex; align-items: center; gap: 4px; margin: 0 4px;">
-                        <input type="email" name="email_destino" placeholder="correo@ejemplo.com" required 
+                        <input type="email" name="email_destino" value="{{ p.email if p.email else '' }}" placeholder="correo@ejemplo.com" required 
                                style="padding: 4px 8px; font-size: 12px; border: 1px solid #ccc; border-radius: 4px; width: 160px;">
                         <button type="submit" 
                                 style="background-color: #4a69bd; color: white; border: none; padding: 5px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; cursor: pointer;">
