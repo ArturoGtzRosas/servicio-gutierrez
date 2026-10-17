@@ -538,7 +538,8 @@ def crear_presupuesto():
                                VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id''',
                             (datetime.now().strftime("%d/%m/%Y %H:%M"), cliente, telefono, email, equipo, servicios_resumen, total))
         
-        nuevo_id = cursor.fetchone()[0]
+        fila = cursor.fetchone()
+        nuevo_id = fila['id'] if fila else 1
         db.commit()
         db.close()
 
