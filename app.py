@@ -682,6 +682,10 @@ def generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total, id_p
         pdf.cell(22, 4, 'Escanear presupuesto', 0, 0, 'C')
     except Exception as e:
         print(f"[QR ERROR]: {e}")
+        pdf_bytes = pdf.output(dest='S')
+    if isinstance(pdf_bytes, str):
+        pdf_bytes = pdf_bytes.encode('latin1')
+    return io.BytesIO(pdf_bytes)
 
 # =====================================================
 # MÓDULO DE NOTAS DE VENTA (INTEGRACIÓN)
