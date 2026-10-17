@@ -365,6 +365,7 @@ def ver_mensajes():
     db.close()
     return render_template('admin_mensajes.html', mensajes=datos)
 
+@app.route('/admin_presupuestos')
 @app.route('/ver_presupuestos')
 def ver_presupuestos():
     if 'user_id' not in session: return redirect(url_for('login'))
