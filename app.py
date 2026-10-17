@@ -536,8 +536,8 @@ def crear_presupuesto():
         servicios_resumen = ", ".join([f"(x{it['cant']}) {it['desc']}" for it in items])
         cursor = db.execute('''INSERT INTO presupuestos (fecha, cliente, telefono, email, equipo, servicios, total)
                                VALUES (?, ?, ?, ?, ?, ?, ?)''',
-                            (datetime.now().strftime("%d/%m/%Y %H:%M"), cliente, telefono, email, equipo, servicios_resumen, total))
-       db.commit()
+        (datetime.now().strftime("%d/%m/%Y %H:%M"), cliente, telefono, email, equipo, servicios_resumen, total))
+        db.commit()
         nuevo_id = cursor.lastrowid
         folio = 1000 + nuevo_id
         db.close()
