@@ -536,11 +536,22 @@ def crear_presupuesto():
         servicios_resumen = ", ".join([f"(x{it['cant']}) {it['desc']}" for it in items])
         cursor = db.execute('''INSERT INTO presupuestos (fecha, cliente, telefono, email, equipo, servicios, total)
                                VALUES (?, ?, ?, ?, ?, ?, ?)''',
-        (datetime.now().strftime("%d/%m/%Y %H:%M"), cliente, telefono, email, equipo, servicios_resumen, total))
-        db.commit()
+                            (datetime.now().strftime("%d/%m/%Y %H:%M"), cliente, telefono, email, equipo, servicios_resumen, total))
+        
         nuevo_id = cursor.lastrowid
-        folio = 1000 + nuevo_id
+        if not nuevo_id:
+            res = cursor.execute("SELECT last_insert_rowid()").fetchone()
+            nuevo_id = res[0] if res else 1
+
+        db.commit()
         db.close()
+
+        folio = 1000 + nuevo_id
+
+        pdf_buffer = generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total, id_presupuesto=nuevo_id)
+        response = send_file(pdf_buffer, mimetype='application/pdf')
+        response.headers["Content-Disposition"] = f"inline; filename=Presupuesto_{cliente.replace(' ', '_')}_{folio}.pdf"
+        return response
 
         pdf_buffer = generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total, id_presupuesto=nuevo_id)
         response = send_file(pdf_buffer, mimetype='application/pdf')
