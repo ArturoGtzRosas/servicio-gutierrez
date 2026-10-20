@@ -16,6 +16,8 @@ import requests
 import base64
 import qrcode
 import io
+import json
+import re
 
 RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
 
@@ -376,7 +378,6 @@ def ver_presupuestos():
 
 @app.route('/descargar_presupuesto/<int:id>')
 def descargar_presupuesto(id):
-        
     db = get_db_connection()
     p = db.execute("SELECT * FROM presupuestos WHERE id = ?", (id,)).fetchone()
     # Si no lo encuentra directo y es un folio (>1000), busca por su ID real
@@ -393,13 +394,22 @@ def descargar_presupuesto(id):
     equipo = p['equipo'] if p['equipo'] else ''
     total = float(p['total']) if p['total'] else 0.0
     
-    # Reconstruir los renglones guardados
+    # Reconstrucción inteligente de items
     items = []
     if p['servicios']:
-        for serv in p['servicios'].split(', '):
-            items.append({'cant': 1, 'desc': serv, 'precio': total})
+        try:
+            # Si se guardó con el nuevo formato estructurado JSON
+            items = json.loads(p['servicios'])
+        except Exception:
+            # Para presupuestos anteriores guardados en texto plano
+            lineas = p['servicios'].split(', ')
+            cant_items = len(lineas)
+            precio_promedio = total / cant_items if cant_items > 0 else total
+            for serv in lineas:
+                desc_limpia = re.sub(r'^\(x\d+\)\s*', '', serv)
+                items.append({'cant': 1, 'desc': desc_limpia, 'precio': precio_promedio})
             
-    pdf_buffer = generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total)
+    pdf_buffer = generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total, id_presupuesto=p['id'])
     
     response = send_file(pdf_buffer, mimetype='application/pdf')
     response.headers["Content-Disposition"] = f"inline; filename=Presupuesto_{cliente.replace(' ', '_')}_{folio}.pdf"
@@ -434,11 +444,18 @@ def enviar_presupuesto_email(id):
 
         items = []
         if presupuesto['servicios']:
-            for serv in presupuesto['servicios'].split(', '):
-                items.append({'cant': 1, 'desc': serv, 'precio': total})
+            try:
+                items = json.loads(presupuesto['servicios'])
+            except Exception:
+                lineas = presupuesto['servicios'].split(', ')
+                cant_items = len(lineas)
+                precio_promedio = total / cant_items if cant_items > 0 else total
+                for serv in lineas:
+                    desc_limpia = re.sub(r'^\(x\d+\)\s*', '', serv)
+                    items.append({'cant': 1, 'desc': desc_limpia, 'precio': precio_promedio})
 
-        pdf_buffer = generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total)
-        pdf_bytes = pdf_buffer.getvalue()
+        pdf_buffer = generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total, id_presupuesto=presupuesto['id'])
+        
     except Exception as e:
         print(f"Error generando PDF: {e}")
         flash(f"Error al generar el PDF: {e}")
@@ -534,10 +551,10 @@ def crear_presupuesto():
                 total += cant * precio
         
         db = get_db_connection()
-        servicios_resumen = ", ".join([f"(x{it['cant']}) {it['desc']}" for it in items])
+        servicios_json = json.dumps(items)
         cursor = db.execute('''INSERT INTO presupuestos (fecha, cliente, telefono, email, equipo, servicios, total)
                                VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id''',
-                            (datetime.now().strftime("%d/%m/%Y %H:%M"), cliente, telefono, email, equipo, servicios_resumen, total))
+                            (datetime.now().strftime("%d/%m/%Y %H:%M"), cliente, telefono, email, equipo, servicios_json, total))
         
         fila = cursor.fetchone()
         nuevo_id = fila['id'] if fila else 1
