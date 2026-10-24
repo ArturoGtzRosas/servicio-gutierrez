@@ -580,29 +580,56 @@ class PDFPresupuesto(FPDF):
         self._out("Q")
 
     def header(self):
-        self.set_fill_color(27, 48, 91)
-        self.rect(0, 0, 210, 50, 'F')
-        
+        # 1. Franja azul de fondo
+        self.set_fill_color(24, 43, 73)
+        self.rect(10, 5, 190, 42, 'F')
+
+        # 2. Tarjeta blanca para el logo
+        self.set_fill_color(255, 255, 255)
+        self.set_draw_color(200, 215, 235)
+        self.set_line_width(0.3)
+        self.rect(13, 8, 52, 34, 'DF')
+
+        # 3. Logo centrado en su tarjeta
         logo_local = os.path.join(BASE_DIR, "static", "img", "logo_nuevo.png")
         url_logo_web = "https://i.postimg.cc/wvXCKc44/logo.png"
         try:
             if os.path.exists(logo_local):
-                self.image(logo_local, 10, 6, 42)
+                self.image(logo_local, 15, 11, 48)
             else:
-                self.image(url_logo_web, 10, 6, 42)
+                self.image(url_logo_web, 15, 11, 48)
         except Exception:
             pass
-        
-        self.set_text_color(197, 160, 89)
-        self.set_font('Arial', 'B', 18)
-        self.cell(0, 5, 'G-Tek Soluciones Digitales - Calidad y Honestidad en cada servicio', align='C')
-        
+
+        # 4. Nombre y detalles de la empresa
         self.set_text_color(255, 255, 255)
-        self.set_font('Arial', '', 9)
-        self.cell(0, 5, 'Francisco Arturo Gutiérrez Rosas | RFC: GURF770808', ln=True, align='C')
-        self.cell(0, 5, 'Cda. Águilas mz 13 lt 30 Casa D, San Buenaventura, Ixtapaluca, México. 56536', ln=True, align='C')
-        self.cell(0, 5, 'Tel. 55 4031 3150 | e-mail: arturogtzrosass@gmail.com', ln=True, align='C')
-        self.ln(25)
+        self.set_font('Arial', 'B', 15)
+        self.set_xy(68, 9)
+        self.cell(130, 6, 'G-Tek Soluciones Digitales', ln=True, align='L')
+
+        # Lema / Subtítulo dorado
+        self.set_text_color(212, 175, 55)
+        self.set_font('Arial', 'B', 8.5)
+        self.set_xy(68, 16)
+        self.cell(130, 5, 'Calidad y Honestidad en cada servicio', ln=True, align='L')
+
+        # Línea divisoria suave
+        self.set_draw_color(70, 100, 145)
+        self.set_line_width(0.2)
+        self.line(68, 22, 195, 22)
+
+        # Datos fiscales y de contacto
+        self.set_text_color(230, 235, 245)
+        self.set_font('Arial', '', 7.5)
+        self.set_xy(68, 24)
+        self.cell(130, 4, 'Francisco Arturo Gutiérrez Rosas | RFC: GURF770808', ln=True, align='L')
+        self.set_xy(68, 28)
+        self.cell(130, 4, 'Cda. Águilas mz 13 lt 30 Casa D, San Buenaventura, Ixtapaluca, México. 56536', ln=True, align='L')
+        self.set_xy(68, 32)
+        self.cell(130, 4, 'Tel. 55 4031 3150 | WhatsApp | e-mail: arturogtzrosass@gmail.com', ln=True, align='L')
+
+        # Espacio antes del folio y cuerpo
+        self.set_y(50)
 
     def marca_de_agua(self):
         self.set_font('Arial', 'B', 30)
@@ -714,67 +741,57 @@ def generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total, id_p
 # =====================================================
 
 class PDFNotaVenta(FPDF):
-    def rotate(self, angle, x=None, y=None):
-        if x is None: x = self.x
-        if y is None: y = self.y
-        self._out(f"q {math.cos(math.radians(angle))} {math.sin(math.radians(angle))} {-math.sin(math.radians(angle))} {math.cos(math.radians(angle))} {x * self.k} {(self.h - y) * self.k} cm 1 0 0 1 {-x * self.k} {-(self.h - y) * self.k} cm")
-
-    def end_rotate(self):
-        self._out("Q")
-
     def header(self):
-        self.set_fill_color(27, 48, 91)
-        self.rect(0, 0, 210, 50, 'F')
-        
+        # 1. Franja azul de fondo
+        self.set_fill_color(24, 43, 73)
+        self.rect(10, 5, 190, 42, 'F')
+
+        # 2. Tarjeta blanca para el logo
+        self.set_fill_color(255, 255, 255)
+        self.set_draw_color(200, 215, 235)
+        self.set_line_width(0.3)
+        self.rect(13, 8, 52, 34, 'DF')
+
+        # 3. Logo centrado en su tarjeta
         logo_local = os.path.join(BASE_DIR, "static", "img", "logo_nuevo.png")
         url_logo_web = "https://i.postimg.cc/wvXCKc44/logo.png"
         try:
             if os.path.exists(logo_local):
-                # Tarjeta blanca para el logo
-                self.set_fill_color(255, 255, 255)
-                self.set_draw_color(180, 205, 230)
-                self.set_line_width(0.3)
-                self.rect(12, 6, 46, 30, 'DF')
-                self.image(logo_local, 13, 7, 44)
+                self.image(logo_local, 15, 11, 48)
             else:
-                # Tarjeta blanca para el logo web
-                self.set_fill_color(255, 255, 255)
-                self.set_draw_color(180, 205, 230)
-                self.set_line_width(0.3)
-                self.rect(12, 6, 46, 30, 'DF')
-                self.image(url_logo_web, 13, 7, 44)
+                self.image(url_logo_web, 15, 11, 48)
         except Exception:
             pass
 
-        # Titulo principal de la marca
+        # 4. Nombre y detalles de la empresa
         self.set_text_color(255, 255, 255)
-        self.set_font('Arial', 'B', 16)
-        self.set_xy(62, 7)
-        self.cell(135, 6, 'G-Tek', ln=True, align='L')
+        self.set_font('Arial', 'B', 15)
+        self.set_xy(68, 9)
+        self.cell(130, 6, 'G-Tek Soluciones Digitales', ln=True, align='L')
 
-        # Subtitulo de marca en acento dorado
-        self.set_text_color(197, 160, 89)
-        self.set_font('Arial', 'B', 9.5)
-        self.set_xy(62, 13)
-        self.cell(135, 5, 'SOLUCIONES DIGITALES', ln=True, align='L')
+        # Lema / Subtítulo dorado
+        self.set_text_color(212, 175, 55)
+        self.set_font('Arial', 'B', 8.5)
+        self.set_xy(68, 16)
+        self.cell(130, 5, 'Calidad y Honestidad en cada servicio', ln=True, align='L')
 
-        # Linea decorativa
-        self.set_draw_color(60, 90, 140)
+        # Línea divisoria suave
+        self.set_draw_color(70, 100, 145)
         self.set_line_width(0.2)
-        self.line(62, 19, 195, 19)
+        self.line(68, 22, 195, 22)
 
         # Datos fiscales y de contacto
         self.set_text_color(230, 235, 245)
         self.set_font('Arial', '', 7.5)
-        self.set_xy(62, 21)
-        self.cell(135, 4, 'Francisco Arturo Gutiérrez Rosas | RFC: GURF770808', ln=True, align='L')
-        self.set_xy(62, 25)
-        self.cell(135, 4, 'Cda. Águilas mz 13 lt 30 Casa D, San Buenaventura, Ixtapaluca, México. 56536', ln=True, align='L')
-        self.set_xy(62, 29)
-        self.cell(135, 4, 'Tel. 55 4031 3150 | WhatsApp | e-mail: arturogtzrosass@gmail.com', ln=True, align='L')
+        self.set_xy(68, 24)
+        self.cell(130, 4, 'Francisco Arturo Gutiérrez Rosas | RFC: GURF770808', ln=True, align='L')
+        self.set_xy(68, 28)
+        self.cell(130, 4, 'Cda. Águilas mz 13 lt 30 Casa D, San Buenaventura, Ixtapaluca, México. 56536', ln=True, align='L')
+        self.set_xy(68, 32)
+        self.cell(130, 4, 'Tel. 55 4031 3150 | WhatsApp | e-mail: arturogtzrosass@gmail.com', ln=True, align='L')
 
-        # Salto para el contenido siguiente
-        self.set_y(44)
+        # Espacio antes del folio y cuerpo
+        self.set_y(50)
 
     def marca_de_agua(self):
         self.set_font('Arial', 'B', 30)
