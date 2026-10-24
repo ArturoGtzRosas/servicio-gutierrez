@@ -611,7 +611,7 @@ class PDFPresupuesto(FPDF):
         self.set_text_color(212, 175, 55)
         self.set_font('Arial', 'B', 8.5)
         self.set_xy(68, 16)
-        self.cell(130, 5, 'Calidad y Honestidad en cada servicio', ln=True, align='L')
+        self.cell(130, 5, 'Innovación, Soporte y Soluciones Tecnológicas Integrales', ln=True, align='L')
 
         # Línea divisoria suave
         self.set_draw_color(70, 100, 145)
@@ -647,7 +647,7 @@ class PDFPresupuesto(FPDF):
         self.cell(0, 5, '* AVISO: Este presupuesto puede cambiar sin previo aviso y tiene vigencia de 15 días.', align='C', ln=True)
         self.set_font('Arial', 'I', 8)
         self.set_text_color(150, 150, 150)
-        self.cell(0, 5, 'G-Tek Soluciones Digitales - Calidad y Honestidad en cada reparación', align='C')
+        self.cell(130, 5, 'Innovación, Soporte y Soluciones Tecnológicas Integrales', ln=True, align='L')
 
 
 def generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total, id_presupuesto=None):
@@ -773,7 +773,7 @@ class PDFNotaVenta(FPDF):
         self.set_text_color(212, 175, 55)
         self.set_font('Arial', 'B', 8.5)
         self.set_xy(68, 16)
-        self.cell(130, 5, 'Calidad y Honestidad en cada servicio', ln=True, align='L')
+        self.cell(130, 5, 'Innovación, Soporte y Soluciones Tecnológicas Integrales', ln=True, align='L')
 
         # Línea divisoria suave
         self.set_draw_color(70, 100, 145)
