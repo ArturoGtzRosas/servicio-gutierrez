@@ -1,6 +1,6 @@
 
 ========================================
-       SERVICIO GUTIÉRREZ - WEB
+       G-Tek Soluciones Digitales - WEB
 ========================================
 FECHA:      12/02/2026 14:52
 CLIENTE:    Arturo
@@ -14,7 +14,7 @@ TOTAL:            $2,850.00
 
 
 ========================================
-       SERVICIO GUTIÉRREZ - WEB
+       G-Tek Soluciones Digitales - WEB
 ========================================
 FECHA:      12/02/2026 14:57
 CLIENTE:    Erenesto

@@ -148,7 +148,7 @@ def enviar_presupuesto_correo(destinatario, cliente, equipo, total, folio, pdf_b
                 <!-- Encabezado -->
                 <tr>
                     <td style="background-color: #0f3d64; padding: 25px 30px; text-align: center;">
-                        <h1 style="color: #ffffff; margin: 0; font-size: 22px; letter-spacing: 0.5px;">SERVICIO GUTIÉRREZ</h1>
+                        <h1 style="color: #ffffff; margin: 0; font-size: 22px; letter-spacing: 0.5px;">G-Tek Soluciones Digitales</h1>
                         <p style="color: #c5a356; margin: 5px 0 0 0; font-size: 14px; font-weight: bold;">Mantenimiento y Soluciones Informáticas</p>
                     </td>
                 </tr>
@@ -199,7 +199,7 @@ def enviar_presupuesto_correo(destinatario, cliente, equipo, total, folio, pdf_b
                 <tr>
                     <td style="background-color: #f8fafc; padding: 18px 30px; text-align: center; border-top: 1px solid #e1e8ed;">
                         <p style="color: #777; font-size: 12px; margin: 0; line-height: 1.4;">
-                            <strong>Servicio Gutiérrez</strong><br>
+                            <strong>G-Tek Soluciones Digitales</strong><br>
                             Atención técnica y soporte especializado
                         </p>
                     </td>
@@ -211,7 +211,7 @@ def enviar_presupuesto_correo(destinatario, cliente, equipo, total, folio, pdf_b
 
         payload = {
             "sender": {
-                "name": "Servicio Gutiérrez",
+                "name": "G-Tek Soluciones Digitales",
                 "email": "serviciogutierrezpc@gmail.com"
             },
             "to": [
@@ -220,7 +220,7 @@ def enviar_presupuesto_correo(destinatario, cliente, equipo, total, folio, pdf_b
                     "name": cliente if cliente else "Cliente"
                 }
             ],
-            "subject": f"Presupuesto #{folio} - Servicio Gutiérrez",
+            "subject": f"Presupuesto #{folio} - G-Tek Soluciones Digitales",
             "htmlContent": cuerpo_html,
             "attachment": [
                 {
@@ -595,7 +595,7 @@ class PDFPresupuesto(FPDF):
         
         self.set_text_color(197, 160, 89)
         self.set_font('Arial', 'B', 18)
-        self.cell(0, 10, 'SERVICIO TÉCNICO GUTIÉRREZ', ln=True, align='C')
+        self.cell(0, 5, 'G-Tek Soluciones Digitales - Calidad y Honestidad en cada servicio', align='C')
         
         self.set_text_color(255, 255, 255)
         self.set_font('Arial', '', 9)
@@ -620,7 +620,7 @@ class PDFPresupuesto(FPDF):
         self.cell(0, 5, '* AVISO: Este presupuesto puede cambiar sin previo aviso y tiene vigencia de 15 días.', align='C', ln=True)
         self.set_font('Arial', 'I', 8)
         self.set_text_color(150, 150, 150)
-        self.cell(0, 5, 'Servicio Gutiérrez - Calidad y Honestidad en cada reparación', align='C')
+        self.cell(0, 5, 'G-Tek Soluciones Digitales - Calidad y Honestidad en cada reparación', align='C')
 
 
 def generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total, id_presupuesto=None):
@@ -730,22 +730,51 @@ class PDFNotaVenta(FPDF):
         url_logo_web = "https://i.postimg.cc/wvXCKc44/logo.png"
         try:
             if os.path.exists(logo_local):
-                self.image(logo_local, 10, 6, 42)
+                # Tarjeta blanca para el logo
+                self.set_fill_color(255, 255, 255)
+                self.set_draw_color(180, 205, 230)
+                self.set_line_width(0.3)
+                self.rect(12, 6, 46, 30, 'DF')
+                self.image(logo_local, 13, 7, 44)
             else:
-                self.image(url_logo_web, 10, 6, 42)
+                # Tarjeta blanca para el logo web
+                self.set_fill_color(255, 255, 255)
+                self.set_draw_color(180, 205, 230)
+                self.set_line_width(0.3)
+                self.rect(12, 6, 46, 30, 'DF')
+                self.image(url_logo_web, 13, 7, 44)
         except Exception:
             pass
-        
-        self.set_text_color(197, 160, 89)
-        self.set_font('Arial', 'B', 18)
-        self.cell(0, 10, 'SERVICIO TÉCNICO GUTIÉRREZ', ln=True, align='C')
-        
+
+        # Titulo principal de la marca
         self.set_text_color(255, 255, 255)
-        self.set_font('Arial', '', 9)
-        self.cell(0, 5, 'Francisco Arturo Gutiérrez Rosas | RFC: GURF770808', ln=True, align='C')
-        self.cell(0, 5, 'Cda. Águilas mz 13 lt 30 Casa D, San Buenaventura, Ixtapaluca, México. 56536', ln=True, align='C')
-        self.cell(0, 5, 'Tel. 55 4031 3150 | e-mail: arturogtzrosass@gmail.com', ln=True, align='C')
-        self.ln(25)
+        self.set_font('Arial', 'B', 16)
+        self.set_xy(62, 7)
+        self.cell(135, 6, 'G-Tek', ln=True, align='L')
+
+        # Subtitulo de marca en acento dorado
+        self.set_text_color(197, 160, 89)
+        self.set_font('Arial', 'B', 9.5)
+        self.set_xy(62, 13)
+        self.cell(135, 5, 'SOLUCIONES DIGITALES', ln=True, align='L')
+
+        # Linea decorativa
+        self.set_draw_color(60, 90, 140)
+        self.set_line_width(0.2)
+        self.line(62, 19, 195, 19)
+
+        # Datos fiscales y de contacto
+        self.set_text_color(230, 235, 245)
+        self.set_font('Arial', '', 7.5)
+        self.set_xy(62, 21)
+        self.cell(135, 4, 'Francisco Arturo Gutiérrez Rosas | RFC: GURF770808', ln=True, align='L')
+        self.set_xy(62, 25)
+        self.cell(135, 4, 'Cda. Águilas mz 13 lt 30 Casa D, San Buenaventura, Ixtapaluca, México. 56536', ln=True, align='L')
+        self.set_xy(62, 29)
+        self.cell(135, 4, 'Tel. 55 4031 3150 | WhatsApp | e-mail: arturogtzrosass@gmail.com', ln=True, align='L')
+
+        # Salto para el contenido siguiente
+        self.set_y(44)
 
     def marca_de_agua(self):
         self.set_font('Arial', 'B', 30)
@@ -763,7 +792,7 @@ class PDFNotaVenta(FPDF):
         self.cell(0, 5, '** Todo trabajo tiene 30 días de garantía en mano de obra', align='C', ln=True)
         self.set_font('Arial', 'I', 8)
         self.set_text_color(150, 150, 150)
-        self.cell(0, 5, 'Servicio Gutiérrez - Calidad y Honestidad en cada reparación', align='C')
+        self.cell(0, 5, 'G-Tek Soluciones Digitales - Calidad y Honestidad en cada reparación', align='C')
 
 def generar_pdf_nota_binario(folio, cliente, direccion, telefono, equipo, servicios_items, total, obs=""):
     subtotal = total / 1.16

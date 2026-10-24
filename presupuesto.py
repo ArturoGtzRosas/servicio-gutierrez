@@ -19,7 +19,7 @@ if __name__ == '__main__':
     # Diseño del recibo
     recibo = f"""
 ========================================
-       SERVICIO GUTIÉRREZ - COTIZACIÓN
+       G-Tek Soluciones Digitales - COTIZACIÓN
 ========================================
 FECHA:      {fecha_actual}
 CLIENTE:    {cliente}

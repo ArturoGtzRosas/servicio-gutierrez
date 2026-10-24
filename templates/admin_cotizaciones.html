@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Historial Servicios - Servicio Gutiérrez</title>
+    <title>Historial Servicios - G-Tek Soluciones Digitales</title>
     <style>
         :root { --azul: #1f3a5f; --oro: #c5a356; }
         body { font-family: 'Segoe UI', sans-serif; background: #f4f4f4; padding: 20px; }
@@ -43,7 +43,7 @@
 <script>
 function imprimirPDF(nom, ser, mod) {
     const v = window.open('', '_blank');
-    v.document.write(`<html><head><style>body{font-family:sans-serif;padding:40px;text-align:center;} .header{border-bottom:2px solid #c5a356;}</style></head><body><div class="header"><h1>SERVICIO GUTIÉRREZ</h1></div><h3>Cotización Técnica</h3><p><strong>Cliente:</strong> ${nom}</p><p><strong>Servicio:</strong> ${ser}</p><p><strong>Equipo:</strong> ${mod}</p><script>window.print();<\/script></body></html>`);
+    v.document.write(`<html><head><style>body{font-family:sans-serif;padding:40px;text-align:center;} .header{border-bottom:2px solid #c5a356;}</style></head><body><div class="header"><h1>G-Tek Soluciones Digitales</h1></div><h3>Cotización Técnica</h3><p><strong>Cliente:</strong> ${nom}</p><p><strong>Servicio:</strong> ${ser}</p><p><strong>Equipo:</strong> ${mod}</p><script>window.print();<\/script></body></html>`);
     v.document.close();
 }
 </script>
