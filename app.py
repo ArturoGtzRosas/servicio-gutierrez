@@ -941,11 +941,14 @@ def crear_nota():
 
     db = get_db_connection()
     clientes_registrados = db.execute("""
-        SELECT cliente, direccion, telefono 
-        FROM notas_venta 
+        SELECT cliente, 
+               MAX(direccion) AS direccion, 
+               MAX(telefono) AS telefono, 
+               MAX(id) AS id
+        FROM notas_venta
         WHERE cliente IS NOT NULL AND TRIM(cliente) != ''
-        GROUP BY cliente 
-        ORDER BY id DESC
+        GROUP BY cliente
+        ORDER BY MAX(id) DESC
     """).fetchall()
     db.close()
 
