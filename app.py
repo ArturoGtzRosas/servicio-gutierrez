@@ -743,56 +743,55 @@ def generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total, id_p
 
 class PDFNotaVenta(FPDF):
     def header(self):
-        # 1. Franja azul de fondo más compacta
+        # 1. Franja azul institucional (más estilizada y compacta)
         self.set_fill_color(24, 43, 73)
-        self.rect(10, 5, 190, 36, 'F')
+        self.rect(10, 8, 190, 32, 'F')
 
-        # 2. Tarjeta blanca para el logo
+        # 2. Recuadro blanco para el logo proporcional
         self.set_fill_color(255, 255, 255)
         self.set_draw_color(200, 215, 235)
         self.set_line_width(0.3)
-        self.rect(12, 7.5, 54, 31, 'DF')
+        self.rect(12, 10, 60, 28, 'DF')
 
-        # 3. Logo centrado en su tarjeta
+        # 3. Logo insertado con proporción real (evita corte de iconos)
         logo_local = os.path.join(BASE_DIR, "static", "img", "logo_nuevo.jpg")
         url_logo_web = "https://i.postimg.cc/wvXCKc44/logo.png"
         try:
-            if os.path.exists(logo_local):
-                self.image(logo_local, 14, 9.5, 50)
-            else:
-                self.image(url_logo_web, 14, 9.5, 50)
+            ruta_logo = logo_local if os.path.exists(logo_local) else url_logo_web
+            # Centrado en X: 12 + (60 - 56)/2 = 14 | Centrado en Y: 10 + (28 - 24)/2 = 12
+            self.image(ruta_logo, x=13.5, y=11.5, w=57)
         except Exception:
             pass
 
-        # 4. Nombre y detalles de la empresa
+        # 4. Nombre comercial
         self.set_text_color(255, 255, 255)
-        self.set_font('Arial', 'B', 15)
-        self.set_xy(68, 9)
-        self.cell(130, 6, 'G-Tek Soluciones Digitales', ln=True, align='L')
+        self.set_font('Arial', 'B', 14)
+        self.set_xy(76, 11)
+        self.cell(120, 5, 'G-Tek Soluciones Digitales', ln=True, align='L')
 
-        # Lema / Subtítulo dorado
-        self.set_text_color(212, 175, 55)
-        self.set_font('Arial', 'B', 8.5)
-        self.set_xy(68, 16)
-        self.cell(130, 5, 'Innovación, Soporte y Soluciones Tecnológicas Integrales', ln=True, align='L')
+        # 5. Eslogan / Subtítulo dorado
+        self.set_text_color(225, 185, 65)
+        self.set_font('Arial', 'B', 8)
+        self.set_xy(76, 17)
+        self.cell(120, 4, 'Innovación, Soporte y Soluciones Tecnológicas Integrales', ln=True, align='L')
 
-        # Línea divisoria suave
-        self.set_draw_color(70, 100, 145)
+        # Línea dorada divisoria sutil
+        self.set_draw_color(225, 185, 65)
         self.set_line_width(0.2)
-        self.line(68, 22, 195, 22)
+        self.line(76, 22.5, 195, 22.5)
 
-        # Datos fiscales y de contacto
+        # 6. Datos fiscales y de contacto
         self.set_text_color(230, 235, 245)
         self.set_font('Arial', '', 7.5)
-        self.set_xy(68, 24)
-        self.cell(130, 4, 'Francisco Arturo Gutiérrez Rosas | RFC: GURF770808', ln=True, align='L')
-        self.set_xy(68, 28)
-        self.cell(130, 4, 'Cda. Águilas mz 13 lt 30 Casa D, San Buenaventura, Ixtapaluca, México. 56536', ln=True, align='L')
-        self.set_xy(68, 32)
-        self.cell(130, 4, 'Tel. 55 4031 3150 | WhatsApp | e-mail: arturogtzrosass@gmail.com', ln=True, align='L')
-
-        # Espacio antes del folio y cuerpo
-        self.set_y(50)
+        self.set_xy(76, 24)
+        self.cell(120, 3.8, 'Francisco Arturo Gutiérrez Rosas | RFC: GURF770808', ln=True, align='L')
+        self.set_xy(76, 28)
+        self.cell(120, 3.8, 'Cda. Águilas mz 13 lt 30 Casa D, San Buenaventura, Ixtapaluca, México. 56536', ln=True, align='L')
+        self.set_xy(76, 32)
+        self.cell(120, 3.8, 'Tel. 55 4031 3150 | WhatsApp | e-mail: arturogtzrosass@gmail.com', ln=True, align='L')
+        
+        # Posicionar cursor al pie del banner para no arrastrar margen vacío
+        self.set_y(42)
 
     def marca_de_agua(self):
         try:
@@ -821,20 +820,47 @@ def generar_pdf_nota_binario(folio, cliente, direccion, telefono, equipo, servic
     pdf.add_page()
     pdf.marca_de_agua()
     
-    # Encabezado folio y titulo (ajustado para compactar espacio)
-    pdf.set_xy(140, 44)
+    # Folio a la derecha
+    pdf.set_xy(140, 43)
     pdf.set_text_color(200, 0, 0)
     pdf.set_font('Arial', 'B', 13)
-    pdf.cell(60, 6, f'FOLIO: {folio}', ln=True, align='R')
+    pdf.cell(60, 5, f'FOLIO: {folio}', ln=True, align='R')
 
-    pdf.set_text_color(100, 100, 100)
-    pdf.set_font('Arial', '', 9)
-    pdf.cell(0, 5, f'Fecha: {datetime.now().strftime("%d/%m/%Y %H:%M")}', ln=True, align='R')
+    # Fecha alineada a la derecha bajo el folio
+    pdf.set_xy(140, 48)
+    pdf.set_text_color(90, 90, 90)
+    pdf.set_font('Arial', '', 8.5)
+    pdf.cell(60, 4, f'Fecha: {datetime.now().strftime("%d/%m/%Y %H:%M")}', ln=True, align='R')
 
-    pdf.set_xy(10, 48)
+    # Título centrado
+    pdf.set_xy(10, 45)
     pdf.set_text_color(24, 43, 73)
     pdf.set_font('Arial', 'B', 15)
-    pdf.cell(0, 7, 'NOTA DE VENTA', ln=True, align='C')
+    pdf.cell(190, 6, 'NOTA DE VENTA', ln=True, align='C')
+
+    # Datos del cliente y equipo
+    pdf.set_xy(10, 54)
+    pdf.set_fill_color(240, 243, 248)
+    pdf.set_text_color(24, 43, 73)
+    pdf.set_font('Arial', 'B', 10)
+    pdf.cell(190, 6, ' DATOS DEL CLIENTE Y EQUIPO', ln=True, fill=True)
+
+    pdf.set_text_color(0, 0, 0)
+    pdf.set_font('Arial', '', 9)
+    pdf.set_x(10)
+    pdf.cell(190, 5, f'Cliente: {cliente}', ln=True)
+    if direccion:
+        pdf.set_x(10)
+        pdf.cell(190, 5, f'Dirección: {direccion}', ln=True)
+    if telefono:
+        pdf.set_x(10)
+        pdf.cell(190, 5, f'Teléfono: {telefono}', ln=True)
+    pdf.set_x(10)
+    pdf.cell(190, 5, f'Equipo: {equipo}', ln=True)
+    if obs:
+        pdf.set_x(10)
+        pdf.multi_cell(190, 4.5, f'Observaciones: {obs}')
+
     pdf.ln(2)
 
     # Datos del cliente y equipo
