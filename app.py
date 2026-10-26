@@ -743,24 +743,24 @@ def generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total, id_p
 
 class PDFNotaVenta(FPDF):
     def header(self):
-        # 1. Franja azul de fondo
+        # 1. Franja azul de fondo más compacta
         self.set_fill_color(24, 43, 73)
-        self.rect(10, 5, 190, 42, 'F')
+        self.rect(10, 5, 190, 36, 'F')
 
         # 2. Tarjeta blanca para el logo
         self.set_fill_color(255, 255, 255)
         self.set_draw_color(200, 215, 235)
         self.set_line_width(0.3)
-        self.rect(13, 8, 52, 34, 'DF')
+        self.rect(12, 7.5, 54, 31, 'DF')
 
         # 3. Logo centrado en su tarjeta
         logo_local = os.path.join(BASE_DIR, "static", "img", "logo_nuevo.jpg")
         url_logo_web = "https://i.postimg.cc/wvXCKc44/logo.png"
         try:
             if os.path.exists(logo_local):
-                self.image(logo_local, 15, 11, 48)
+                self.image(logo_local, 14, 9.5, 50)
             else:
-                self.image(url_logo_web, 15, 11, 48)
+                self.image(url_logo_web, 14, 9.5, 50)
         except Exception:
             pass
 
@@ -821,18 +821,21 @@ def generar_pdf_nota_binario(folio, cliente, direccion, telefono, equipo, servic
     pdf.add_page()
     pdf.marca_de_agua()
     
-    # Encabezado folio y título
-    pdf.set_xy(140, 55)
+    # Encabezado folio y titulo (ajustado para compactar espacio)
+    pdf.set_xy(140, 44)
     pdf.set_text_color(200, 0, 0)
-    pdf.set_font('Arial', 'B', 14)
-    pdf.cell(60, 10, f'FOLIO: {folio}', ln=True, align='R')
-    
-    pdf.set_text_color(0, 0, 0)
-    pdf.set_font('Arial', 'B', 16)
-    pdf.cell(0, 8, 'NOTA DE VENTA', ln=True, align='C')
-    pdf.set_font('Arial', '', 10)
-    pdf.cell(0, 6, f'Fecha: {datetime.now().strftime("%d/%m/%Y %H:%M")}', ln=True, align='R')
-    pdf.ln(4)
+    pdf.set_font('Arial', 'B', 13)
+    pdf.cell(60, 6, f'FOLIO: {folio}', ln=True, align='R')
+
+    pdf.set_text_color(100, 100, 100)
+    pdf.set_font('Arial', '', 9)
+    pdf.cell(0, 5, f'Fecha: {datetime.now().strftime("%d/%m/%Y %H:%M")}', ln=True, align='R')
+
+    pdf.set_xy(10, 48)
+    pdf.set_text_color(24, 43, 73)
+    pdf.set_font('Arial', 'B', 15)
+    pdf.cell(0, 7, 'NOTA DE VENTA', ln=True, align='C')
+    pdf.ln(2)
 
     # Datos del cliente y equipo
     pdf.set_fill_color(245, 245, 245)
