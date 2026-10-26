@@ -795,13 +795,15 @@ class PDFNotaVenta(FPDF):
         self.set_y(50)
 
     def marca_de_agua(self):
-        self.set_font('Arial', 'B', 30)
-        self.set_text_color(240, 240, 240)
-        self.rotate(45, 105, 160)
-        texto = "ESTE NO ES UN COMPROBANTE FISCAL"
-        w = self.get_string_width(texto)
-        self.text(105 - (w / 2), 160, texto)
-        self.end_rotate()
+        try:
+            self.set_font('Arial', 'B', 30)
+            self.set_text_color(240, 240, 240)
+            texto = "ESTE NO ES UN COMPROBANTE FISCAL"
+            w = self.get_string_width(texto)
+            with self.rotation(45, 105, 160):
+                self.text(105 - (w / 2), 160, texto)
+        except Exception:
+            pass
 
     def footer(self):
         self.set_y(-22)
