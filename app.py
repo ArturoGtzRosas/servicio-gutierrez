@@ -861,19 +861,8 @@ def generar_pdf_nota_binario(folio, cliente, direccion, telefono, equipo, servic
         pdf.set_x(10)
         pdf.multi_cell(190, 4.5, f'Observaciones: {obs}')
 
-    pdf.ln(2)
-
-    # Datos del cliente y equipo
-    pdf.set_fill_color(245, 245, 245)
-    pdf.set_font('Arial', 'B', 11)
-    pdf.cell(0, 8, ' DATOS DEL CLIENTE Y EQUIPO', ln=True, fill=True)
-    pdf.set_font('Arial', '', 10)
-    pdf.cell(0, 6, f'  Cliente: {cliente}', ln=True)
-    if direccion: pdf.cell(0, 6, f'  Dirección: {direccion}', ln=True)
-    if telefono: pdf.cell(0, 6, f'  Teléfono: {telefono}', ln=True)
-    pdf.cell(0, 6, f'  Equipo: {equipo}', ln=True)
-    if obs: pdf.multi_cell(0, 6, f'  Observaciones: {obs}')
-    pdf.ln(5)
+    pdf.ln(3)
+    
 
     # Encabezado de la tabla (Ancho total: 15 + 105 + 35 + 35 = 190 mm)
     pdf.set_font('Arial', 'B', 10)
