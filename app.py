@@ -927,7 +927,8 @@ def crear_nota():
                 })
                 total += subt_item
                 
-        serv_resumen = ", ".join([f"(x{it['cant']}) {it['desc']}" if it['cant'] > 1 else it['desc'] for it in items])
+        import json
+        serv_resumen = json.dumps(items, ensure_ascii=False)
         
         db = get_db_connection()
         cur = db.execute('''INSERT INTO notas_venta 
@@ -971,23 +972,12 @@ def descargar_nota(id):
     folio = 1000 + n['id']
     items = []
     if n['servicio']:
-        servicios_lista = [s.strip() for s in n['servicio'].split(',') if s.strip()]
-        num_items = len(servicios_lista)
-        total_float = float(n['total']) if n['total'] else 0.0
-        p_unit_estimado = round(total_float / num_items, 2) if num_items > 0 else 0.0
-        
-        for idx, s in enumerate(servicios_lista):
-            if idx == num_items - 1:
-                subt = round(total_float - (p_unit_estimado * (num_items - 1)), 2)
-            else:
-                subt = p_unit_estimado
-
-            items.append({
-                'cant': 1,
-                'desc': s,
-                'p_unit': subt,
-                'precio': subt
-            })
+        try:
+            import json
+            items = json.loads(n['servicio'])
+        except Exception:
+            # Respaldo por si se consulta una nota anterior guardada en texto plano
+            items = [{'cant': 1, 'desc': n['servicio'], 'p_unit': float(n['total'] or 0.0), 'precio': float(n['total'] or 0.0)}]
             
     pdf_buf = generar_pdf_nota_binario(folio, n['cliente'], n['direccion'], n['telefono'], n['equipo'], items, float(n['total']), n['observaciones'])
     response = send_file(pdf_buf, mimetype='application/pdf')
