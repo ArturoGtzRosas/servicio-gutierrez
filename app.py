@@ -591,7 +591,7 @@ class PDFPresupuesto(FPDF):
         self.rect(13, 8, 52, 34, 'DF')
 
         # 3. Logo centrado en su tarjeta
-        logo_local = os.path.join(BASE_DIR, "static", "img", "logo_nuevo.png")
+        logo_local = os.path.join(BASE_DIR, "static", "img", "logo_nuevo.jpg")
         url_logo_web = "https://i.postimg.cc/wvXCKc44/logo.png"
         try:
             if os.path.exists(logo_local):
@@ -712,8 +712,7 @@ def generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total, id_p
     # Generación e inserción de Código QR dinámico
     try:
         id_qr = id_presupuesto if id_presupuesto else folio
-        url_qr = f"https://servicio-gutierrez.onrender.com/descargar_presupuesto/{id_qr}"
-
+        url_qr = f"https://gtek-soluciones.onrender.com/descargar_presupuesto/{id_qr}"
         qr = qrcode.QRCode(box_size=3, border=1)
         qr.add_data(url_qr)
         qr.make(fit=True)
@@ -753,7 +752,7 @@ class PDFNotaVenta(FPDF):
         self.rect(13, 8, 52, 34, 'DF')
 
         # 3. Logo centrado en su tarjeta
-        logo_local = os.path.join(BASE_DIR, "static", "img", "logo_nuevo.png")
+        logo_local = os.path.join(BASE_DIR, "static", "img", "logo_nuevo.jpg")
         url_logo_web = "https://i.postimg.cc/wvXCKc44/logo.png"
         try:
             if os.path.exists(logo_local):
