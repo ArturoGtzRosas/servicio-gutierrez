@@ -858,14 +858,30 @@ def generar_pdf_nota_binario(folio, cliente, direccion, telefono, equipo, servic
     for item in servicios_items:
         cant = item.get('cant', 1)
         desc = item.get('desc', '')
-        p_unit = item.get('p_unit', float(item.get('precio', 0.0)) / cant)
-        # Importe real directo (Cantidad x Precio Unitario)
+        try:
+            p_unit = float(item.get('p_unit', 0.0))
+        except Exception:
+            p_unit = float(item.get('precio', 0.0)) / cant if cant else 0.0
         importe_item = cant * p_unit
 
-        pdf.cell(15, 8, f"{cant}", 1, 0, 'C')
-        pdf.cell(105, 8, f" {desc}", 1, 0, 'L')
-        pdf.cell(35, 8, f"${p_unit:,.2f}", 1, 0, 'R')
-        pdf.cell(35, 8, f"${importe_item:,.2f}", 1, 1, 'R')
+        x_start = pdf.get_x()
+        y_start = pdf.get_y()
+
+        w_cant, w_desc, w_punit, w_imp = 15, 105, 35, 35
+        h_linea = 5
+
+        # Imprimir la descripción en multi_cell para permitir salto de línea
+        pdf.set_xy(x_start + w_cant, y_start)
+        pdf.multi_cell(w_desc, h_linea, f"{desc}", border=0, align='L')
+        y_fin = pdf.get_y()
+        alto_fila = max(8, y_fin - y_start)
+
+        # Dibujar las celdas con la altura calculada para que coincidan perfectamente
+        pdf.set_xy(x_start, y_start)
+        pdf.cell(w_cant, alto_fila, f"{cant}", border=1, ln=0, align='C')
+        pdf.cell(w_desc, alto_fila, '', border=1, ln=0)
+        pdf.cell(w_punit, alto_fila, f"${p_unit:,.2f}", border=1, ln=0, align='R')
+        pdf.cell(w_imp, alto_fila, f"${importe_item:,.2f}", border=1, ln=1, align='R')
 
     pdf.ln(4)
     # Bloque de liquidación final
@@ -932,11 +948,13 @@ def crear_nota():
         
         db = get_db_connection()
         cur = db.execute('''INSERT INTO notas_venta 
-                            (fecha, cliente, direccion, telefono, equipo, servicio, total, observaciones) 
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?)''',
-                         (datetime.now().strftime("%d/%m/%Y %H:%M"), cliente, direccion, telefono, equipo, serv_resumen, total, observaciones))
+                 (fecha, cliente, direccion, telefono, equipo, servicio, total, observaciones)
+                 VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id''',
+                 (datetime.now().strftime("%d/%m/%Y %H:%M"), cliente, direccion, telefono, equipo, serv_resumen, total, observaciones))
+        row = cur.fetchone()
+        nuevo_id = row[0] if row else 1
         db.commit()
-        folio = 1000 + cur.lastrowid
+        folio = 1000 + nuevo_id
         db.close()
         
         pdf_buf = generar_pdf_nota_binario(folio, cliente, direccion, telefono, equipo, items, total, observaciones)
