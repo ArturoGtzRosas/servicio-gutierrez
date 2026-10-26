@@ -952,7 +952,7 @@ def crear_nota():
                  VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id''',
                  (datetime.now().strftime("%d/%m/%Y %H:%M"), cliente, direccion, telefono, equipo, serv_resumen, total, observaciones))
         row = cur.fetchone()
-        nuevo_id = row[0] if row else 1
+        nuevo_id = (row['id'] if isinstance(row, dict) else row[0]) if row else 1
         db.commit()
         folio = 1000 + nuevo_id
         db.close()
