@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{ s.titulo }} - G-Tek Soluciones Digitales</title>
+    <style>
+        :root {
+            --azul: #1f3a5f;
+            --azul-oscuro: #14263f;
+            --oro: #c5a356;
+            --gris-fondo: #f4f6f9;
+            --texto: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--gris-fondo);
+            color: var(--texto);
+        }
+
+        nav {
+            background-color: var(--azul);
+            padding: 15px 25px;
+            display: flex;
+            justify-content: center;
+            gap: 22px;
+            border-bottom: 4px solid var(--oro);
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9em;
+            text-transform: uppercase;
+        }
+
+        nav a:hover {
+            color: var(--oro);
+        }
+
+        .header-detalle {
+            background: linear-gradient(rgba(31, 58, 95, 0.95), rgba(20, 38, 63, 0.95));
+            color: white;
+            padding: 45px 20px 65px 20px;
+            text-align: center;
+        }
+
+        .badge-categoria {
+            display: inline-block;
+            background: var(--oro);
+            color: #1f3a5f;
+            font-size: 0.8em;
+            font-weight: bold;
+            padding: 5px 14px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            margin-bottom: 12px;
+        }
+
+        .header-detalle h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.1em;
+        }
+
+        .header-detalle p {
+            margin: 0 auto;
+            max-width: 680px;
+            color: #d6e2ee;
+            font-size: 1.05em;
+        }
+
+        .contenedor-principal {
+            max-width: 900px;
+            margin: -35px auto 50px auto;
+            padding: 0 20px;
+        }
+
+        .caja-detalle {
+            background: white;
+            border-radius: 12px;
+            padding: 35px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+            border-top: 5px solid var(--oro);
+        }
+
+        .zona-imagen {
+            width: 100%;
+            height: 260px;
+            background-color: #e9eff5;
+            border-radius: 10px;
+            overflow: hidden;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid #dce4ed;
+        }
+
+        .zona-imagen img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        .zona-imagen .placeholder-img {
+            color: var(--azul);
+            font-weight: bold;
+            font-size: 1.1em;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .seccion-texto h3 {
+            color: var(--azul);
+            margin-top: 0;
+            font-size: 1.35em;
+        }
+
+        .seccion-texto p {
+            color: #555;
+            line-height: 1.6;
+            font-size: 0.98em;
+        }
+
+        .lista-beneficios {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0 30px 0;
+        }
+
+        .lista-beneficios li {
+            padding: 10px 0;
+            border-bottom: 1px solid #eee;
+            font-size: 0.95em;
+            color: #444;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .lista-beneficios li::before {
+            content: "✓";
+            color: var(--oro);
+            font-weight: bold;
+            font-size: 1.1em;
+            margin-right: 12px;
+        }
+
+        .barra-acciones {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            margin-top: 25px;
+            padding-top: 20px;
+            border-top: 1px solid #eee;
+        }
+
+        .btn-solicitar {
+            background-color: var(--azul);
+            color: var(--oro);
+            text-decoration: none;
+            font-weight: bold;
+            padding: 13px 25px;
+            border-radius: 8px;
+            font-size: 1em;
+            transition: 0.2s;
+            text-transform: uppercase;
+        }
+
+        .btn-solicitar:hover {
+            background-color: var(--azul-oscuro);
+        }
+
+        .link-volver {
+            color: var(--azul);
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .link-volver:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="{{ url_for('index') }}">Inicio</a>
+    <a href="{{ url_for('servicios') }}">Nuestros Servicios</a>
+    <a href="{{ url_for('cotizar_cliente') }}">Cotiza</a>
+    <a href="{{ url_for('cotizador') }}">Calculadora</a>
+    <a href="{{ url_for('contacto') }}">Contacto</a>
+    <a href="{{ url_for('login') }}">Admin</a>
+</nav>
+
+<div class="header-detalle">
+    <span class="badge-categoria">{{ s.badge }}</span>
+    <h1>{{ s.titulo }}</h1>
+    <p>{{ s.subtitulo }}</p>
+</div>
+
+<div class="contenedor-principal">
+    <div class="caja-detalle">
+
+        <!-- Espacio de imagen ilustrativa -->
+        <div class="zona-imagen">
+            <img src="{{ url_for('static', filename='img/' + s.imagen) }}" 
+                 alt="{{ s.titulo }}" 
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div class="placeholder-img" style="display: none;">
+                G-Tek Soluciones Digitales<br>
+                <small style="color: #666; font-size: 0.8em;">(Foto del servicio: {{ s.imagen }})</small>
+            </div>
+        </div>
+
+        <div class="seccion-texto">
+            <h3>Descripción del Servicio</h3>
+            <p>{{ s.descripcion }}</p>
+
+            <h3 style="margin-top: 25px;">Qué incluye nuestro servicio</h3>
+            <ul class="lista-beneficios">
+                {% for b in s.beneficios %}
+                <li>{{ b }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="barra-acciones">
+            <a href="{{ url_for('servicios') }}" class="link-volver">← Volver al Catálogo de Servicios</a>
+            {% if s.servicio_param %}
+            <a href="{{ url_for('cotizar_cliente') }}?servicio={{ s.servicio_param }}" class="btn-solicitar">Solicitar Cotización</a>
+            {% else %}
+            <a href="{{ url_for('contacto') }}" class="btn-solicitar">Contactar para Proyecto</a>
+            {% endif %}
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

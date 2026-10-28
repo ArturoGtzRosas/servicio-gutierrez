@@ -84,10 +84,14 @@
                 <td class="asunto-tag">{{ m['asunto'] if m['asunto'] else m[3] }}</td>
                 <td>{{ m['mensaje'] if m['mensaje'] else m[4] }}</td>
                 <td>
-                    <button type="button" class="btn-accion btn-responder" 
-                            onclick="abrirModal('{{ m['nombre'] if m['nombre'] else m[1] }}', '{{ m['email'] if m['email'] else m[2] }}', '{{ m['asunto'] if m['asunto'] else m[3] }}')">
-                        Responder
+                    <button type="button" class="btn-accion btn-responder"
+                    data-nombre="{{ m['nombre'] if m['nombre'] else m[1] }}"
+                    data-email="{{ m['email'] if m['email'] else m[2] }}"
+                    data-asunto="{{ m['asunto'] if m['asunto'] else m[3] }}"
+                    onclick="abrirModalDesdeBoton(this)">
+                    Responder
                     </button>
+
                     <a href="{{ url_for('borrar_mensaje', id=m['id'] if m['id'] else m[0]) }}" 
                        class="btn-accion btn-borrar" 
                        onclick="return confirm('¿Seguro que deseas eliminar este mensaje?');">
@@ -139,7 +143,11 @@
 </div>
 
 <script>
-    function abrirModal(nombre, email, asunto) {
+    function abrirModalDesdeBoton(btn) {
+        const nombre = btn.getAttribute('data-nombre');
+        const email = btn.getAttribute('data-email');
+        const asunto = btn.getAttribute('data-asunto');
+
         document.getElementById('modal_nombre').value = nombre;
         document.getElementById('modal_destinatario').value = email;
         document.getElementById('modal_destinatario_vista').value = nombre + " <" + email + ">";

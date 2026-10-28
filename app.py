@@ -312,6 +312,110 @@ def enviar_presupuesto_correo(destinatario, cliente, equipo, total, folio, pdf_b
 def index():
     return render_template('index.html')
 
+@app.route('/servicios')
+def servicios():
+    return render_template('servicios.html')
+
+CATALOGO_DETALLE = {
+    'diseno-web': {
+        'titulo': 'Diseño y Desarrollo Web Profesional',
+        'subtitulo': 'Sitios web modernos, rápidos y orientados a generar clientes para tu negocio.',
+        'badge': 'Presencia Digital',
+        'imagen': 'diseno_web.jpg',
+        'descripcion': 'Desarrollamos plataformas digitales a la medida, adaptadas para visualizarse correctamente en computadoras, tablets y teléfonos celulares. Nos enfocamos en velocidad, claridad de información y herramientas de contacto directo (WhatsApp, formularios y cotizadores).',
+        'beneficios': [
+            'Diseño totalmente responsivo y adaptado a móviles',
+            'Integración directa con WhatsApp y correo corporativo',
+            'Optimización técnica de velocidad de carga y posicionamiento',
+            'Configuración de dominio propio (.com, .mx) y hosting seguro',
+            'Opciones de cotizadores interactivos y catálogos de productos'
+        ],
+        'servicio_param': ''
+    },
+    'ssd': {
+        'titulo': 'Instalación y Migración a Disco Sólido (SSD)',
+        'subtitulo': 'Multiplica la velocidad de tu equipo hasta 10 veces frente a discos duros convencionales.',
+        'badge': 'Hardware y Rendimiento',
+        'imagen': 'ssd_upgrade.jpg',
+        'descripcion': 'El disco de estado sólido es la mejor actualización para revivir equipos lentos. Eliminamos los tiempos largos de encendido y la espera al abrir programas pesados, asegurando la integridad de tus archivos mediante clonación o instalación limpia.',
+        'beneficios': [
+            'Arranque del sistema operativo en menos de 15 segundos',
+            'Disponibilidad en tecnologías SATA III (2.5") y M.2 NVMe PCIe',
+            'Capacidades estándar y de alta exigencia: 240GB, 480GB, 1TB y 2TB',
+            'Clonación exacta de tu sistema o instalación desde cero',
+            'Consumo menor de energía y mayor tolerancia a golpes en laptops'
+        ],
+        'servicio_param': 'ssd'
+    },
+    'ram': {
+        'titulo': 'Ampliación de Memoria RAM',
+        'subtitulo': 'Fluidez total para trabajar con múltiples pestañas y programas pesados a la vez.',
+        'badge': 'Capacidad Multitarea',
+        'imagen': 'memoria_ram.jpg',
+        'descripcion': 'Cuando la memoria RAM se satura, el equipo se congela o se vuelve extremadamente lento. Analizamos la placa madre de tu laptop o PC de escritorio para instalar módulos compatibles a la frecuencia óptima y en configuración de doble canal (Dual-Channel).',
+        'beneficios': [
+            'Compatibilidad con estándares DDR3, DDR4 y DDR5',
+            'Ampliaciones recomendadas a 8 GB, 16 GB o 32 GB',
+            'Activación de tecnología Dual Channel para máximo ancho de banda',
+            'Mayor estabilidad en navegadores, diseño gráfico y edición',
+            'Pruebas de estrés y diagnóstico de memoria antes de la entrega'
+        ],
+        'servicio_param': 'ram'
+    },
+    'mantenimiento': {
+        'titulo': 'Mantenimiento Preventivo y Pasta Térmica',
+        'subtitulo': 'Disipación eficiente del calor, reducción de ruidos y protección de tus componentes.',
+        'badge': 'Cuidado Integral',
+        'imagen': 'mantenimiento_pc.jpg',
+        'descripcion': 'El polvo acumulado y la pasta térmica seca son la causa número uno de sobrecalentamiento y fallas permanentes en procesadores y tarjetas de video. Realizamos una limpieza profunda con equipo antiestático y aplicamos compuestos térmicos de alta conductividad.',
+        'beneficios': [
+            'Limpieza profunda de placa base y disipadores con aire comprimido seco',
+            'Cambio de pasta térmica con compuestos de alto rendimiento',
+            'Lubricación y desobstrucción de ventiladores (coolers)',
+            'Inspección visual de capacitores, puertos y flexores',
+            'Reporte de temperaturas antes y después del servicio'
+        ],
+        'servicio_param': 'mantenimiento'
+    },
+    'pantalla': {
+        'titulo': 'Reemplazo de Pantalla / Display',
+        'subtitulo': 'Recupera la imagen de tu laptop o All-in-One con repuestos de calidad garantizada.',
+        'badge': 'Reparación de Hardware',
+        'imagen': 'pantalla_laptop.jpg',
+        'descripcion': 'Si tu pantalla sufrió una caída, muestra líneas verticales, manchas de tinta o no da brillo, sustituimos el panel dañado asegurando la compatibilidad de resolución, conectores de video y tamaño exacto de tu equipo.',
+        'beneficios': [
+            'Paneles compatibles para marcas líderes (HP, Dell, Lenovo, ASUS, Acer, Apple)',
+            'Formatos Slim, LED y paneles IPS con ángulos amplios de visión',
+            'Resoluciones estándar HD (1366x768) y Full HD (1920x1080)',
+            'Inspección del cable flexor y circuitos del inversor',
+            'Garantía por escrito contra píxeles muertos y defectos de fábrica'
+        ],
+        'servicio_param': 'pantalla'
+    },
+    'software': {
+        'titulo': 'Sistemas Operativos y Software Especializado',
+        'subtitulo': 'Entornos limpios, optimizados y protegidos para el trabajo diario o profesional.',
+        'badge': 'Software y Seguridad',
+        'imagen': 'sistema_operativo.jpg',
+        'descripcion': 'Instalamos y configuramos sistemas operativos estables, libres de programas basura que ralentizan el encendido. Respaldamos tu información importante y dejamos las herramientas que necesitas listas para trabajar.',
+        'beneficios': [
+            'Instalación limpia de Windows 10, Windows 11 o distribuciones Linux',
+            'Respaldo y restauración íntegra de documentos, fotos y carpetas de usuario',
+            'Configuración de paquetería de oficina (Office) y utilitarios básicos',
+            'Soluciones de seguridad, protección de datos y antivirus',
+            'Actualización oficial de controladores de fabricante (drivers)'
+        ],
+        'servicio_param': 'so'
+    }
+}
+
+@app.route('/servicio/<servicio_id>')
+def servicio_detalle(servicio_id):
+    info = CATALOGO_DETALLE.get(servicio_id)
+    if not info:
+        return redirect(url_for('servicios'))
+    return render_template('servicio_detalle.html', s=info)
+
 @app.route('/cotizar_cliente')
 def cotizar_cliente():
     return render_template('cotizar_cliente.html')

@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nuestros Servicios - G-Tek Soluciones Digitales</title>
+    <style>
+        :root {
+            --azul: #1f3a5f;
+            --azul-oscuro: #14263f;
+            --oro: #c5a356;
+            --gris-fondo: #f4f6f9;
+            --texto: #333333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: var(--gris-fondo);
+            color: var(--texto);
+        }
+
+        /* Barra de navegación */
+        nav {
+            background-color: var(--azul);
+            padding: 15px 25px;
+            display: flex;
+            justify-content: center;
+            gap: 22px;
+            border-bottom: 4px solid var(--oro);
+            flex-wrap: wrap;
+        }
+
+        nav a {
+            color: #ffffff;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            transition: color 0.2s;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--oro);
+        }
+
+        /* Encabezado */
+        .hero-servicios {
+            background: linear-gradient(rgba(31, 58, 95, 0.94), rgba(20, 38, 63, 0.94));
+            color: white;
+            text-align: center;
+            padding: 45px 20px;
+        }
+
+        .hero-servicios h1 {
+            margin: 0 0 10px 0;
+            font-size: 2.2em;
+            color: #ffffff;
+        }
+
+        .hero-servicios p {
+            margin: 0 auto;
+            max-width: 700px;
+            color: #d8e2ec;
+            font-size: 1.05em;
+            line-height: 1.5;
+        }
+
+        /* Contenedor del Catálogo */
+        .container {
+            max-width: 1150px;
+            margin: -30px auto 40px auto;
+            padding: 0 20px;
+        }
+
+        .grid-servicios {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 25px;
+        }
+
+        /* Tarjeta de Servicio */
+        .card-servicio {
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 5px 20px rgba(0, 0, 0, 0.07);
+            border-top: 5px solid var(--oro);
+            padding: 28px 24px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+
+        .card-servicio:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 26px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-badge {
+            display: inline-block;
+            background: #eef3f9;
+            color: var(--azul);
+            font-size: 0.75em;
+            font-weight: bold;
+            padding: 4px 10px;
+            border-radius: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+            align-self: flex-start;
+        }
+
+        .card-servicio h3 {
+            color: var(--azul);
+            margin: 0 0 12px 0;
+            font-size: 1.35em;
+        }
+
+        .card-servicio p.desc {
+            color: #555;
+            font-size: 0.92em;
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .lista-puntos {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 22px 0;
+        }
+
+        .lista-puntos li {
+            font-size: 0.88em;
+            color: #444;
+            padding: 6px 0;
+            border-bottom: 1px dashed #e7ecf2;
+            display: flex;
+            align-items: center;
+        }
+
+        .lista-puntos li::before {
+            content: "✓";
+            color: var(--oro);
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .card-botones {
+            display: flex;
+            gap: 10px;
+            margin-top: auto;
+        }
+
+        .btn-info {
+            flex: 1;
+            text-align: center;
+            background: var(--azul);
+            color: white;
+            text-decoration: none;
+            padding: 11px 12px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+
+        .btn-info:hover {
+            background: var(--azul-oscuro);
+        }
+
+        .btn-cotizar-rapido {
+            text-align: center;
+            background: #fff;
+            color: var(--azul);
+            border: 1px solid var(--azul);
+            text-decoration: none;
+            padding: 11px 12px;
+            border-radius: 8px;
+            font-size: 0.85em;
+            font-weight: bold;
+            transition: all 0.2s;
+        }
+
+        .btn-cotizar-rapido:hover {
+            background: var(--oro);
+            border-color: var(--oro);
+            color: white;
+        }
+
+        /* Banner inferior */
+        .banner-asesoria {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            margin-top: 35px;
+            text-align: center;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e1e8f0;
+        }
+
+        .banner-asesoria h4 {
+            color: var(--azul);
+            margin: 0 0 8px 0;
+            font-size: 1.2em;
+        }
+
+        .banner-asesoria p {
+            color: #666;
+            margin: 0 0 15px 0;
+            font-size: 0.9em;
+        }
+
+        .banner-asesoria a {
+            display: inline-block;
+            background: var(--oro);
+            color: #1f3a5f;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 10px 22px;
+            border-radius: 8px;
+            font-size: 0.9em;
+            transition: 0.2s;
+        }
+
+        .banner-asesoria a:hover {
+            background: #b39247;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <a href="{{ url_for('index') }}">Inicio</a>
+    <a href="{{ url_for('servicios') }}" class="active">Nuestros Servicios</a>
+    <a href="{{ url_for('cotizar_cliente') }}">Cotiza</a>
+    <a href="{{ url_for('cotizador') }}">Calculadora</a>
+    <a href="{{ url_for('contacto') }}">Contacto</a>
+    <a href="{{ url_for('login') }}">Admin</a>
+</nav>
+
+<div class="hero-servicios">
+    <h1>Catálogo de Soluciones Tecnológicas</h1>
+    <p>Servicios especializados en mantenimiento, optimización de hardware, infraestructura de redes y desarrollo de plataformas digitales.</p>
+</div>
+
+<div class="container">
+    <div class="grid-servicios">
+
+        <!-- 1. Diseño Web y Soluciones Digitales -->
+        <div class="card-servicio" style="border-top-color: var(--azul);">
+            <div>
+                <span class="card-badge">Presencia en Línea</span>
+                <h3>Diseño y Desarrollo Web</h3>
+                <p class="desc">Impulsa tu negocio con sitios web modernos, rápidos y adaptados a cualquier pantalla (PC y celular).</p>
+                <ul class="lista-puntos">
+                    <li>Páginas corporativas y de servicios</li>
+                    <li>Landing pages para captación de clientes</li>
+                    <li>Cotizadores y catálogos en línea</li>
+                    <li>Configuración de hosting y dominio</li>
+                </ul>
+            </div>
+            <div class="card-botones">
+                <a href="{{ url_for('servicio_detalle', servicio_id='diseno-web') }}" class="btn-info">Ver Detalles</a>
+                <a href="{{ url_for('cotizar_cliente') }}" class="btn-cotizar-rapido">Cotizar</a>
+            </div>
+        </div>
+
+        <!-- 2. Actualización a Discos SSD -->
+        <div class="card-servicio">
+            <div>
+                <span class="card-badge">Velocidad y Almacenamiento</span>
+                <h3>Instalación de Discos SSD</h3>
+                <p class="desc">Aumenta la velocidad de arranque y respuesta de tu equipo hasta 10 veces sustituyendo el disco tradicional.</p>
+                <ul class="lista-puntos">
+                    <li>Formatos SATA 2.5" y M.2 NVMe PCIe</li>
+                    <li>Clonación de información sin pérdidas</li>
+                    <li>Unidades de 240GB, 480GB, 1TB y 2TB</li>
+                    <li>Pruebas de velocidad y rendimiento térmico</li>
+                </ul>
+            </div>
+            <div class="card-botones">
+                <a href="{{ url_for('servicio_detalle', servicio_id='ssd') }}" class="btn-info">Ver Detalles</a>
+                <a href="{{ url_for('cotizar_cliente') }}?servicio=ssd" class="btn-cotizar-rapido">Cotizar</a>
+            </div>
+        </div>
+
+        <!-- 3. Ampliación de Memoria RAM -->
+        <div class="card-servicio">
+            <div>
+                <span class="card-badge">Multitarea</span>
+                <h3>Ampliación de Memoria RAM</h3>
+                <p class="desc">Elimina congelamientos al tener varios programas o pestañas abiertas trabajando en simultáneo.</p>
+                <ul class="lista-puntos">
+                    <li>Módulos DDR3, DDR4 y DDR5 garantizados</li>
+                    <li>Compatibilidad para laptops y PC escritorio</li>
+                    <li>Configuraciones de 8GB, 16GB y 32GB</li>
+                    <li>Habilitación de doble canal (Dual Channel)</li>
+                </ul>
+            </div>
+            <div class="card-botones">
+                <a href="{{ url_for('servicio_detalle', servicio_id='ram') }}" class="btn-info">Ver Detalles</a>
+                <a href="{{ url_for('cotizar_cliente') }}?servicio=ram" class="btn-cotizar-rapido">Cotizar</a>
+            </div>
+        </div>
+
+        <!-- 4. Mantenimiento y Enfriamiento -->
+        <div class="card-servicio">
+            <div>
+                <span class="card-badge">Prevención y Rendimiento</span>
+                <h3>Mantenimiento y Pasta Térmica</h3>
+                <p class="desc">Reduce calentamientos, ruidos de ventilador y prolonga la vida útil de procesadores y tarjetas gráficas.</p>
+                <ul class="lista-puntos">
+                    <li>Sopleteado y limpieza antiestática de placa</li>
+                    <li>Aplicación de pasta térmica de alto rendimiento</li>
+                    <li>Lubricación y desobstrucción de disipadores</li>
+                    <li>Monitoreo de temperaturas bajo carga</li>
+                </ul>
+            </div>
+            <div class="card-botones">
+                <a href="{{ url_for('servicio_detalle', servicio_id='mantenimiento') }}" class="btn-info">Ver Detalles</a>
+                <a href="{{ url_for('cotizar_cliente') }}?servicio=mantenimiento" class="btn-cotizar-rapido">Cotizar</a>
+            </div>
+        </div>
+
+        <!-- 5. Pantallas y Displays -->
+        <div class="card-servicio">
+            <div>
+                <span class="card-badge">Hardware y Video</span>
+                <h3>Cambio de Pantallas / Display</h3>
+                <p class="desc">Reemplazo de paneles rotos, estrellados, con rayas o sin brillo para laptops y equipos All-in-One.</p>
+                <ul class="lista-puntos">
+                    <li>Resoluciones HD, Full HD y paneles IPS</li>
+                    <li>Medidas estándar (14.0", 15.6", etc.)</li>
+                    <li>Revisión de flexor y conectores de video</li>
+                    <li>Garantía de nitidez y cero píxeles muertos</li>
+                </ul>
+            </div>
+            <div class="card-botones">
+                <a href="{{ url_for('servicio_detalle', servicio_id='pantalla') }}" class="btn-info">Ver Detalles</a>
+                <a href="{{ url_for('cotizar_cliente') }}?servicio=pantalla" class="btn-cotizar-rapido">Cotizar</a>
+            </div>
+        </div>
+
+        <!-- 6. Sistemas Operativos y Software -->
+        <div class="card-servicio">
+            <div>
+                <span class="card-badge">Software</span>
+                <h3>Sistemas Operativos y Programas</h3>
+                <p class="desc">Configuración de entornos limpios, estables y protegidos listos para trabajar, estudiar o jugar.</p>
+                <ul class="lista-puntos">
+                    <li>Instalación de Windows 10/11 y distribuciones Linux</li>
+                    <li>Respaldo íntegro y seguro de archivos</li>
+                    <li>Paquetería de oficina y herramientas utilitarias</li>
+                    <li>Optimización contra malware y arranque lento</li>
+                </ul>
+            </div>
+            <div class="card-botones">
+                <a href="{{ url_for('servicio_detalle', servicio_id='software') }}" class="btn-info">Ver Detalles</a>
+                <a href="{{ url_for('cotizar_cliente') }}?servicio=so" class="btn-cotizar-rapido">Cotizar</a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Bloque de asesoría técnica -->
+    <div class="banner-asesoria">
+        <h4>¿No sabes qué servicio específico necesita tu equipo?</h4>
+        <p>Escríbenos directamente para asesorarte y ofrecerte la alternativa técnica más adecuada.</p>
+        <a href="{{ url_for('contacto') }}">Contactar con un Especialista</a>
+    </div>
+</div>
+
+</body>
+</html>
