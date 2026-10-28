@@ -7,3 +7,4 @@ servicio_gutierrez.db
 .env
 respaldo.py
 *.sql
+respaldo_sistema.bat
