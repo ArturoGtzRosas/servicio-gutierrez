@@ -29,6 +29,8 @@
             <a href="{{ url_for('ver_mensajes') }}">Mensajes</a>
             <a href="{{ url_for('ver_presupuestos') }}">📄 Historial de Presupuestos</a>
             <a href="{{ url_for('ver_notas') }}" class="btn-menu">📝 Notas de Venta</a>
+            <a href="{{ url_for('admin_office') }}">📊 Licencias Office</a>
+            <a href="{{ url_for('admin_antivirus') }}">🛡️ Licencias Antivirus</a>
             <a href="{{ url_for('crear_presupuesto') }}" style="background-color: #27ae60; color: white;">➕ Generar Presupuesto PDF</a>
             {% if session.get('user_rol') == 'admin' %}
             <a href="{{ url_for('admin_usuarios') }}" style="border-left: 3px solid var(--oro);">👥 Gestión de Usuarios</a>

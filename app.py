@@ -118,6 +118,53 @@ import base64
 import os
 import requests
 
+def init_db_licencias():
+    try:
+        db = get_db_connection()
+        # Tabla de licencias Office
+        db.execute('''
+            CREATE TABLE IF NOT EXISTS licencias_office (
+                id SERIAL PRIMARY KEY,
+                clave_producto TEXT NOT NULL,
+                version_office TEXT NOT NULL,
+                tipo_licencia TEXT,
+                precio_venta REAL,
+                nombre_cliente TEXT,
+                telefono_cliente TEXT,
+                equipo_asignado TEXT,
+                fecha_venta TEXT,
+                estatus TEXT DEFAULT 'Disponible',
+                observaciones TEXT
+            )
+        ''')
+        # Tabla de licencias Antivirus
+        db.execute('''
+            CREATE TABLE IF NOT EXISTS licencias_antivirus (
+                id SERIAL PRIMARY KEY,
+                marca_antivirus TEXT NOT NULL,
+                edicion TEXT,
+                clave_licencia TEXT NOT NULL,
+                dispositivos_totales INTEGER DEFAULT 1,
+                dispositivos_usados INTEGER DEFAULT 0,
+                duracion_meses INTEGER DEFAULT 12,
+                precio_venta REAL,
+                nombre_cliente TEXT,
+                telefono_cliente TEXT,
+                equipo_instalado TEXT,
+                fecha_activacion TEXT,
+                fecha_vencimiento TEXT,
+                estatus TEXT DEFAULT 'Disponible',
+                observaciones TEXT
+            )
+        ''')
+        if hasattr(db.conn, 'commit'):
+            db.conn.commit()
+        db.close()
+    except Exception as e:
+        print(f"[BD ERROR]: Error creando tablas de licencias: {e}")
+
+init_db_licencias()
+
 def enviar_presupuesto_correo(destinatario, cliente, equipo, total, folio, pdf_bytes):
     try:
         print(f"[CORREO] Preparando envio via Brevo hacia: {destinatario}...")
@@ -1313,3 +1360,165 @@ def asegurar_admin_en_arranque():
 
 # Ejecutar al iniciar la aplicacion
 # asegurar_admin_en_arranque()
+
+# =====================================================
+# MÓDULO DE LICENCIAS DE OFFICE
+# =====================================================
+
+@app.route('/admin_office')
+def admin_office():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    db = get_db_connection()
+    licencias = db.execute("SELECT * FROM licencias_office ORDER BY id DESC").fetchall()
+    
+    # También obtenemos los clientes registrados para autocompletar en el formulario
+    clientes = db.execute("""
+        SELECT cliente, MAX(telefono) AS telefono 
+        FROM notas_venta 
+        WHERE cliente IS NOT NULL AND TRIM(cliente) != '' 
+        GROUP BY cliente 
+        ORDER BY cliente ASC
+    """).fetchall()
+    db.close()
+    
+    return render_template('admin_office.html', licencias=licencias, clientes=clientes)
+
+@app.route('/crear_licencia_office', methods=['POST'])
+def crear_licencia_office():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    clave_producto = request.form.get('clave_producto', '').strip()
+    version_office = request.form.get('version_office', '').strip()
+    tipo_licencia = request.form.get('tipo_licencia', '').strip()
+    precio_venta = request.form.get('precio_venta', '0').strip()
+    nombre_cliente = request.form.get('nombre_cliente', '').strip()
+    telefono_cliente = request.form.get('telefono_cliente', '').strip()
+    equipo_asignado = request.form.get('equipo_asignado', '').strip()
+    estatus = request.form.get('estatus', 'Disponible').strip()
+    observaciones = request.form.get('observaciones', '').strip()
+    
+    try:
+        precio_val = float(precio_venta) if precio_venta else 0.0
+    except ValueError:
+        precio_val = 0.0
+        
+    fecha_venta = datetime.now().strftime("%d/%m/%Y %H:%M") if estatus == 'Asignada / Activa' else ''
+
+    db = get_db_connection()
+    db.execute('''
+        INSERT INTO licencias_office 
+        (clave_producto, version_office, tipo_licencia, precio_venta, nombre_cliente, telefono_cliente, equipo_asignado, fecha_venta, estatus, observaciones)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (clave_producto, version_office, tipo_licencia, precio_val, nombre_cliente, telefono_cliente, equipo_asignado, fecha_venta, estatus, observaciones))
+    db.commit()
+    db.close()
+    
+    flash("Licencia de Office registrada exitosamente.")
+    return redirect(url_for('admin_office'))
+
+@app.route('/borrar_licencia_office/<int:id>')
+def borrar_licencia_office(id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    if session.get('user_rol') != 'admin':
+        flash("Acceso denegado: Solo administradores pueden eliminar registros.")
+        return redirect(url_for('admin_office'))
+        
+    db = get_db_connection()
+    db.execute("DELETE FROM licencias_office WHERE id = ?", (id,))
+    db.commit()
+    db.close()
+    
+    flash("Registro de licencia eliminado.")
+    return redirect(url_for('admin_office'))
+
+# =====================================================
+# MÓDULO DE LICENCIAS DE ANTIVIRUS
+# =====================================================
+
+from datetime import timedelta
+
+@app.route('/admin_antivirus')
+def admin_antivirus():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    db = get_db_connection()
+    licencias = db.execute("SELECT * FROM licencias_antivirus ORDER BY id DESC").fetchall()
+    
+    # Clientes para autocompletar
+    clientes = db.execute("""
+        SELECT cliente, MAX(telefono) AS telefono 
+        FROM notas_venta 
+        WHERE cliente IS NOT NULL AND TRIM(cliente) != '' 
+        GROUP BY cliente 
+        ORDER BY cliente ASC
+    """).fetchall()
+    db.close()
+    
+    return render_template('admin_antivirus.html', licencias=licencias, clientes=clientes)
+
+@app.route('/crear_licencia_antivirus', methods=['POST'])
+def crear_licencia_antivirus():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    
+    marca_antivirus = request.form.get('marca_antivirus', '').strip()
+    edicion = request.form.get('edicion', '').strip()
+    clave_licencia = request.form.get('clave_licencia', '').strip()
+    dispositivos_totales = int(request.form.get('dispositivos_totales') or 1)
+    dispositivos_usados = int(request.form.get('dispositivos_usados') or 0)
+    duracion_meses = int(request.form.get('duracion_meses') or 12)
+    precio_venta = request.form.get('precio_venta', '0').strip()
+    nombre_cliente = request.form.get('nombre_cliente', '').strip()
+    telefono_cliente = request.form.get('telefono_cliente', '').strip()
+    equipo_instalado = request.form.get('equipo_instalado', '').strip()
+    estatus = request.form.get('estatus', 'Disponible').strip()
+    observaciones = request.form.get('observaciones', '').strip()
+    
+    try:
+        precio_val = float(precio_venta) if precio_venta else 0.0
+    except ValueError:
+        precio_val = 0.0
+
+    # Fechas de activación y vencimiento si está activa
+    fecha_activacion = ''
+    fecha_vencimiento = ''
+    if estatus in ['Activo', 'Por Vencer']:
+        ahora = datetime.now()
+        fecha_activacion = ahora.strftime("%d/%m/%Y")
+        # Aproximación de vigencia (30.4 días por mes)
+        dias_vigencia = int(duracion_meses * 30.4)
+        vence_dt = ahora + timedelta(days=dias_vigencia)
+        fecha_vencimiento = vence_dt.strftime("%d/%m/%Y")
+
+    db = get_db_connection()
+    db.execute('''
+        INSERT INTO licencias_antivirus 
+        (marca_antivirus, edicion, clave_licencia, dispositivos_totales, dispositivos_usados, duracion_meses, precio_venta, nombre_cliente, telefono_cliente, equipo_instalado, fecha_activacion, fecha_vencimiento, estatus, observaciones)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    ''', (marca_antivirus, edicion, clave_licencia, dispositivos_totales, dispositivos_usados, duracion_meses, precio_val, nombre_cliente, telefono_cliente, equipo_instalado, fecha_activacion, fecha_vencimiento, estatus, observaciones))
+    db.commit()
+    db.close()
+    
+    flash("Licencia de Antivirus registrada exitosamente.")
+    return redirect(url_for('admin_antivirus'))
+
+@app.route('/borrar_licencia_antivirus/<int:id>')
+def borrar_licencia_antivirus(id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    if session.get('user_rol') != 'admin':
+        flash("Acceso denegado: Solo administradores pueden eliminar registros.")
+        return redirect(url_for('admin_antivirus'))
+        
+    db = get_db_connection()
+    db.execute("DELETE FROM licencias_antivirus WHERE id = ?", (id,))
+    db.commit()
+    db.close()
+    
+    flash("Registro de antivirus eliminado.")
+    return redirect(url_for('admin_antivirus'))

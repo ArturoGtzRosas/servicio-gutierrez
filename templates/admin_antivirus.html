@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Control de Antivirus - G-Tek Soluciones Digitales</title>
+    <style>
+        :root { --azul: #1b305b; --oro: #c5a059; --verde: #27ae60; --naranja: #e67e22; --rojo: #e74c3c; }
+        body { font-family: 'Segoe UI', sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; }
+        .container { max-width: 1250px; margin: auto; }
+        
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .header h2 { color: var(--azul); margin: 0; }
+        .btn-volver { background: var(--azul); color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 13px; }
+        
+        .card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.06); border-top: 4px solid var(--oro); margin-bottom: 25px; }
+        .card h3 { color: var(--azul); margin-top: 0; font-size: 16px; margin-bottom: 15px; }
+
+        .grid-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+        label { font-size: 12px; font-weight: bold; color: #444; display: block; margin-bottom: 4px; }
+        input, select, textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 13px; }
+        
+        .btn-guardar { background: var(--verde); color: white; border: none; padding: 10px 18px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 14px; margin-top: 15px; }
+        .btn-guardar:hover { background: #219150; }
+
+        table { width: 100%; border-collapse: collapse; background: white; border-radius: 8px; overflow: hidden; box-shadow: 0 4px 10px rgba(0,0,0,0.06); font-size: 13px; }
+        th { background: var(--azul); color: white; text-align: left; padding: 10px; font-size: 12px; }
+        td { padding: 10px; border-bottom: 1px solid #eef2f5; vertical-align: middle; }
+        tr:hover { background: #f9fbfd; }
+
+        .badge { padding: 3px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; display: inline-block; }
+        .badge-disponible { background: #e8f8f5; color: #1abc9c; border: 1px solid #a3e4d7; }
+        .badge-activo { background: #eafaf1; color: #27ae60; border: 1px solid #a9dfbf; }
+        .badge-porvencer { background: #fef5e7; color: var(--naranja); border: 1px solid #f8c471; }
+        .badge-vencido { background: #fdedec; color: var(--rojo); border: 1px solid #fadbd8; }
+
+        .clave-box { font-family: 'Consolas', monospace; font-size: 12px; background: #f8f9fa; padding: 3px 6px; border: 1px solid #e1e4e8; border-radius: 4px; display: inline-flex; align-items: center; gap: 5px; }
+        .btn-copiar { background: #eaeded; border: none; cursor: pointer; padding: 2px 6px; border-radius: 3px; font-size: 11px; }
+        .btn-copiar:hover { background: #d5dbdb; }
+
+        .btn-wa-renovar { background: #25D366; color: white; text-decoration: none; padding: 3px 7px; border-radius: 4px; font-size: 11px; font-weight: bold; display: inline-block; margin-top: 3px; }
+        .btn-wa-renovar:hover { background: #20ba5a; }
+
+        .btn-del { color: var(--rojo); text-decoration: none; font-weight: bold; font-size: 12px; }
+        .btn-del:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <h2>🛡️ Control de Licencias de Antivirus</h2>
+        <a href="{{ url_for('dashboard') }}" class="btn-volver">← Volver al Panel</a>
+    </div>
+
+    <!-- Formulario para registrar antivirus -->
+    <div class="card">
+        <h3>➕ Registrar Licencia / Suscripción de Antivirus</h3>
+        <form action="{{ url_for('crear_licencia_antivirus') }}" method="POST">
+            <!-- Autocompletado desde clientes registrados -->
+            <div style="margin-bottom: 15px;">
+                <label>👥 Autocompletar con Cliente Existente (Opcional):</label>
+                <select onchange="autoCompletar(this)" style="background: #fbfcfc;">
+                    <option value="" data-tel="">-- Seleccionar de la lista --</option>
+                    {% for c in clientes %}
+                    <option value="{{ c.cliente }}" data-tel="{{ c.telefono or '' }}">{{ c.cliente }} {% if c.telefono %}({{ c.telefono }}){% endif %}</option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="grid-form">
+                <div>
+                    <label>Marca de Antivirus:</label>
+                    <select name="marca_antivirus" required>
+                        <option value="Kaspersky">Kaspersky</option>
+                        <option value="ESET NOD32">ESET NOD32</option>
+                        <option value="Bitdefender">Bitdefender</option>
+                        <option value="McAfee">McAfee</option>
+                        <option value="Norton">Norton</option>
+                        <option value="Otro">Otro</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Edición:</label>
+                    <input type="text" name="edicion" placeholder="Ej. Standard / Internet Security">
+                </div>
+                <div>
+                    <label>Clave o Código de Licencia:</label>
+                    <input type="text" name="clave_licencia" required placeholder="XXXXX-XXXXX-XXXXX" style="font-family: monospace;">
+                </div>
+                <div>
+                    <label>Dispositivos Totales:</label>
+                    <input type="number" name="dispositivos_totales" value="1" min="1">
+                </div>
+                <div>
+                    <label>Dispositivos Usados:</label>
+                    <input type="number" name="dispositivos_usados" value="0" min="0">
+                </div>
+                <div>
+                    <label>Duración (Meses):</label>
+                    <select name="duracion_meses">
+                        <option value="12" selected>12 Meses (1 Año)</option>
+                        <option value="24">24 Meses (2 Años)</option>
+                        <option value="36">36 Meses (3 Años)</option>
+                        <option value="6">6 Meses</option>
+                    </select>
+                </div>
+                <div>
+                    <label>Precio Venta ($ MXN):</label>
+                    <input type="number" step="0.5" name="precio_venta" placeholder="Ej. 500.00">
+                </div>
+                <div>
+                    <label>Estatus:</label>
+                    <select name="estatus">
+                        <option value="Disponible">Disponible (En Stock)</option>
+                        <option value="Activo">Activo (Activado hoy)</option>
+                        <option value="Por Vencer">Por Vencer</option>
+                        <option value="Vencido">Vencido</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="grid-form" style="margin-top: 12px;">
+                <div>
+                    <label>Nombre del Cliente:</label>
+                    <input type="text" name="nombre_cliente" id="in_cliente" placeholder="Nombre completo">
+                </div>
+                <div>
+                    <label>Teléfono Cliente (WhatsApp):</label>
+                    <input type="text" name="telefono_cliente" id="in_telefono" placeholder="55 1234 5678">
+                </div>
+                <div>
+                    <label>Equipo Instalado:</label>
+                    <input type="text" name="equipo_instalado" placeholder="Ej. Laptop Asus / PC Gamer">
+                </div>
+                <div style="grid-column: span 1;">
+                    <label>Observaciones / Consola Central:</label>
+                    <input type="text" name="observaciones" placeholder="Correo cuenta MyKaspersky / Notas">
+                </div>
+            </div>
+
+            <button type="submit" class="btn-guardar">💾 Guardar Licencia Antivirus</button>
+        </form>
+    </div>
+
+    <!-- Tabla de licencias -->
+    <div style="overflow-x: auto;">
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Antivirus / Edición</th>
+                    <th>Clave de Activación</th>
+                    <th>Dispositivos</th>
+                    <th>Vigencia / Vencimiento</th>
+                    <th>Estatus</th>
+                    <th>Cliente Asignado</th>
+                    <th>Precio</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for lic in licencias %}
+                <tr>
+                    <td><strong>#{{ lic.id }}</strong></td>
+                    <td>
+                        <strong>{{ lic.marca_antivirus }}</strong><br>
+                        <small style="color: #666;">{{ lic.edicion or 'Edición Estándar' }}</small>
+                    </td>
+                    <td>
+                        <span class="clave-box">
+                            <span id="key-av-{{ lic.id }}">{{ lic.clave_licencia }}</span>
+                            <button type="button" class="btn-copiar" onclick="copiarClave('key-av-{{ lic.id }}')" title="Copiar clave">📋</button>
+                        </span>
+                    </td>
+                    <td>
+                        <strong>{{ lic.dispositivos_usados or 0 }}</strong> / {{ lic.dispositivos_totales or 1 }} disp.
+                    </td>
+                    <td>
+                        {% if lic.fecha_vencimiento %}
+                            <span>Vence: <strong>{{ lic.fecha_vencimiento }}</strong></span><br>
+                            <small style="color: #777;">Act.: {{ lic.fecha_activacion or 'N/A' }}</small>
+                        {% else %}
+                            <small style="color: #999;">Sin activar ({{ lic.duracion_meses }} meses)</small>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if lic.estatus == 'Disponible' %}
+                            <span class="badge badge-disponible">Disponible</span>
+                        {% elif lic.estatus == 'Activo' %}
+                            <span class="badge badge-activo">Activo</span>
+                        {% elif lic.estatus == 'Por Vencer' %}
+                            <span class="badge badge-porvencer">Por Vencer</span>
+                        {% else %}
+                            <span class="badge badge-vencido">{{ lic.estatus }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if lic.nombre_cliente %}
+                            <strong>{{ lic.nombre_cliente }}</strong><br>
+                            <small style="color: #666;">{{ lic.telefono_cliente or '' }}</small>
+                            {% if lic.telefono_cliente %}
+                                <br>
+                                <a href="https://wa.me/52{{ lic.telefono_cliente|replace(' ', '')|replace('-', '') }}?text=Hola%20*{{ lic.nombre_cliente }}*,%20te%20saludamos%20de%20*G-Tek%20Soluciones%20Digitales*.%20Te%20recordamos%20que%20tu%20protección%20antivirus%20{{ lic.marca_antivirus }}%20está%20próxima%20a%20vencer%20({{ lic.fecha_vencimiento }}).%20¿Deseas%20renovarla?" target="_blank" class="btn-wa-renovar">
+                                    📲 Avisar Renovación
+                                </a>
+                            {% endif %}
+                        {% else %}
+                            <span style="color: #999;">—</span>
+                        {% endif %}
+                    </td>
+                    <td><strong>${{ "%.2f"|format(lic.precio_venta or 0) }}</strong></td>
+                    <td>
+                        <a href="{{ url_for('borrar_licencia_antivirus', id=lic.id) }}" class="btn-del" onclick="return confirm('¿Seguro que deseas eliminar este registro de antivirus?')">🗑️ Borrar</a>
+                    </td>
+                </tr>
+                {% else %}
+                <tr>
+                    <td colspan="9" style="text-align: center; color: #777; padding: 25px;">
+                        No hay licencias de antivirus registradas aún. Agrega la primera arriba.
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<script>
+function autoCompletar(select) {
+    const opt = select.options[select.selectedIndex];
+    const nombre = opt.value;
+    const tel = opt.getAttribute('data-tel') || '';
+    if (nombre) {
+        document.getElementById('in_cliente').value = nombre;
+        document.getElementById('in_telefono').value = tel;
+    }
+}
+
+function copiarClave(idSpan) {
+    const texto = document.getElementById(idSpan).innerText;
+    navigator.clipboard.writeText(texto).then(() => {
+        alert("Clave copiada al portapapeles: " + texto);
+    });
+}
+</script>
+
+</body>
+</html>
