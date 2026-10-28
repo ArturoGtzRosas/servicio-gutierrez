@@ -697,56 +697,54 @@ class PDFPresupuesto(FPDF):
         self._out("Q")
 
     def header(self):
-        # 1. Franja azul de fondo
+        # 1. Franja azul institucional idéntica a la Nota de Venta
         self.set_fill_color(24, 43, 73)
-        self.rect(10, 5, 190, 42, 'F')
+        self.rect(10, 8, 190, 32, 'F')
 
-        # 2. Tarjeta blanca para el logo
+        # 2. Recuadro blanco para el logo proporcional
         self.set_fill_color(255, 255, 255)
         self.set_draw_color(200, 215, 235)
         self.set_line_width(0.3)
-        self.rect(13, 8, 52, 34, 'DF')
+        self.rect(12, 10, 60, 28, 'DF')
 
         # 3. Logo centrado en su tarjeta
         logo_local = os.path.join(BASE_DIR, "static", "img", "logo_nuevo.jpg")
         url_logo_web = "https://i.postimg.cc/wvXCKc44/logo.png"
         try:
-            if os.path.exists(logo_local):
-                self.image(logo_local, 15, 11, 48)
-            else:
-                self.image(url_logo_web, 15, 11, 48)
+            ruta_logo = logo_local if os.path.exists(logo_local) else url_logo_web
+            self.image(ruta_logo, x=13.5, y=11.5, w=57)
         except Exception:
             pass
 
-        # 4. Nombre y detalles de la empresa
+        # 4. Nombre comercial
         self.set_text_color(255, 255, 255)
-        self.set_font('Arial', 'B', 15)
-        self.set_xy(68, 9)
-        self.cell(130, 6, 'G-Tek Soluciones Digitales', ln=True, align='L')
+        self.set_font('Arial', 'B', 14)
+        self.set_xy(76, 11)
+        self.cell(120, 5, 'G-Tek Soluciones Digitales', ln=True, align='L')
 
-        # Lema / Subtítulo dorado
-        self.set_text_color(212, 175, 55)
-        self.set_font('Arial', 'B', 8.5)
-        self.set_xy(68, 16)
-        self.cell(130, 5, 'Innovación, Soporte y Soluciones Tecnológicas Integrales', ln=True, align='L')
+        # 5. Eslogan / Subtítulo dorado
+        self.set_text_color(225, 185, 65)
+        self.set_font('Arial', 'B', 8)
+        self.set_xy(76, 17)
+        self.cell(120, 4, 'Innovación, Soporte y Soluciones Tecnológicas Integrales', ln=True, align='L')
 
-        # Línea divisoria suave
-        self.set_draw_color(70, 100, 145)
+        # Línea dorada divisoria
+        self.set_draw_color(225, 185, 65)
         self.set_line_width(0.2)
-        self.line(68, 22, 195, 22)
+        self.line(76, 22.5, 195, 22.5)
 
-        # Datos fiscales y de contacto
+        # 6. Datos fiscales y de contacto
         self.set_text_color(230, 235, 245)
         self.set_font('Arial', '', 7.5)
-        self.set_xy(68, 24)
-        self.cell(130, 4, 'Francisco Arturo Gutiérrez Rosas | RFC: GURF770808', ln=True, align='L')
-        self.set_xy(68, 28)
-        self.cell(130, 4, 'Cda. Águilas mz 13 lt 30 Casa D, San Buenaventura, Ixtapaluca, México. 56536', ln=True, align='L')
-        self.set_xy(68, 32)
-        self.cell(130, 4, 'Tel. 55 4031 3150 | WhatsApp | e-mail: arturogtzrosass@gmail.com', ln=True, align='L')
+        self.set_xy(76, 24)
+        self.cell(120, 3.8, 'Francisco Arturo Gutiérrez Rosas | RFC: GURF770808', ln=True, align='L')
+        self.set_xy(76, 28)
+        self.cell(120, 3.8, 'Cda. Águilas mz 13 lt 30 Casa D, San Buenaventura, Ixtapaluca, México. 56536', ln=True, align='L')
+        self.set_xy(76, 32)
+        self.cell(120, 3.8, 'Tel. 55 4031 3150 | WhatsApp | e-mail: arturogtzrosass@gmail.com', ln=True, align='L')
 
-        # Espacio antes del folio y cuerpo
-        self.set_y(50)
+        # Posicionar cursor al pie del encabezado
+        self.set_y(42)
 
     def marca_de_agua(self):
         try:
