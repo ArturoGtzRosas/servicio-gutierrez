@@ -1080,6 +1080,58 @@ def descargar_nota(id):
     response.headers["Content-Disposition"] = f"inline; filename=Nota_{n['cliente'].replace(' ', '_')}_{folio}.pdf"
     return response
 
+@app.route('/enviar_nota_email/<int:id>', methods=['GET', 'POST'])
+def enviar_nota_email(id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    email_destino = request.form.get('email_destino') or request.args.get('email_destino')
+
+    if not email_destino:
+        flash("Por favor proporciona un correo electrónico válido.")
+        return redirect(url_for('ver_notas'))
+
+    db = get_db_connection()
+    n = db.execute("SELECT * FROM notas_venta WHERE id = ?", (id,)).fetchone()
+    db.close()
+
+    if not n:
+        flash("Nota no encontrada.")
+        return redirect(url_for('ver_notas'))
+
+    try:
+        folio = 1000 + n['id']
+        items = []
+        if n['servicio']:
+            try:
+                import json
+                items = json.loads(n['servicio'])
+            except Exception:
+                items = [{'cant': 1, 'desc': n['servicio'], 'p_unit': float(n['total'] or 0.0), 'precio': float(n['total'] or 0.0)}]
+
+        pdf_buf = generar_pdf_nota_binario(folio, n['cliente'], n['direccion'], n['telefono'], n['equipo'], items, float(n['total']), n['observaciones'])
+        pdf_bytes = pdf_buf.getvalue() if hasattr(pdf_buf, 'getvalue') else pdf_buf.read()
+    except Exception as e:
+        print(f"Error generando PDF de nota: {e}")
+        flash(f"Error al generar el PDF: {e}")
+        return redirect(url_for('ver_notas'))
+
+    exito, mensaje = enviar_presupuesto_correo(
+        destinatario=email_destino,
+        cliente=n['cliente'],
+        equipo=n['equipo'],
+        total=n['total'],
+        folio=folio,
+        pdf_bytes=pdf_bytes
+    )
+
+    if exito:
+        flash(f"Nota de venta enviada exitosamente a {email_destino}")
+    else:
+        flash(f"No se pudo enviar el correo: {mensaje}")
+
+    return redirect(url_for('ver_notas'))
+
 @app.route('/borrar_nota/<int:id>')
 def borrar_nota(id):
     if 'user_id' not in session:
