@@ -103,6 +103,16 @@ def migrar_db_email():
         pass
 
 migrar_db_email()
+def migrar_db_notas_email():
+    try:
+        conn = get_db_connection()
+        conn.execute("ALTER TABLE notas_venta ADD COLUMN email TEXT")
+        conn.commit()
+        conn.close()
+    except Exception:
+        pass
+
+migrar_db_notas_email()
 
 import base64
 import os
@@ -998,6 +1008,7 @@ def crear_nota():
         telefono = request.form.get('telefono', '').strip()
         equipo = request.form.get('equipo', '').strip()
         observaciones = request.form.get('observaciones', '').strip()
+        email = request.form.get('email', '').strip()
         
         cantidades = request.form.getlist('cantidad[]')
         descripciones = request.form.getlist('descripcion[]')
@@ -1025,10 +1036,10 @@ def crear_nota():
         serv_resumen = json.dumps(items, ensure_ascii=False)
         
         db = get_db_connection()
-        cur = db.execute('''INSERT INTO notas_venta 
-                 (fecha, cliente, direccion, telefono, equipo, servicio, total, observaciones)
-                 VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id''',
-                 (datetime.now().strftime("%d/%m/%Y %H:%M"), cliente, direccion, telefono, equipo, serv_resumen, total, observaciones))
+        cur = db.execute('''INSERT INTO notas_venta
+        (fecha, cliente, direccion, telefono, equipo, servicio, total, observaciones, email)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id''',
+        (datetime.now().strftime("%d/%m/%Y %H:%M"), cliente, direccion, telefono, equipo, serv_resumen, total, observaciones, email))
         row = cur.fetchone()
         nuevo_id = (row['id'] if isinstance(row, dict) else row[0]) if row else 1
         db.commit()
@@ -1080,6 +1091,86 @@ def descargar_nota(id):
     response.headers["Content-Disposition"] = f"inline; filename=Nota_{n['cliente'].replace(' ', '_')}_{folio}.pdf"
     return response
 
+def enviar_nota_correo(destinatario, cliente, equipo, total, folio, pdf_bytes):
+    try:
+        print(f"[CORREO] Preparando envio de nota de venta via Brevo hacia: {destinatario}...")
+        if isinstance(pdf_bytes, (bytes, bytearray)):
+            contenido_pdf = pdf_bytes
+        elif hasattr(pdf_bytes, 'getvalue'):
+            contenido_pdf = pdf_bytes.getvalue()
+        elif hasattr(pdf_bytes, 'read'):
+            pdf_bytes.seek(0)
+            contenido_pdf = pdf_bytes.read()
+        else:
+            contenido_pdf = str(pdf_bytes).encode('latin-1', errors='ignore')
+
+        pdf_b64 = base64.b64encode(contenido_pdf).decode('utf-8')
+
+        api_key = os.environ.get("BREVO_API_KEY")
+        if not api_key:
+            return False, "No se encontró la variable BREVO_API_KEY en Render."
+
+        url = "https://api.brevo.com/v3/smtp/email"
+        headers = {
+            "accept": "application/json",
+            "api-key": api_key,
+            "content-type": "application/json"
+        }
+
+        cuerpo_html = f"""
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+            <div style="background-color: #1b305b; padding: 20px; text-align: center; color: white;">
+                <h2 style="margin: 0;">G-Tek Soluciones Digitales</h2>
+                <p style="margin: 5px 0 0; font-size: 14px; color: #c5a059;">Mantenimiento y Soluciones Informáticas</p>
+            </div>
+            <div style="padding: 25px; color: #333;">
+                <h3 style="color: #1b305b; margin-top: 0;">Nota de Venta Folio #{folio}</h3>
+                <p>Estimado(a) <strong>{cliente}</strong>,</p>
+                <p>Le compartimos adjunta a este correo su nota de venta formal por el servicio realizado. A continuación el resumen:</p>
+                <table style="width: 100%; border-collapse: collapse; margin: 20px 0;">
+                    <tr style="background-color: #f8f9fa;">
+                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Equipo:</td>
+                        <td style="padding: 10px; border: 1px solid #ddd;">{equipo}</td>
+                    </tr>
+                    <tr>
+                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Folio:</td>
+                        <td style="padding: 10px; border: 1px solid #ddd; color: #c0392b; font-weight: bold;">#{folio}</td>
+                    </tr>
+                    <tr style="background-color: #f8f9fa;">
+                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold;">Importe Total:</td>
+                        <td style="padding: 10px; border: 1px solid #ddd; font-weight: bold; color: #1b305b; font-size: 16px;">${total:,.2f} MXN</td>
+                    </tr>
+                </table>
+                <p style="font-size: 13px; color: #666;">📎 <i>El comprobante formal en formato PDF se encuentra adjunto al pie de este mensaje para su descarga e impresión.</i></p>
+            </div>
+            <div style="background-color: #f1f1f1; padding: 15px; text-align: center; font-size: 12px; color: #777;">
+                G-Tek Soluciones Digitales • Soporte y Servicios Profesionales
+            </div>
+        </div>
+        """
+
+        payload = {
+            "sender": {"name": "G-Tek Soluciones Digitales", "email": "serviciogutierrezpc@gmail.com"},
+            "to": [{"email": destinatario, "name": cliente}],
+            "subject": f"Nota de Venta #{folio} - G-Tek Soluciones Digitales",
+            "htmlContent": cuerpo_html,
+            "attachment": [
+                {
+                    "content": pdf_b64,
+                    "name": f"Nota_Venta_{folio}.pdf"
+                }
+            ]
+        }
+
+        resp = requests.post(url, json=payload, headers=headers, timeout=15)
+        if resp.status_code in [200, 201, 202]:
+            return True, "Enviado con éxito"
+        else:
+            return False, f"Brevo devolvió {resp.status_code}: {resp.text}"
+
+    except Exception as e:
+        return False, str(e)
+
 @app.route('/enviar_nota_email/<int:id>', methods=['GET', 'POST'])
 def enviar_nota_email(id):
     if 'user_id' not in session:
@@ -1116,7 +1207,7 @@ def enviar_nota_email(id):
         flash(f"Error al generar el PDF: {e}")
         return redirect(url_for('ver_notas'))
 
-    exito, mensaje = enviar_presupuesto_correo(
+    exito, mensaje = enviar_nota_correo(
         destinatario=email_destino,
         cliente=n['cliente'],
         equipo=n['equipo'],

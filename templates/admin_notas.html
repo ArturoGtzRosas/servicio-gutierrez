@@ -61,7 +61,7 @@
                     {% set url_pdf = url_for('descargar_nota', id=n.id, _external=True) %}
                     {% set mensaje_w = "Hola *" ~ (n.cliente if n.cliente else 'Cliente') ~ "*, le compartimos su nota de venta formal de *G-Tek Soluciones Digitales*. Puede verla aquí: " ~ url_pdf %}
                     <a href="https://wa.me/52{{ n.telefono|string|replace(' ', '')|replace('-', '') if n.telefono else '' }}?text={{ mensaje_w|urlencode }}" target="_blank" style="background-color: #25D366; color: white; text-decoration: none; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; margin-left: 5px;">📲 WhatsApp</a>
-                    <a href="javascript:void(0);" onclick="enviarPorCorreo('{{ n.id }}')" style="background-color: #e67e22; color: white; text-decoration: none; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; margin-left: 5px;">✉️ Correo</a>
+                    <a href="javascript:void(0);" data-id="{{ n.id }}" data-email="{{ n.email or '' }}" onclick="enviarPorCorreo(this)" style="background-color: #e67e22; color: white; text-decoration: none; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; margin-left: 5px;">✉️ Correo</a>
                     {% if session.get('user_rol') == 'admin' %}
                     <a href="{{ url_for('borrar_nota', id=n.id) }}" class="btn-del" onclick="return confirm('¿Seguro que deseas eliminar esta nota?');">🗑️</a>
                     {% endif %}
@@ -79,8 +79,14 @@
 </div>
 
 <script>
-function enviarPorCorreo(id) {
-    const email = prompt("Introduce el correo electrónico al que deseas enviar la nota de venta:");
+function enviarPorCorreo(btn) {
+    const id = btn.getAttribute('data-id');
+    let email = btn.getAttribute('data-email');
+    
+    if (!email || email.trim() === "") {
+        email = prompt("Esta nota no tiene correo guardado. Introduce el correo al que deseas enviarla:");
+    }
+    
     if (email && email.trim() !== "") {
         window.location.href = `/enviar_nota_email/${id}?email_destino=${encodeURIComponent(email.trim())}`;
     }
