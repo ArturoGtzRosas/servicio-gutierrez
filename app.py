@@ -317,6 +317,7 @@ def cotizar_cliente():
     return render_template('cotizar_cliente.html')
 
 @app.route('/procesar_cotizacion', methods=['POST'])
+@app.route('/procesar_cotizacion', methods=['POST'])
 def procesar_cotizacion():
     nombre = request.form.get('nombre', '')
     servicio = request.form.get('servicio', '')
@@ -324,14 +325,21 @@ def procesar_cotizacion():
     telefono = request.form.get('telefono', 'No proporcionado')
     correo = request.form.get('correo', 'No proporcionado')
 
-    # 1. Guardar en la base de datos
     db = get_db_connection()
+    # 1. Guardar en cotizaciones
     db.execute("INSERT INTO cotizaciones (nombre, servicio, modelo) VALUES (?, ?, ?)",
                (nombre, servicio, modelo))
+    
+    # 2. Guardar también en la bandeja de mensajes para verlo en /ver_mensajes
+    asunto_msg = f"Cotización: {servicio}"
+    cuerpo_msg = f"Equipo: {modelo} | Tel/WhatsApp: {telefono}"
+    db.execute("INSERT INTO mensajes (nombre, email, asunto, mensaje) VALUES (?, ?, ?, ?)",
+               (nombre, correo, asunto_msg, cuerpo_msg))
+    
     db.commit()
     db.close()
 
-    # 2. Notificación automática a tu correo por Brevo
+    # 3. Notificación a tu correo por Brevo
     try:
         asunto = f"Nueva Solicitud de Cotización - {nombre}"
         mensaje_cuerpo = f"Equipo y contacto: {modelo}\nServicio solicitado: {servicio}\nTeléfono: {telefono}\nCorreo: {correo}"
@@ -501,6 +509,64 @@ def ver_mensajes():
     datos = db.execute("SELECT * FROM mensajes ORDER BY id DESC").fetchall()
     db.close()
     return render_template('admin_mensajes.html', mensajes=datos)
+@app.route('/responder_mensaje', methods=['POST'])
+def responder_mensaje():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    destinatario = request.form.get('destinatario')
+    nombre_cliente = request.form.get('nombre_cliente')
+    asunto = request.form.get('asunto')
+    respuesta = request.form.get('respuesta')
+
+    api_key = os.environ.get("BREVO_API_KEY")
+    if not api_key:
+        print("BREVO_API_KEY no encontrada.")
+        return redirect(url_for('ver_mensajes'))
+
+    url = "https://api.brevo.com/v3/smtp/email"
+    headers = {
+        "accept": "application/json",
+        "api-key": api_key,
+        "content-type": "application/json"
+    }
+
+    cuerpo_html = f"""
+    <html>
+    <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+        <div style="background-color: #1f3a5f; padding: 15px; text-align: center; border-bottom: 4px solid #c5a356;">
+            <h2 style="color: white; margin: 0;">G-Tek Soluciones Digitales</h2>
+        </div>
+        <div style="padding: 20px;">
+            <p>Hola <strong>{nombre_cliente}</strong>,</p>
+            <p>En respuesta a tu consulta sobre <em>"{asunto}"</em>:</p>
+            <div style="background-color: #f4f6f9; border-left: 4px solid #1f3a5f; padding: 15px; margin: 15px 0;">
+                <p style="margin: 0; white-space: pre-line;">{respuesta}</p>
+            </div>
+            <p>Para cualquier duda adicional o seguimiento técnico, estamos a tus órdenes.</p>
+            <hr style="border: none; border-top: 1px solid #ddd; margin: 20px 0;">
+            <p style="font-size: 0.85em; color: #777;">
+                <strong>G-Tek Soluciones Digitales</strong><br>
+                Soporte Técnico Especializado, Redes y Mantenimiento de Cómputo
+            </p>
+        </div>
+    </body>
+    </html>
+    """
+
+    payload = {
+        "sender": {"name": "G-Tek Soluciones Digitales", "email": "serviciogutierrezpc@gmail.com"},
+        "to": [{"email": destinatario, "name": nombre_cliente}],
+        "subject": f"Re: {asunto} - G-Tek Soluciones Digitales",
+        "htmlContent": cuerpo_html
+    }
+
+    try:
+        requests.post(url, json=payload, headers=headers)
+    except Exception as e:
+        print(f"Error al enviar respuesta por Brevo: {e}")
+
+    return redirect(url_for('ver_mensajes'))
 
 @app.route('/admin_presupuestos')
 @app.route('/ver_presupuestos')

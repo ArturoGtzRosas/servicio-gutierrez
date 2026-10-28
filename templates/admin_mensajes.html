@@ -2,42 +2,163 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Mensajes - G-Tek Soluciones Digitales</title>
     <style>
         :root { --azul: #1f3a5f; --oro: #c5a356; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f4; padding: 20px; }
-        .container { max-width: 1000px; margin: auto; background: white; padding: 20px; border-radius: 10px; border-top: 5px solid var(--oro); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        th { background: var(--azul); color: white; padding: 12px; text-align: left; }
-        td { padding: 12px; border-bottom: 1px solid #eee; font-size: 0.9em; }
-        .btn-borrar { background: #e74c3c; color: white; text-decoration: none; padding: 5px 10px; border-radius: 4px; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f4f6f9; margin: 0; padding: 25px; }
+        .container { max-width: 1100px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.08); border-top: 5px solid var(--oro); }
+        h2 { color: var(--azul); margin-top: 0; margin-bottom: 25px; }
+        
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+        th { background-color: var(--azul); color: white; text-align: left; padding: 12px 14px; font-size: 0.9em; }
+        td { padding: 12px 14px; border-bottom: 1px solid #e1e6ed; font-size: 0.9em; vertical-align: middle; }
+        tr:hover { background-color: #fcfcfd; }
+        
+        .asunto-tag { color: var(--oro); font-weight: bold; }
+        
+        .btn-accion { display: inline-block; padding: 7px 12px; border-radius: 6px; font-weight: bold; font-size: 0.8em; text-decoration: none; border: none; cursor: pointer; transition: 0.2s; }
+        .btn-responder { background-color: var(--azul); color: var(--oro); margin-right: 6px; }
+        .btn-responder:hover { background-color: #162a45; }
+        .btn-borrar { background-color: #d9534f; color: white; }
+        .btn-borrar:hover { background-color: #c9302c; }
+
+        .back-link { display: inline-block; margin-top: 25px; color: var(--azul); font-weight: bold; text-decoration: none; font-size: 0.9em; }
+        .back-link:hover { text-decoration: underline; }
+
+        /* Estilos del modal emergente */
+        .modal-fondo {
+            display: none; 
+            position: fixed; 
+            z-index: 1000; 
+            left: 0; 
+            top: 0; 
+            width: 100%; 
+            height: 100%; 
+            background: rgba(0, 0, 0, 0.55); 
+            backdrop-filter: blur(2px);
+            align-items: center; 
+            justify-content: center;
+        }
+        .modal-caja {
+            background: white; 
+            width: 90%; 
+            max-width: 550px; 
+            padding: 25px; 
+            border-radius: 12px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2); 
+            border-top: 5px solid var(--azul);
+        }
+        .modal-caja h3 { margin-top: 0; color: var(--azul); margin-bottom: 15px; }
+        .modal-campo { margin-bottom: 14px; text-align: left; }
+        .modal-campo label { display: block; font-size: 0.85em; font-weight: bold; color: var(--azul); margin-bottom: 5px; }
+        .modal-campo input, .modal-campo textarea {
+            width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 6px; box-sizing: border-box; font-family: inherit; font-size: 0.9em;
+        }
+        .modal-campo textarea { resize: vertical; min-height: 110px; }
+        .modal-botones { display: flex; justify-content: flex-end; gap: 10px; margin-top: 20px; }
+        .btn-cancelar { background: #888; color: white; }
+        .btn-enviar-correo { background: var(--azul); color: var(--oro); }
     </style>
 </head>
 <body>
+
 <div class="container">
     <h2>Mensajes de Clientes</h2>
+
     <table>
         <thead>
-            <tr><th>Nombre</th><th>Email</th><th>Asunto</th><th>Mensaje</th><th>Acción</th></tr>
+            <tr>
+                <th>Nombre</th>
+                <th>Email</th>
+                <th>Asunto</th>
+                <th>Mensaje</th>
+                <th style="min-width: 170px;">Acción</th>
+            </tr>
         </thead>
         <tbody>
             {% for m in mensajes %}
             <tr>
-                <td>{{ m.nombre }}</td>
-                <td>{{ m.email }}</td>
-                <td style="color: var(--oro); font-weight: bold;">{{ m.asunto }}</td>
-                <td>{{ m.mensaje }}</td>
+                <td><strong>{{ m['nombre'] if m['nombre'] else m[1] }}</strong></td>
+                <td>{{ m['email'] if m['email'] else m[2] }}</td>
+                <td class="asunto-tag">{{ m['asunto'] if m['asunto'] else m[3] }}</td>
+                <td>{{ m['mensaje'] if m['mensaje'] else m[4] }}</td>
                 <td>
-                    <a href="{{ url_for('borrar_mensaje', id=m.id) }}" class="btn-borrar" onclick="return confirm('¿Eliminar?')">Borrar</a>
+                    <button type="button" class="btn-accion btn-responder" 
+                            onclick="abrirModal('{{ m['nombre'] if m['nombre'] else m[1] }}', '{{ m['email'] if m['email'] else m[2] }}', '{{ m['asunto'] if m['asunto'] else m[3] }}')">
+                        Responder
+                    </button>
+                    <a href="{{ url_for('borrar_mensaje', id=m['id'] if m['id'] else m[0]) }}" 
+                       class="btn-accion btn-borrar" 
+                       onclick="return confirm('¿Seguro que deseas eliminar este mensaje?');">
+                        Borrar
+                    </a>
                 </td>
             </tr>
             {% else %}
-            <tr><td colspan="5" style="text-align:center;">No hay mensajes registrados.</td></tr>
+            <tr>
+                <td colspan="5" style="text-align: center; color: #888; padding: 25px;">No hay mensajes registrados.</td>
+            </tr>
             {% endfor %}
         </tbody>
     </table>
-    <br>
-    <a href="{{ url_for('dashboard') }}" style="text-decoration:none; color:var(--azul); font-weight:bold;">← Volver al Panel</a>
+
+    <a href="{{ url_for('dashboard') }}" class="back-link">← Volver al Panel</a>
 </div>
+
+<!-- Modal para responder vía Brevo -->
+<div id="modalResponder" class="modal-fondo">
+    <div class="modal-caja">
+        <h3>Responder a Cliente</h3>
+        <form action="{{ url_for('responder_mensaje') }}" method="POST">
+            <input type="hidden" name="destinatario" id="modal_destinatario">
+            <input type="hidden" name="nombre_cliente" id="modal_nombre">
+            <input type="hidden" name="asunto" id="modal_asunto">
+
+            <div class="modal-campo">
+                <label>Para:</label>
+                <input type="text" id="modal_destinatario_vista" readonly style="background-color: #eee;">
+            </div>
+
+            <div class="modal-campo">
+                <label>Asunto:</label>
+                <input type="text" id="modal_asunto_vista" readonly style="background-color: #eee;">
+            </div>
+
+            <div class="modal-campo">
+                <label>Tu Respuesta:</label>
+                <textarea name="respuesta" required placeholder="Escribe aquí tu cotización, detalles técnicos o instrucciones para el cliente..."></textarea>
+            </div>
+
+            <div class="modal-botones">
+                <button type="button" class="btn-accion btn-cancelar" onclick="cerrarModal()">Cancelar</button>
+                <button type="submit" class="btn-accion btn-enviar-correo">Enviar Correo (Brevo)</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<script>
+    function abrirModal(nombre, email, asunto) {
+        document.getElementById('modal_nombre').value = nombre;
+        document.getElementById('modal_destinatario').value = email;
+        document.getElementById('modal_destinatario_vista').value = nombre + " <" + email + ">";
+        document.getElementById('modal_asunto').value = asunto;
+        document.getElementById('modal_asunto_vista').value = "Re: " + asunto;
+        document.getElementById('modalResponder').style.display = 'flex';
+    }
+
+    function cerrarModal() {
+        document.getElementById('modalResponder').style.display = 'none';
+    }
+
+    window.onclick = function(event) {
+        const modal = document.getElementById('modalResponder');
+        if (event.target === modal) {
+            cerrarModal();
+        }
+    }
+</script>
+
 </body>
 </html>
