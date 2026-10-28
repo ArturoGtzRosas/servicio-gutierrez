@@ -11,7 +11,6 @@ from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 from werkzeug.security import generate_password_hash, check_password_hash
-import os
 import requests
 import base64
 import qrcode
@@ -20,6 +19,7 @@ import json
 import re
 
 RESEND_API_KEY = os.environ.get('RESEND_API_KEY', '')
+BREVO_API_KEY = os.environ.get('BREVO_API_KEY', '')
 
 
 # Parche de compatibilidad para ReportLab en Python 3.8
@@ -28,7 +28,6 @@ def _patched_md5(*args, **kwargs):
     kwargs.pop('usedforsecurity', None)
     return _orig_md5(*args, **kwargs)
 hashlib.md5 = _patched_md5
-import io
 from datetime import datetime
 from flask import send_file
 
@@ -267,6 +266,60 @@ def procesar_cotizacion():
     
     return render_template('confirmacion.html', nombre=nombre, servicio=servicio, modelo=modelo)
 
+def enviar_correo_brevo(nombre, email, telefono, asunto, mensaje):
+    api_key = os.environ.get("BREVO_API_KEY")
+    if not api_key:
+        print("BREVO_API_KEY no encontrada en las variables de entorno.")
+        return False
+
+    url = "https://api.brevo.com/v3/smtp/email"
+    headers = {
+        "accept": "application/json",
+        "api-key": api_key,
+        "content-type": "application/json"
+    }
+
+    # Remitente validado en tu cuenta de Brevo
+    sender_email = "serviciogutierrezpc@gmail.com"
+    # Destinatario donde recibes la notificación
+    destinatario = "arturogtzrosass@gmail.com"
+
+    cuerpo_html = f"""
+    <div style="font-family: Arial, sans-serif; color: #222; max-width: 600px; margin: auto; border: 1px solid #e0e0e0; border-radius: 8px; overflow: hidden;">
+        <div style="background-color: #182b49; color: #ffffff; padding: 18px 24px;">
+            <h2 style="margin: 0; font-size: 20px;">G-Tek Soluciones Digitales</h2>
+            <p style="margin: 5px 0 0 0; font-size: 13px; color: #d0d8e8;">Nuevo mensaje desde el formulario de contacto</p>
+        </div>
+        <div style="padding: 24px;">
+            <p><strong>Nombre:</strong> {nombre}</p>
+            <p><strong>Correo del cliente:</strong> <a href="mailto:{email}">{email}</a></p>
+            <p><strong>Teléfono:</strong> {telefono}</p>
+            <p><strong>Asunto:</strong> {asunto}</p>
+            <hr style="border: none; border-top: 1px solid #eee; margin: 18px 0;">
+            <p style="margin-bottom: 6px;"><strong>Mensaje:</strong></p>
+            <div style="background-color: #f7f9fc; border-left: 4px solid #182b49; padding: 12px 16px; border-radius: 4px; white-space: pre-wrap;">{mensaje}</div>
+        </div>
+        <div style="background-color: #f1f3f5; padding: 12px 24px; text-align: center; font-size: 12px; color: #666;">
+            Mensaje recibido el {datetime.now().strftime("%d/%m/%Y a las %H:%M")} hrs.
+        </div>
+    </div>
+    """
+
+    payload = {
+        "sender": {"name": "G-Tek Web", "email": sender_email},
+        "to": [{"email": destinatario, "name": "Arturo Gutiérrez"}],
+        "replyTo": {"email": email, "name": nombre},
+        "subject": f"📩 [G-Tek Web] {asunto} - {nombre}",
+        "htmlContent": cuerpo_html
+    }
+
+    try:
+        response = requests.post(url, json=payload, headers=headers, timeout=10)
+        return response.status_code in [200, 201, 202]
+    except Exception as e:
+        print(f"Error al conectar con Brevo: {e}")
+        return False
+
 @app.route('/contacto', methods=['GET', 'POST'])
 def contacto():
     if request.method == 'POST':
@@ -282,8 +335,14 @@ def contacto():
                    (datetime.now().strftime("%d/%m/%Y %H:%M"), nombre, email, telefono, asunto, mensaje))
         db.commit()
         db.close()
-        
+        # Enviar correo de notificación mediante Brevo
+        try:
+            enviar_correo_brevo(nombre, email, telefono, asunto, mensaje)
+        except Exception as e:
+            print(f"Error al intentar enviar notificación con Brevo: {e}")
+
         return render_template('confirmacion.html', nombre=nombre, servicio=asunto, modelo="Mensaje de Contacto")
+        
         
     return render_template('contacto.html')
 
