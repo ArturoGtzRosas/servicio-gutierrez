@@ -191,6 +191,11 @@
 
     <div class="container">
         <h2>Mensajes de Clientes</h2>
+        <div style="margin-bottom: 15px;">
+            <input type="text" id="filtroTabla" onkeyup="filtrarMensajes()"
+                placeholder="🔍 Buscar por cliente, asunto o texto..."
+                style="width: 100%; padding: 10px 14px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; box-sizing: border-box;">
+        </div>
 
         <table>
             <thead>
@@ -300,6 +305,17 @@
             if (event.target === modal) {
                 cerrarModal();
             }
+        }
+
+            // AGREGAR ESTA FUNCIÓN AQUÍ:
+        function filtrarMensajes() {
+            const texto = document.getElementById('filtroTabla').value.toLowerCase();
+            const filas = document.querySelectorAll('tbody tr');
+
+            filas.forEach(fila => {
+                const contenido = fila.innerText.toLowerCase();
+                fila.style.display = contenido.includes(texto) ? '' : 'none';
+            });
         }
     </script>
 
