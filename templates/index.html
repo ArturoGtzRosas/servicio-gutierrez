@@ -133,7 +133,7 @@
     <nav>
         <a href="{{ url_for('index') }}">INICIO</a>
         <a href="{{ url_for('cotizar_cliente') }}">COTIZA</a>
-        <a href="{{ url_for('servicios') }}">Nuestros Servicios</a>
+        <a href="{{ url_for('servicios') }}">NUESTROS SERVICIOS</a>
         <a href="{{ url_for('cotizador') }}">PRESUPUESTO</a>
         <a href="{{ url_for('contacto') }}">CONTACTO</a>
         <a href="{{ url_for('login') }}" style="color: var(--oro);">ADMIN</a>
@@ -150,7 +150,7 @@
         </div>
     </section>
 
-    <h2 style="text-align: center; color: var(--azul); margin-top: 50px; font-size: 2em;">¿Qué necesita tu equipo hoy?</h2>
+    <h2 style="text-align: center; color: var(--azul); margin-top: 50px; font-size: 2em;">Soluciones Tecnológicas a tu Medida</h2>
     
     <section class="servicios" id="servicios">
         <div class="card">
@@ -161,6 +161,14 @@
                 <a href="{{ url_for('cotizar_cliente') }}" class="btn-card">Cotizar</a>
             </div>
         </div>
+        <div class="card">
+            <img src="{{ url_for('static', filename='img/diseno_web.jpg') }}" alt="Diseño y Desarrollo Web">
+            <div class="card-info">
+                <h3>Diseño y Desarrollo Web</h3>
+                <p>Sitios web corporativos, catálogos en línea y páginas adaptadas a móviles.</p>
+                <a href="{{ url_for('servicio_detalle', servicio_id='diseno-web') }}" class="btn-card">Ver Detalles</a>
+            </div>
+            </div>
         <div class="card">
             <img src="{{ url_for('static', filename='img/pantalla.jpg') }}" alt="Pantalla">
             <div class="card-info">
