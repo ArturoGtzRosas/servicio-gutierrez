@@ -1278,22 +1278,25 @@ def crear_nota():
         serv_resumen = json.dumps(items, ensure_ascii=False)
         
         db = get_db_connection()
-        cur = db.execute('''INSERT INTO notas_venta
-        (fecha, cliente, direccion, telefono, equipo, servicio, total, observaciones, email)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id''',
-        (datetime.now().strftime("%d/%m/%Y %H:%M"), cliente, direccion, telefono, equipo, serv_resumen, total, observaciones, email))
-        row = cur.fetchone()
-        nuevo_id = (row['id'] if isinstance(row, dict) else row[0]) if row else 1
-        db.commit()
-        folio = 1000 + nuevo_id
-        db.close()
-        
-        pdf_buf = generar_pdf_nota_binario(folio, cliente, direccion, telefono, equipo, items, total, observaciones)
-        response = send_file(pdf_buf, mimetype='application/pdf')
-        response.headers["Content-Disposition"] = f"inline; filename=Nota_{cliente.replace(' ', '_')}_{folio}.pdf"
-        return response
+    presupuesto_id = request.args.get('desde_presupuesto')
+    datos_precargados = None
+    items_precargados = []
 
-    db = get_db_connection()
+    if presupuesto_id:
+        p = db.execute("SELECT * FROM presupuestos WHERE id = ?", (presupuesto_id,)).fetchone()
+        if p:
+            datos_precargados = p
+            if p['servicios']:
+                try:
+                    import json
+                    items_precargados = json.loads(p['servicios'])
+                except Exception:
+                    lineas = p['servicios'].split(', ')
+                    cant_items = len(lineas)
+                    precio_p = float(p['total'] or 0.0) / cant_items if cant_items > 0 else float(p['total'] or 0.0)
+                    for serv in lineas:
+                        items_precargados.append({'cant': 1, 'desc': serv, 'precio': precio_p, 'p_unit': precio_p})
+
     clientes_registrados = db.execute("""
         SELECT cliente, 
                MAX(direccion) AS direccion, 
@@ -1306,8 +1309,10 @@ def crear_nota():
     """).fetchall()
     db.close()
 
-    return render_template('generar_nota.html', clientes_registrados=clientes_registrados)
-    
+    return render_template('generar_nota.html', 
+                           clientes_registrados=clientes_registrados, 
+                           precarga=datos_precargados, 
+                           items_precarga=items_precargados)
 @app.route('/descargar_nota/<int:id>')
 def descargar_nota(id):
     if 'user_id' not in session: return redirect(url_for('login'))

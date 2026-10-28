@@ -12,7 +12,6 @@
         label { font-weight: bold; font-size: 13px; color: #333; display: block; margin-bottom: 4px; }
         input, textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; }
         
-        /* Ajuste de renglones para que la descripción quede ancha */
         .item-row { 
             display: flex; 
             gap: 10px; 
@@ -47,11 +46,19 @@
         .btn-add { background: #34495e; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 13px; }
         .btn-guardar { background: #27ae60; color: white; border: none; padding: 12px; width: 100%; border-radius: 6px; font-weight: bold; font-size: 16px; cursor: pointer; margin-top: 15px; }
         .total-box { background: #e8f4fd; padding: 10px; border-radius: 5px; text-align: right; font-size: 18px; font-weight: bold; color: var(--azul); margin-top: 10px; }
+        .aviso-precarga { background: #eafaf1; border: 1px solid #2ecc71; border-left: 5px solid #27ae60; padding: 10px 15px; border-radius: 6px; margin-bottom: 15px; color: #1e8449; font-weight: bold; font-size: 14px; }
     </style>
 </head>
 <body>
 <div class="container">
     <h2>🧾 Emitir Nota de Venta</h2>
+
+    {% if precarga %}
+    <div class="aviso-precarga">
+        📋 Datos precargados exitosamente desde el Presupuesto #{{ 1000 + precarga.id }}. Puedes ajustar cualquier campo antes de generar la nota.
+    </div>
+    {% endif %}
+
     <form method="POST" target="_blank">
         <!-- Selector de Cliente del Catálogo -->
         <div style="background: #f8f9fa; border: 1px solid #dcdcdc; border-left: 4px solid var(--oro); padding: 12px 15px; border-radius: 6px; margin-bottom: 20px;">
@@ -61,49 +68,61 @@
             <select id="select_catalogo_clientes" onchange="autocompletarCliente(this)" style="width: 100%; padding: 9px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; background: white;">
                 <option value="" data-dir="" data-tel="">-- Cliente Nuevo / Escribir Manualmente --</option>
                 {% for cl in clientes_registrados %}
-                <option value="{{ cl.cliente }}" data-dir="{{ cl.direccion or '' }}" data-tel="{{ cl.telefono or '' }}">
+                <option value="{{ cl.cliente }}" data-dir="{{ cl.direccion or '' }}" data-tel="{{ cl.telefono or '' }}" {% if precarga and precarga.cliente == cl.cliente %}selected{% endif %}>
                     {{ cl.cliente }}{% if cl.telefono %} (Tel: {{ cl.telefono }}){% endif %}
                 </option>
                 {% endfor %}
             </select>
         </div>
+
         <div class="grid">
             <div>
                 <label>Cliente:</label>
-                <input type="text" name="cliente" required placeholder="Nombre completo">
+                <input type="text" name="cliente" value="{{ precarga.cliente if precarga else '' }}" required placeholder="Nombre completo">
             </div>
             <div>
                 <label>Teléfono:</label>
-                <input type="text" name="telefono" placeholder="55 1234 5678">
+                <input type="text" name="telefono" value="{{ precarga.telefono if precarga else '' }}" placeholder="55 1234 5678">
             </div>
             <div>
                 <label>Correo Electrónico (opcional):</label>
-                <input type="email" name="email" id="email" placeholder="cliente@correo.com">
+                <input type="email" name="email" id="email" value="{{ precarga.email if precarga else '' }}" placeholder="cliente@correo.com">
             </div>
             <div>
                 <label>Equipo:</label>
-                <input type="text" name="equipo" required placeholder="Ej: Laptop Asus / PC Gamer">
+                <input type="text" name="equipo" value="{{ precarga.equipo if precarga else '' }}" required placeholder="Ej: Laptop Asus / PC Gamer">
             </div>
             <div style="grid-column: span 2;">
                 <label>Dirección:</label>
-                <input type="text" name="direccion" placeholder="Calle, Número, Municipio">
+                <input type="text" name="direccion" value="{{ precarga.direccion if precarga else '' }}" placeholder="Calle, Número, Municipio">
             </div>
         </div>
 
         <div style="margin-top: 15px;">
             <label>Observaciones Técnicas:</label>
-            <textarea name="observaciones" rows="2" placeholder="Garantía, detalles o especificaciones adicionales"></textarea>
+            <textarea name="observaciones" rows="2" placeholder="Garantía, detalles o especificaciones adicionales">{{ precarga.observaciones if precarga and precarga.observaciones else '' }}</textarea>
         </div>
 
         <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ddd;">
         <label>Servicios / Refacciones:</label>
         <div id="contenedor-items">
-            <div class="item-row">
-                <input type="number" name="cantidad[]" value="1" min="1" placeholder="Cant">
-                <input type="text" name="descripcion[]" required placeholder="Descripción del servicio o artículo">
-                <input type="number" step="0.5" name="precio[]" required placeholder="P. Unitario $" class="precio-item" oninput="calcularTotal()">
-                <button type="button" class="btn-del" onclick="eliminarFila(this)">✕</button>
-            </div>
+            {% if items_precarga and items_precarga|length > 0 %}
+                {% for it in items_precarga %}
+                <div class="item-row">
+                    <input type="number" name="cantidad[]" value="{{ it.cant or 1 }}" min="1" placeholder="Cant">
+                    <input type="text" name="descripcion[]" value="{{ it.desc or '' }}" required placeholder="Descripción del servicio o artículo">
+                    <input type="number" step="0.5" name="precio[]" value="{{ it.p_unit or it.precio or 0 }}" required placeholder="P. Unitario $" class="precio-item" oninput="calcularTotal()">
+                    <button type="button" class="btn-del" onclick="eliminarFila(this)">✕</button>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="item-row">
+                    <input type="number" name="cantidad[]" value="1" min="1" placeholder="Cant">
+                    <input type="text" name="descripcion[]" required placeholder="Descripción del servicio o artículo">
+                    <input type="number" step="0.5" name="precio[]" required placeholder="P. Unitario $" class="precio-item" oninput="calcularTotal()">
+                    <button type="button" class="btn-del" onclick="eliminarFila(this)">✕</button>
+                </div>
+            {% endif %}
         </div>
 
         <button type="button" class="btn-add" onclick="agregarFila()">+ Agregar Renglón</button>
@@ -111,8 +130,8 @@
         <div class="total-box">Total a Cobrar: $<span id="lblTotal">0.00</span></div>
 
         <div style="display: flex; gap: 12px; margin-top: 15px;">
-    <button type="submit" class="btn-guardar" style="margin-top: 0; flex: 2;">💾 Guardar y Descargar Nota en PDF</button>
-    <button type="button" onclick="limpiarFormulario()" style="flex: 1; background: #7f8c8d; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer;">✨ Nueva Nota / Limpiar</button>
+            <button type="submit" class="btn-guardar" style="margin-top: 0; flex: 2;">💾 Guardar y Descargar Nota en PDF</button>
+            <button type="button" onclick="limpiarFormulario()" style="flex: 1; background: #7f8c8d; color: white; border: none; padding: 12px; border-radius: 6px; font-weight: bold; font-size: 15px; cursor: pointer;">✨ Nueva Nota / Limpiar</button>
         </div>
     </form>
     <br>
@@ -131,12 +150,14 @@ function agregarFila() {
     `;
     document.getElementById('contenedor-items').appendChild(div);
 }
+
 function eliminarFila(btn) {
     if(document.querySelectorAll('.item-row').length > 1) {
         btn.parentElement.remove();
         calcularTotal();
     }
 }
+
 function calcularTotal() {
     let total = 0;
     const filas = document.querySelectorAll('.item-row');
@@ -151,8 +172,6 @@ function calcularTotal() {
 function limpiarFormulario() {
     if (confirm('¿Deseas limpiar todos los campos para crear una nueva nota?')) {
         document.querySelector('form').reset();
-        
-        // Dejar solo un renglón limpio en servicios
         const contenedor = document.getElementById('contenedor-items');
         contenedor.innerHTML = `
             <div class="item-row">
@@ -191,6 +210,10 @@ function autocompletarCliente(select) {
     }
 }
 
+// Calcular total automáticamente al cargar si viene con datos precargados
+window.addEventListener('DOMContentLoaded', () => {
+    calcularTotal();
+});
 </script>
 </body>
 </html>

@@ -113,7 +113,7 @@
                 <td>{{ p.equipo if p.equipo else 'General' }}</td>
                 <td><span class="monto">${{ "{:,.2f}".format(p.total) if p.total else '0.00' }}</span></td>
                 <td style="text-align: center;">
-                    <a href="{{ url_for('descargar_presupuesto', id=p.id) }}" target="_blank" class="btn-accion btn-pdf" title="Descargar PDF">📄 PDF</a>
+                    <a href="{{ url_for('crear_nota', desde_presupuesto=p.id) }}" class="btn-accion" style="background-color: #27ae60; color: white;" title="Convertir en Nota de Venta">➡️ Nota</a>
                     
                     {% set url_pdf = url_for('descargar_presupuesto', id=p.id, _external=True) %}
                     {% set mensaje_w = "Hola *" ~ (p.cliente if p.cliente else 'Cliente') ~ "*, le compartimos el presupuesto formal de *G-Tek Soluciones Digitales* para su equipo " ~ (p.equipo if p.equipo else '') ~ ". Puede descargarlo aquí: " ~ url_pdf %}
