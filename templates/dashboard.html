@@ -36,8 +36,15 @@
             <a href="{{ url_for('admin_usuarios') }}" style="border-left: 3px solid var(--oro);">👥 Gestión de Usuarios</a>
             {% endif %}
         </div>
-        <a href="{{ url_for('logout') }}" class="btn-logout">Cerrar Sesión</a>
-    </aside>
+
+    <!-- Enlace al Control de Versiones -->
+    <a href="{{ url_for('changelog') }}" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; margin-bottom: 12px; background: rgba(197, 160, 89, 0.15); border: 1px solid var(--oro); border-radius: 6px; color: #fff; text-decoration: none; font-size: 13px;">
+        <span><i class="fas fa-code-branch" style="color: var(--oro); margin-right: 6px;"></i> Changelog</span>
+        <span style="background: var(--oro); color: #182b49; font-weight: bold; font-size: 11px; padding: 2px 7px; border-radius: 10px;">{{ app_version }}</span>
+    </a>
+
+    <a href="{{ url_for('logout') }}" class="btn-logout">Cerrar Sesión</a>
+</aside>
     <main class="main-content">
         <h1>Bienvenido, {{ session['user_name'] }}</h1>
         <p>Desde este panel puedes gestionar todas las funciones de tu sistema.</p>

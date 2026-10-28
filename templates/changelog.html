@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Historial de Versiones - G-Tek Soluciones Digitales</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f6f9;
+            margin: 0;
+            padding: 30px 20px;
+            color: #333;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 35px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            border-top: 5px solid #182b49;
+        }
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #eef2f6;
+            padding-bottom: 20px;
+            margin-bottom: 30px;
+        }
+        h1 {
+            color: #182b49;
+            margin: 0;
+            font-size: 24px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .badge-current {
+            background-color: #28a745;
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 13px;
+            font-weight: bold;
+        }
+        .btn-volver {
+            background-color: #182b49;
+            color: white;
+            text-decoration: none;
+            padding: 9px 18px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: bold;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .btn-volver:hover {
+            background-color: #0f1c30;
+        }
+        .timeline {
+            position: relative;
+            border-left: 3px solid #d0d8e8;
+            margin-left: 15px;
+            padding-left: 25px;
+        }
+        .version-card {
+            position: relative;
+            margin-bottom: 35px;
+        }
+        .version-card::before {
+            content: '';
+            position: absolute;
+            left: -32px;
+            top: 4px;
+            width: 13px;
+            height: 13px;
+            border-radius: 50%;
+            background: #c5a059;
+            border: 3px solid #ffffff;
+            box-shadow: 0 0 0 2px #d0d8e8;
+        }
+        .version-title {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 10px;
+        }
+        .version-tag {
+            font-size: 18px;
+            font-weight: bold;
+            color: #182b49;
+        }
+        .version-date {
+            font-size: 13px;
+            color: #777;
+        }
+        .version-body {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 16px 20px;
+        }
+        .version-body ul {
+            margin: 0;
+            padding-left: 20px;
+        }
+        .version-body li {
+            margin-bottom: 8px;
+            font-size: 14px;
+            line-height: 1.5;
+        }
+        .tag-feat { color: #28a745; font-weight: bold; }
+        .tag-fix { color: #007bff; font-weight: bold; }
+        .tag-design { color: #c5a059; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header-top">
+        <div>
+            <h1><i class="fas fa-code-branch"></i> Control de Versiones</h1>
+            <p style="margin: 5px 0 0 0; color: #666; font-size: 13px;">Historial de actualizaciones de G-Tek Soluciones Digitales</p>
+        </div>
+        <div style="display: flex; gap: 12px; align-items: center;">
+            <span class="badge-current"><i class="fas fa-check-circle"></i> Versión Activa: {{ app_version }}</span>
+            <a href="{{ url_for('dashboard') }}" class="btn-volver"><i class="fas fa-arrow-left"></i> Volver al Panel</a>
+        </div>
+    </div>
+
+    <div class="timeline">
+        <!-- Versión 2.1.0 -->
+        <div class="version-card">
+            <div class="version-title">
+                <span class="version-tag">v2.1.0</span>
+                <span class="version-date">28 de Octubre, 2026</span>
+            </div>
+            <div class="version-body">
+                <ul>
+                    <li><span class="tag-feat">[Nuevo]</span> Módulo para inventario y control de licencias de <strong>Office</strong>.</li>
+                    <li><span class="tag-feat">[Nuevo]</span> Módulo de licencias de <strong>Antivirus</strong> con cálculo automático de vigencias (6, 12, 24, 36 meses) y enlace a WhatsApp.</li>
+                    <li><span class="tag-feat">[Nuevo]</span> Selector autocompletable de clientes existentes en la generación de presupuestos.</li>
+                    <li><span class="tag-design">[Diseño]</span> Unificación y proporción del membrete formal en PDF de presupuestos con la nota de venta.</li>
+                    <li><span class="tag-feat">[Sistema]</span> Implementación de control de versiones visible y vista de Changelog.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Versión 2.0.0 -->
+        <div class="version-card">
+            <div class="version-title">
+                <span class="version-tag">v2.0.0</span>
+                <span class="version-date">Octubre, 2026</span>
+            </div>
+            <div class="version-body">
+                <ul>
+                    <li><span class="tag-design">[Rebranding]</span> Transición institucional de identidad a <strong>G-Tek Soluciones Digitales</strong>.</li>
+                    <li><span class="tag-feat">[Nuevo]</span> Módulo de Notas de Venta con base de datos en PostgreSQL (Neon) y códigos QR dinámicos.</li>
+                    <li><span class="tag-feat">[Integración]</span> Envío de presupuestos y comprobantes por correo electrónico mediante API de Brevo.</li>
+                    <li><span class="tag-fix">[Seguridad]</span> Manejo de contraseñas mediante hashing seguro y roles administrativos.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

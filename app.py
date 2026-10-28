@@ -34,6 +34,12 @@ from flask import send_file
 app = Flask(__name__)
 app.secret_key = 'servicio_gutierrez_master_key_2026'
 
+APP_VERSION = "v2.1.0"
+
+@app.context_processor
+def inject_version():
+    return dict(app_version=APP_VERSION)
+
 MAIL_SERVER = 'smtp.gmail.com'
 MAIL_PORT = 465
 MAIL_USERNAME = 'serviciogutierrezpc@gmail.com'
@@ -1536,3 +1542,9 @@ def borrar_licencia_antivirus(id):
     
     flash("Registro de antivirus eliminado.")
     return redirect(url_for('admin_antivirus'))
+
+@app.route('/changelog')
+def changelog():
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+    return render_template('changelog.html')
