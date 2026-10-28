@@ -37,3 +37,37 @@ CREATE TABLE usuarios (
 );
 INSERT INTO "usuarios" VALUES(1,'Arturo','arturo@servicio.com','pbkdf2:sha256:260000$tVv21uK8$38bb10901e6878b668ba01b7a64cebb43e2e9c15d4825920367dca2066fa19b0','admin');
 COMMIT;
+
+-- --------------------------------------------------------
+-- Tabla de Licencias de Office
+-- --------------------------------------------------------
+CREATE TABLE IF NOT EXISTS licencias_office (
+    id SERIAL PRIMARY KEY,
+    cliente VARCHAR(150),
+    correo VARCHAR(150),
+    telefono VARCHAR(50),
+    version_office VARCHAR(100),
+    clave_activacion VARCHAR(150),
+    tipo_licencia VARCHAR(50),
+    fecha_venta TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    precio NUMERIC(10, 2),
+    notas TEXT
+);
+
+-- --------------------------------------------------------
+-- Tabla de Licencias de Antivirus
+-- --------------------------------------------------------
+CREATE TABLE IF NOT EXISTS licencias_antivirus (
+    id SERIAL PRIMARY KEY,
+    cliente VARCHAR(150),
+    correo VARCHAR(150),
+    telefono VARCHAR(50),
+    antivirus VARCHAR(100),
+    clave_activacion VARCHAR(150),
+    dispositivos INTEGER DEFAULT 1,
+    duracion_meses INTEGER DEFAULT 12,
+    fecha_venta TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    fecha_vencimiento DATE,
+    precio NUMERIC(10, 2),
+    notas TEXT
+);
