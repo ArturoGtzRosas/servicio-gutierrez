@@ -1479,21 +1479,27 @@ def crear_licencia_antivirus():
     estatus = request.form.get('estatus', 'Disponible').strip()
     observaciones = request.form.get('observaciones', '').strip()
     
+    # Tomar fecha enviada desde el formulario o calcularla
+    raw_fecha_act = request.form.get('fecha_activacion', '').strip()
+    fecha_vencimiento = request.form.get('fecha_vencimiento', '').strip()
+    
     try:
         precio_val = float(precio_venta) if precio_venta else 0.0
     except ValueError:
         precio_val = 0.0
 
-    # Fechas de activación y vencimiento si está activa
     fecha_activacion = ''
-    fecha_vencimiento = ''
-    if estatus in ['Activo', 'Por Vencer']:
-        ahora = datetime.now()
-        fecha_activacion = ahora.strftime("%d/%m/%Y")
-        # Aproximación de vigencia (30.4 días por mes)
-        dias_vigencia = int(duracion_meses * 30.4)
-        vence_dt = ahora + timedelta(days=dias_vigencia)
-        fecha_vencimiento = vence_dt.strftime("%d/%m/%Y")
+    if raw_fecha_act:
+        try:
+            # Viene en formato YYYY-MM-DD del input type="date"
+            dt_act = datetime.strptime(raw_fecha_act, "%Y-%m-%d")
+            fecha_activacion = dt_act.strftime("%d/%m/%Y")
+            if not fecha_vencimiento:
+                # Si viniera vacía por cualquier motivo, calculamos meses
+                dias_aprox = int(duracion_meses * 30.4)
+                fecha_vencimiento = (dt_act + timedelta(days=dias_aprox)).strftime("%d/%m/%Y")
+        except Exception:
+            fecha_activacion = raw_fecha_act
 
     db = get_db_connection()
     db.execute('''

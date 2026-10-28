@@ -20,9 +20,10 @@
         .card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.06); border-top: 4px solid var(--oro); margin-bottom: 25px; transition: all 0.3s ease; }
         .card h3 { color: var(--azul); margin-top: 0; font-size: 16px; margin-bottom: 15px; }
 
-        .grid-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr)); gap: 12px; }
+        .grid-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; }
         label { font-size: 12px; font-weight: bold; color: #444; display: block; margin-bottom: 4px; }
         input, select, textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 5px; box-sizing: border-box; font-size: 13px; }
+        input[readonly] { background-color: #f8f9fa; font-weight: bold; color: #1b305b; }
         
         .btn-guardar { background: var(--verde); color: white; border: none; padding: 10px 18px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 14px; }
         .btn-guardar:hover { background: #219150; }
@@ -101,16 +102,24 @@
                 </div>
                 <div>
                     <label>Dispositivos Usados:</label>
-                    <input type="number" name="dispositivos_usados" value="0" min="0">
+                    <input type="number" name="dispositivos_usados" value="1" min="0">
                 </div>
                 <div>
                     <label>Duración (Meses):</label>
-                    <select name="duracion_meses">
+                    <select name="duracion_meses" id="duracion_meses" onchange="calcularVencimiento()">
+                        <option value="6">6 Meses</option>
                         <option value="12" selected>12 Meses (1 Año)</option>
                         <option value="24">24 Meses (2 Años)</option>
                         <option value="36">36 Meses (3 Años)</option>
-                        <option value="6">6 Meses</option>
                     </select>
+                </div>
+                <div>
+                    <label>📅 Fecha Instalación / Activación:</label>
+                    <input type="date" name="fecha_activacion" id="fecha_activacion" onchange="calcularVencimiento()">
+                </div>
+                <div>
+                    <label>⏳ Fecha Vencimiento Calculada:</label>
+                    <input type="text" name="fecha_vencimiento" id="fecha_vencimiento" readonly placeholder="DD/MM/AAAA">
                 </div>
                 <div>
                     <label>Precio Venta ($ MXN):</label>
@@ -118,9 +127,9 @@
                 </div>
                 <div>
                     <label>Estatus:</label>
-                    <select name="estatus">
+                    <select name="estatus" id="estatus_select">
+                        <option value="Activo" selected>Activo</option>
                         <option value="Disponible">Disponible (En Stock)</option>
-                        <option value="Activo">Activo (Activado hoy)</option>
                         <option value="Por Vencer">Por Vencer</option>
                         <option value="Vencido">Vencido</option>
                     </select>
@@ -162,7 +171,7 @@
                     <th>Antivirus / Edición</th>
                     <th>Clave de Activación</th>
                     <th>Dispositivos</th>
-                    <th>Vigencia / Vencimiento</th>
+                    <th>Instalación / Vencimiento</th>
                     <th>Estatus</th>
                     <th>Cliente Asignado</th>
                     <th>Precio</th>
@@ -188,8 +197,8 @@
                     </td>
                     <td>
                         {% if lic.fecha_vencimiento %}
-                            <span>Vence: <strong>{{ lic.fecha_vencimiento }}</strong></span><br>
-                            <small style="color: #777;">Act.: {{ lic.fecha_activacion or 'N/A' }}</small>
+                            <span>Vence: <strong style="color: #c0392b;">{{ lic.fecha_vencimiento }}</strong></span><br>
+                            <small style="color: #777;">Instalado: {{ lic.fecha_activacion or 'N/A' }} ({{ lic.duracion_meses }}m)</small>
                         {% else %}
                             <small style="color: #999;">Sin activar ({{ lic.duracion_meses }} meses)</small>
                         {% endif %}
@@ -209,9 +218,9 @@
                         {% if lic.nombre_cliente %}
                             <strong>{{ lic.nombre_cliente }}</strong><br>
                             <small style="color: #666;">{{ lic.telefono_cliente or '' }}</small>
-                            {% if lic.telefono_cliente %}
+                            {% if lic.telefono_cliente and lic.fecha_vencimiento %}
                                 <br>
-                                <a href="https://wa.me/52{{ lic.telefono_cliente|replace(' ', '')|replace('-', '') }}?text=Hola%20*{{ lic.nombre_cliente }}*,%20te%20saludamos%20de%20*G-Tek%20Soluciones%20Digitales*.%20Te%20recordamos%20que%20tu%20protección%20antivirus%20{{ lic.marca_antivirus }}%20está%20próxima%20a%20vencer%20({{ lic.fecha_vencimiento }}).%20¿Deseas%20renovarla?" target="_blank" class="btn-wa-renovar">
+                                <a href="https://wa.me/52{{ lic.telefono_cliente|replace(' ', '')|replace('-', '') }}?text=Hola%20*{{ lic.nombre_cliente }}*,%20le%20saludamos%20de%20*G-Tek%20Soluciones%20Digitales*.%20Le%20recordamos%20que%20su%20protección%20antivirus%20{{ lic.marca_antivirus }}%20está%20próxima%20a%20vencer%20({{ lic.fecha_vencimiento }}).%20¿Desea%20renovarla?" target="_blank" class="btn-wa-renovar">
                                     📲 Avisar Renovación
                                 </a>
                             {% endif %}
@@ -239,7 +248,39 @@
 <script>
 function toggleFormulario() {
     const f = document.getElementById('form-container');
-    f.style.display = (f.style.display === 'none' || f.style.display === '') ? 'block' : 'none';
+    const abierto = (f.style.display === 'none' || f.style.display === '');
+    f.style.display = abierto ? 'block' : 'none';
+    if (abierto) {
+        // Inicializar fecha con el día de hoy si está vacía
+        const inFecha = document.getElementById('fecha_activacion');
+        if (!inFecha.value) {
+            const hoy = new Date().toISOString().split('T')[0];
+            inFecha.value = hoy;
+            calcularVencimiento();
+        }
+    }
+}
+
+function calcularVencimiento() {
+    const fStr = document.getElementById('fecha_activacion').value;
+    const meses = parseInt(document.getElementById('duracion_meses').value || 12);
+    if (!fStr) {
+        document.getElementById('fecha_vencimiento').value = '';
+        return;
+    }
+    const partes = fStr.split('-');
+    const y = parseInt(partes[0]);
+    const m = parseInt(partes[1]) - 1;
+    const d = parseInt(partes[2]);
+
+    const fecha = new Date(y, m, d);
+    fecha.setMonth(fecha.getMonth() + meses);
+
+    const diaRes = String(fecha.getDate()).padStart(2, '0');
+    const mesRes = String(fecha.getMonth() + 1).padStart(2, '0');
+    const anioRes = fecha.getFullYear();
+
+    document.getElementById('fecha_vencimiento').value = `${diaRes}/${mesRes}/${anioRes}`;
 }
 
 function autoCompletar(select) {
