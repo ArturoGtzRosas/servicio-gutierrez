@@ -4,20 +4,43 @@
     <meta charset="UTF-8">
     <title>Historial de Presupuestos - G-Tek Soluciones Digitales</title>
     <style>
-        :root { --azul: #1f3a5f; --oro: #c5a356; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f4; padding: 20px; }
-        .container { max-width: 1100px; margin: auto; background: white; padding: 25px; border-radius: 10px; border-top: 5px solid var(--oro); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        h2 { color: var(--azul); margin: 0; }
-        .btn-nuevo { background: #27ae60; color: white; padding: 9px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 14px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th { background: var(--azul); color: white; padding: 12px; text-align: left; font-size: 14px; }
-        td { padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; }
+        :root { --azul: #1b305b; --oro: #c5a059; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f6f9; padding: 25px 15px; margin: 0; }
+        .container { max-width: 1200px; margin: auto; background: white; padding: 30px; border-radius: 12px; border-top: 5px solid var(--oro); box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px; }
+        h2 { color: var(--azul); margin: 0; font-size: 1.6em; }
+        .btn-nuevo { background: #27ae60; color: white; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px; transition: 0.2s; }
+        .btn-nuevo:hover { background: #219150; }
+
+        /* Tarjetas de métricas */
+        .grid-metricas { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .card-metrica { background: #fbfcfd; border: 1px solid #e1e8ed; border-radius: 8px; padding: 16px 20px; border-left: 4px solid var(--azul); }
+        .card-metrica.total { border-left-color: #2980b9; }
+        .card-metrica.cantidad { border-left-color: var(--oro); }
+        .card-metrica.promedio { border-left-color: #8e44ad; }
+        .card-titulo { font-size: 0.85em; color: #666; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
+        .card-valor { font-size: 1.6em; font-weight: bold; color: var(--azul); }
+
+        /* Buscador */
+        .filtro-box { margin-bottom: 20px; }
+        .filtro-box input { width: 100%; padding: 11px 15px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; box-sizing: border-box; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { background: var(--azul); color: white; padding: 12px 14px; text-align: left; font-size: 13px; }
+        td { padding: 12px 14px; border-bottom: 1px solid #eee; font-size: 13.5px; vertical-align: middle; }
         tr:hover { background-color: #f9fbfd; }
         .folio-tag { color: #c0392b; font-weight: bold; }
-        .btn-pdf { background: #2980b9; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; display: inline-block; }
-        .btn-del { color: #e74c3c; margin-left: 12px; text-decoration: none; font-weight: bold; font-size: 13px; }
         .monto { font-weight: bold; color: var(--azul); }
+
+        .btn-accion { text-decoration: none; padding: 6px 10px; border-radius: 4px; font-weight: bold; font-size: 12px; display: inline-flex; align-items: center; gap: 4px; margin: 2px; border: none; cursor: pointer; }
+        .btn-pdf { background: #2980b9; color: white; }
+        .btn-pdf:hover { background: #20638f; }
+        .btn-wsp { background: #25D366; color: white; }
+        .btn-wsp:hover { background: #1ebd56; }
+        .btn-mail { background: #4a69bd; color: white; }
+        .btn-mail:hover { background: #3b5598; }
+        .btn-del { background: #e74c3c; color: white; }
+        .btn-del:hover { background: #c0392b; }
     </style>
 </head>
 <body>
@@ -29,23 +52,56 @@
 
     {% with messages = get_flashed_messages() %}
       {% if messages %}
-        <div style="background-color: #e8f4fd; border-left: 5px solid #2980b9; padding: 12px; margin-bottom: 15px; border-radius: 4px; color: #1f3a5f; font-weight: bold;">
+        <div style="background-color: #e8f4fd; border-left: 5px solid #2980b9; padding: 12px; margin-bottom: 15px; border-radius: 4px; color: #1b305b; font-weight: bold;">
           {% for message in messages %}
             <p style="margin: 0;">ℹ️ {{ message }}</p>
           {% endfor %}
         </div>
       {% endif %}
-    {% endwith %}    
+    {% endwith %}
 
-    <table>
+    <!-- Cálculo de métricas automáticas -->
+    {% set acumulado = namespace(total=0, cantidad=0) %}
+    {% for p in presupuestos %}
+        {% set acumulado.total = acumulado.total + (p.total or 0) %}
+        {% set acumulado.cantidad = acumulado.cantidad + 1 %}
+    {% endfor %}
+
+    <div class="grid-metricas">
+        <div class="card-metrica total">
+            <div class="card-titulo">Total en Presupuestos</div>
+            <div class="card-valor">${{ "{:,.2f}".format(acumulado.total) }} MXN</div>
+        </div>
+        <div class="card-metrica cantidad">
+            <div class="card-titulo">Presupuestos Elaborados</div>
+            <div class="card-valor">{{ acumulado.cantidad }}</div>
+        </div>
+        <div class="card-metrica promedio">
+            <div class="card-titulo">Promedio por Cotización</div>
+            <div class="card-valor">
+                {% if acumulado.cantidad > 0 %}
+                    ${{ "{:,.2f}".format(acumulado.total / acumulado.cantidad) }} MXN
+                {% else %}
+                    $0.00 MXN
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Buscador Reactivo -->
+    <div class="filtro-box">
+        <input type="text" id="filtroPresupuestos" onkeyup="filtrarPresupuestos()" placeholder="🔍 Buscar por cliente, folio, equipo, fecha o monto...">
+    </div>
+
+    <table id="tablaPresupuestos">
         <thead>
             <tr>
-                <th style="width: 10%;">Folio</th>
+                <th style="width: 9%;">Folio</th>
                 <th style="width: 15%;">Fecha</th>
                 <th style="width: 20%;">Cliente</th>
-                <th style="width: 15%;">Equipo</th>
-                <th style="width: 15%;">Total (IVA inc)</th>
-                <th style="width: 25%; text-align: center;">Acciones</th>
+                <th style="width: 18%;">Equipo</th>
+                <th style="width: 12%;">Total (IVA inc)</th>
+                <th style="width: 26%; text-align: center;">Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -57,34 +113,25 @@
                 <td>{{ p.equipo if p.equipo else 'General' }}</td>
                 <td><span class="monto">${{ "{:,.2f}".format(p.total) if p.total else '0.00' }}</span></td>
                 <td style="text-align: center;">
-                    <a href="{{ url_for('descargar_presupuesto', id=p.id) }}" target="_blank" class="btn-pdf">🖹 PDF</a>
+                    <a href="{{ url_for('descargar_presupuesto', id=p.id) }}" target="_blank" class="btn-accion btn-pdf" title="Descargar PDF">📄 PDF</a>
                     
-                {% set url_pdf = url_for('descargar_presupuesto', id=p.id, _external=True) %}
+                    {% set url_pdf = url_for('descargar_presupuesto', id=p.id, _external=True) %}
                     {% set mensaje_w = "Hola *" ~ (p.cliente if p.cliente else 'Cliente') ~ "*, le compartimos el presupuesto formal de *G-Tek Soluciones Digitales* para su equipo " ~ (p.equipo if p.equipo else '') ~ ". Puede descargarlo aquí: " ~ url_pdf %}
-                    <a href="https://wa.me/52{{ p.telefono|string|replace(' ', '')|replace('-', '') }}?text={{ mensaje_w|urlencode }}" target="_blank" 
-                target="_blank" 
-                 style="background-color: #25D366; color: white; text-decoration: none; padding: 6px 10px; border-radius: 4px; font-weight: bold; font-size: 13px; display: inline-flex; align-items: center; gap: 4px; margin: 0 4px;">
-                 📲 WhatsApp
-                </a>    
+                    <a href="https://wa.me/52{{ p.telefono|string|replace(' ', '')|replace('-', '') if p.telefono else '' }}?text={{ mensaje_w|urlencode }}" target="_blank" class="btn-accion btn-wsp" title="Enviar WhatsApp">📲</a>
 
-                   <!-- Formulario directo para enviar por correo -->
-                    <form action="{{ url_for('enviar_presupuesto_email', id=p.id) }}" method="POST" style="display: inline-flex; align-items: center; gap: 4px; margin: 0 4px;">
-                        <input type="email" name="email_destino" value="{{ p.email if p.email else '' }}" placeholder="correo@ejemplo.com" required 
-                               style="padding: 4px 8px; font-size: 12px; border: 1px solid #ccc; border-radius: 4px; width: 160px;">
-                        <button type="submit" 
-                                style="background-color: #4a69bd; color: white; border: none; padding: 5px 8px; border-radius: 4px; font-weight: bold; font-size: 12px; cursor: pointer;">
-                            ✉️ Enviar
-                        </button>
+                    <!-- Enviar Correo vía Brevo -->
+                    <form action="{{ url_for('enviar_presupuesto_email', id=p.id) }}" method="POST" style="display: inline-flex; align-items: center; margin: 0 2px;">
+                        <input type="email" name="email_destino" value="{{ p.email if p.email else '' }}" placeholder="correo..." required 
+                               style="padding: 5px 7px; font-size: 11.5px; border: 1px solid #ccc; border-radius: 4px; width: 130px; box-sizing: border-box;">
+                        <button type="submit" class="btn-accion btn-mail" style="padding: 5px 8px; margin-left: 3px;" title="Enviar por correo">✉️</button>
                     </form>
                     
-                    {% if session.get('user_rol') == 'admin' %}
-                    <a href="{{ url_for('borrar_presupuesto', id=p.id) }}" class="btn-del" onclick="return confirm('¿Seguro que deseas eliminar este presupuesto?');">🗑️</a>
-                    {% endif %}
+                    <a href="{{ url_for('borrar_presupuesto', id=p.id) }}" class="btn-accion btn-del" onclick="return confirm('¿Seguro que deseas eliminar este presupuesto?');" title="Eliminar registro">🗑️</a>
                 </td>
             </tr>
             {% else %}
             <tr>
-                <td colspan="6" style="text-align: center; color: #777; padding: 25px;">No hay presupuestos registrados en el historial todavía.</td>
+                <td colspan="6" style="text-align: center; color: #777; padding: 30px;">No hay presupuestos registrados en el historial todavía.</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -93,5 +140,17 @@
     <br><br>
     <a href="{{ url_for('dashboard') }}" style="text-decoration:none; color:var(--azul); font-weight:bold;">← Volver al Panel</a>
 </div>
+
+<script>
+function filtrarPresupuestos() {
+    const texto = document.getElementById('filtroPresupuestos').value.toLowerCase();
+    const filas = document.querySelectorAll('#tablaPresupuestos tbody tr');
+    
+    filas.forEach(fila => {
+        const contenido = fila.innerText.toLowerCase();
+        fila.style.display = contenido.includes(texto) ? '' : 'none';
+    });
+}
+</script>
 </body>
 </html>
