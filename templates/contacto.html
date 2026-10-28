@@ -36,7 +36,7 @@
             border: 1px solid #ccc; 
             border-radius: 5px; 
             box-sizing: border-box; 
-            font-size: 16px; /* Evita el zoom automático en iPhone/Android al escribir */
+            font-size: 16px;
         }
         
         button { 
@@ -54,6 +54,51 @@
         }
         
         button:hover { background: #162a45; }
+
+        .separador-o {
+            display: flex;
+            align-items: center;
+            text-align: center;
+            color: #777;
+            font-size: 13px;
+            font-weight: bold;
+            margin: 20px 0 15px;
+        }
+
+        .separador-o::before, .separador-o::after {
+            content: '';
+            flex: 1;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .separador-o:not(:empty)::before {
+            margin-right: 12px;
+        }
+
+        .separador-o:not(:empty)::after {
+            margin-left: 12px;
+        }
+
+        .btn-whatsapp {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            width: 100%;
+            background-color: #25D366;
+            color: white;
+            text-decoration: none;
+            padding: 14px;
+            border-radius: 5px;
+            font-weight: bold;
+            font-size: 1.05em;
+            box-sizing: border-box;
+            transition: background 0.3s, transform 0.1s;
+        }
+
+        .btn-whatsapp:hover {
+            background-color: #20ba5a;
+        }
 
         /* Ajuste para pantallas pequeñas */
         @media (max-width: 600px) {
@@ -81,6 +126,9 @@
         
         <label>Correo Electrónico:</label>
         <input type="email" name="email" placeholder="correo@ejemplo.com" required>
+
+        <label>Teléfono (opcional / WhatsApp):</label>
+        <input type="tel" name="telefono" placeholder="55 1234 5678">
         
         <label>Asunto:</label>
         <select name="asunto">
@@ -95,6 +143,12 @@
         
         <button type="submit">Enviar Solicitud</button>
     </form>
+
+    <div class="separador-o">O CONTÁCTANOS DE INMEDIATO</div>
+
+    <a href="https://wa.me/525531998587?text=Hola%20*G-Tek%20Soluciones%20Digitales*,%20me%20gustar%C3%ADa%20solicitar%20informaci%C3%B3n%20sobre%20sus%20servicios." target="_blank" class="btn-whatsapp">
+        💬 Enviar WhatsApp
+    </a>
 </div>
 
 </body>

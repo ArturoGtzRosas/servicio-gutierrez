@@ -339,7 +339,7 @@ def contacto():
         asunto = request.form.get('asunto', '').strip()
         mensaje = request.form.get('mensaje', '').strip()
         
-                  
+        db = get_db_connection()          
         db.execute('''INSERT INTO mensajes (fecha, nombre, email, telefono, asunto, mensaje) 
                       VALUES (?, ?, ?, ?, ?, ?)''',
                    (datetime.now().strftime("%d/%m/%Y %H:%M"), nombre, email, telefono, asunto, mensaje))
