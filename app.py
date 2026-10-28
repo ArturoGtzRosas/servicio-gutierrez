@@ -514,6 +514,7 @@ def enviar_presupuesto_email(id):
                     items.append({'cant': 1, 'desc': desc_limpia, 'precio': precio_promedio})
 
         pdf_buffer = generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total, id_presupuesto=presupuesto['id'])
+        pdf_bytes = pdf_buffer.getvalue()
         
     except Exception as e:
         print(f"Error generando PDF: {e}")
