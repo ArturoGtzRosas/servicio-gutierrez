@@ -44,6 +44,7 @@ MAIL_SERVER = 'smtp.gmail.com'
 MAIL_PORT = 465
 MAIL_USERNAME = 'serviciogutierrezpc@gmail.com'
 MAIL_PASSWORD = 'sondiuxeuddmtspx'
+MAIL_SENDER = 'G-Tek Soluciones Digitales <serviciogutierrezpc@gmail.com>'
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -344,6 +345,7 @@ def enviar_correo_brevo(nombre, email, telefono, asunto, mensaje):
 
     # Remitente validado en tu cuenta de Brevo
     sender_email = "serviciogutierrezpc@gmail.com"
+    sender_name = "G-Tek Soluciones Digitales"
     # Destinatario donde recibes la notificación
     destinatario = "arturogtzrosass@gmail.com"
 
@@ -369,7 +371,7 @@ def enviar_correo_brevo(nombre, email, telefono, asunto, mensaje):
     """
 
     payload = {
-        "sender": {"name": "G-Tek Web", "email": sender_email},
+        "sender": {"name": sender_name, "email": sender_email},
         "to": [{"email": destinatario, "name": "Arturo Gutiérrez"}],
         "replyTo": {"email": email, "name": nombre},
         "subject": f"📩 [G-Tek Web] {asunto} - {nombre}",
