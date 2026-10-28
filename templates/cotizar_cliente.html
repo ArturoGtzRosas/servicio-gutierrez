@@ -107,11 +107,23 @@
         
         <form action="{{ url_for('procesar_cotizacion') }}" method="POST" onsubmit="prepararEnvio()">
             
+            <!-- Datos del cliente -->
             <div class="form-group">
                 <label>Nombre Completo:</label>
                 <input type="text" name="nombre" required placeholder="Ej: Juan Pérez">
             </div>
 
+            <div class="form-group">
+                <label>Teléfono / WhatsApp:</label>
+                <input type="tel" name="telefono" id="input_telefono" required placeholder="Ej: 55 1234 5678">
+            </div>
+
+            <div class="form-group">
+                <label>Correo Electrónico:</label>
+                <input type="email" name="correo" id="input_correo" required placeholder="Ej: cliente@correo.com">
+            </div>
+
+            <!-- Menú principal de servicios -->
             <div class="form-group">
                 <label>Servicio Requerido:</label>
                 <select name="servicio_base" id="select_servicio" onchange="mostrarOpcionesServicio()">
@@ -126,7 +138,7 @@
                 </select>
             </div>
 
-            <!-- 1. OPCIONES PARA DISCO SSD -->
+            <!-- 1. Opciones para SSD -->
             <div id="opc_SSD" class="campo-especifico">
                 <div class="sub-row">
                     <label>Capacidad de Almacenamiento:</label>
@@ -147,7 +159,7 @@
                 </div>
             </div>
 
-            <!-- 2. OPCIONES PARA MEMORIA RAM -->
+            <!-- 2. Opciones para RAM -->
             <div id="opc_RAM" class="campo-especifico">
                 <div class="sub-row">
                     <label>Tipo de Equipo:</label>
@@ -166,7 +178,7 @@
                 </div>
             </div>
 
-            <!-- 3. OPCIONES PARA PANTALLA -->
+            <!-- 3. Opciones para Pantalla -->
             <div id="opc_Pantalla" class="campo-especifico">
                 <div class="sub-row">
                     <label>Tipo de Equipo:</label>
@@ -198,7 +210,7 @@
                 </div>
             </div>
 
-            <!-- 4. OPCIONES PARA BATERÍA -->
+            <!-- 4. Opciones para Batería -->
             <div id="opc_Bateria" class="campo-especifico">
                 <div class="sub-row">
                     <label>Tipo de Batería:</label>
@@ -221,7 +233,7 @@
                 </div>
             </div>
 
-            <!-- 5. OPCIONES PARA SISTEMA OPERATIVO -->
+            <!-- 5. Opciones para Sistema Operativo -->
             <div id="opc_SO" class="campo-especifico">
                 <div class="sub-row">
                     <label>Sistema Operativo deseado:</label>
@@ -242,7 +254,7 @@
                 </div>
             </div>
 
-            <!-- 6. OPCIONES PARA INSTALACIÓN DE SOFTWARE -->
+            <!-- 6. Opciones para Software -->
             <div id="opc_Software" class="campo-especifico">
                 <div class="sub-row">
                     <label>Categoría de Software:</label>
@@ -256,7 +268,7 @@
                 </div>
             </div>
 
-            <!-- 7. OPCIONES PARA MANTENIMIENTO -->
+            <!-- 7. Opciones para Mantenimiento -->
             <div id="opc_Mantenimiento" class="campo-especifico">
                 <div class="sub-row">
                     <label>Tipo de Computadora:</label>
@@ -272,13 +284,13 @@
                 </div>
             </div>
 
-            <!-- Campo visible para Modelo del equipo -->
+            <!-- Modelo del equipo -->
             <div class="form-group">
                 <label>Marca y Modelo exacto del equipo:</label>
                 <input type="text" id="input_modelo" required placeholder="Ej: HP Pavilion 15-dw1085la / Dell Inspiron 3501">
             </div>
 
-            <!-- Campos ocultos enviados a app.py para almacenar sin romper la base de datos -->
+            <!-- Campos ocultos para envio -->
             <input type="hidden" name="servicio" id="hidden_servicio">
             <input type="hidden" name="modelo" id="hidden_modelo">
 
@@ -311,14 +323,12 @@
         }
     }
 
-    // Al cargar la página, verificar si viene un parámetro en la URL (?servicio=ssd, etc.)
     window.addEventListener('DOMContentLoaded', () => {
         const params = new URLSearchParams(window.location.search);
         const servicioParam = params.get('servicio');
 
         if (servicioParam) {
             const select = document.getElementById('select_servicio');
-            // Mapeo simple de parámetros posibles
             const mapa = {
                 'ssd': 'SSD',
                 'ram': 'RAM',
@@ -340,44 +350,44 @@
         }
     });
 
-    // Antes de hacer submit, consolidar detalles para mandarlos a los campos que guarda app.py
     function prepararEnvio() {
         const servicioBase = document.getElementById('select_servicio').value;
         const modeloUsuario = document.getElementById('input_modelo').value.trim();
+        const telUsuario = document.getElementById('input_telefono').value.trim();
+        const correoUsuario = document.getElementById('input_correo').value.trim();
         let detalleServicio = servicioBase;
-        let detalleExtra = '';
 
         if (servicioBase === 'SSD') {
             const cap = document.getElementById('ssd_capacidad').value;
             const tipo = document.getElementById('ssd_tipo').value;
-            detalleServicio = `Disco SSD (${cap} - ${tipo})`;
+            detalleServicio = "Disco SSD (" + cap + " - " + tipo + ")";
         } else if (servicioBase === 'RAM') {
             const tipo = document.getElementById('ram_tipo').value;
             const cap = document.getElementById('ram_capacidad').value;
-            detalleServicio = `Memoria RAM (${cap} - ${tipo})`;
+            detalleServicio = "Memoria RAM (" + cap + " - " + tipo + ")";
         } else if (servicioBase === 'Pantalla') {
             const tipo = document.getElementById('pantalla_tipo').value;
             const marca = document.getElementById('pantalla_marca').value;
             const tam = document.getElementById('pantalla_tamano').value;
-            detalleServicio = `Cambio de Display (${tipo} ${marca} ${tam})`;
+            detalleServicio = "Cambio de Display (" + tipo + " " + marca + " " + tam + ")";
         } else if (servicioBase === 'Bateria') {
             const tipo = document.getElementById('bateria_tipo').value;
             const marca = document.getElementById('bateria_marca').value;
-            detalleServicio = `Cambio de Batería (${tipo} - ${marca})`;
+            detalleServicio = "Cambio de Batería (" + tipo + " - " + marca + ")";
         } else if (servicioBase === 'SO') {
             const ver = document.getElementById('so_version').value;
             const resp = document.getElementById('so_respaldo').value;
-            detalleServicio = `Sistema Operativo (${ver} - ${resp})`;
+            detalleServicio = "Sistema Operativo (" + ver + " - " + resp + ")";
         } else if (servicioBase === 'Software') {
             const cat = document.getElementById('soft_categoria').value;
-            detalleServicio = `Instalación de Software (${cat})`;
+            detalleServicio = "Instalación de Software (" + cat + ")";
         } else if (servicioBase === 'Mantenimiento') {
             const tipo = document.getElementById('mant_tipo').value;
-            detalleServicio = `Mantenimiento y Pasta Térmica (${tipo})`;
+            detalleServicio = "Mantenimiento y Pasta Térmica (" + tipo + ")";
         }
 
         document.getElementById('hidden_servicio').value = detalleServicio;
-        document.getElementById('hidden_modelo').value = modeloUsuario;
+        document.getElementById('hidden_modelo').value = modeloUsuario + " | Tel: " + telUsuario + " | Email: " + correoUsuario;
     }
 </script>
 

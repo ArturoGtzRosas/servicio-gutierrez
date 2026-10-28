@@ -318,16 +318,27 @@ def cotizar_cliente():
 
 @app.route('/procesar_cotizacion', methods=['POST'])
 def procesar_cotizacion():
-    nombre = request.form['nombre']
-    servicio = request.form['servicio']
-    modelo = request.form['modelo']
-    
+    nombre = request.form.get('nombre', '')
+    servicio = request.form.get('servicio', '')
+    modelo = request.form.get('modelo', '')
+    telefono = request.form.get('telefono', 'No proporcionado')
+    correo = request.form.get('correo', 'No proporcionado')
+
+    # 1. Guardar en la base de datos
     db = get_db_connection()
     db.execute("INSERT INTO cotizaciones (nombre, servicio, modelo) VALUES (?, ?, ?)",
                (nombre, servicio, modelo))
     db.commit()
     db.close()
-    
+
+    # 2. Notificación automática a tu correo por Brevo
+    try:
+        asunto = f"Nueva Solicitud de Cotización - {nombre}"
+        mensaje_cuerpo = f"Equipo y contacto: {modelo}\nServicio solicitado: {servicio}\nTeléfono: {telefono}\nCorreo: {correo}"
+        enviar_correo_brevo(nombre, correo, telefono, asunto, mensaje_cuerpo)
+    except Exception as e:
+        print(f"Error al enviar correo de cotización: {e}")
+
     return render_template('confirmacion.html', nombre=nombre, servicio=servicio, modelo=modelo)
 
 def enviar_correo_brevo(nombre, email, telefono, asunto, mensaje):
