@@ -110,6 +110,7 @@ def migrar_db_email():
         pass
 
 migrar_db_email()
+
 def migrar_db_notas_email():
     try:
         conn = get_db_connection()
@@ -120,10 +121,6 @@ def migrar_db_notas_email():
         pass
 
 migrar_db_notas_email()
-
-import base64
-import os
-import requests
 
 def init_db_licencias():
     try:
@@ -304,10 +301,6 @@ def enviar_presupuesto_correo(destinatario, cliente, equipo, total, folio, pdf_b
         print(f"[CORREO] Error al enviar: {str(e)}")
         return False, f"Error al procesar el correo: {str(e)}"
 
-    except Exception as e:
-        print(f"[CORREO ERROR] Falló en: {e}")
-        return False, str(e)
-
 @app.route('/')
 def index():
     return render_template('index.html')
@@ -421,7 +414,6 @@ def cotizar_cliente():
     return render_template('cotizar_cliente.html')
 
 @app.route('/procesar_cotizacion', methods=['POST'])
-@app.route('/procesar_cotizacion', methods=['POST'])
 def procesar_cotizacion():
     nombre = request.form.get('nombre', '')
     servicio = request.form.get('servicio', '')
@@ -531,7 +523,6 @@ def contacto():
 
         return render_template('confirmacion.html', nombre=nombre, servicio=asunto, modelo="Mensaje de Contacto")
         
-        
     return render_template('contacto.html')
 
 @app.route('/cotizador', methods=['GET', 'POST'])
@@ -613,6 +604,7 @@ def ver_mensajes():
     datos = db.execute("SELECT * FROM mensajes ORDER BY id DESC").fetchall()
     db.close()
     return render_template('admin_mensajes.html', mensajes=datos)
+
 @app.route('/responder_mensaje', methods=['POST'])
 def responder_mensaje():
     if 'user_id' not in session:
@@ -1070,7 +1062,6 @@ class PDFNotaVenta(FPDF):
         url_logo_web = "https://i.postimg.cc/wvXCKc44/logo.png"
         try:
             ruta_logo = logo_local if os.path.exists(logo_local) else url_logo_web
-            # Centrado en X: 12 + (60 - 56)/2 = 14 | Centrado en Y: 10 + (28 - 24)/2 = 12
             self.image(ruta_logo, x=13.5, y=11.5, w=57)
         except Exception:
             pass
@@ -1174,7 +1165,6 @@ def generar_pdf_nota_binario(folio, cliente, direccion, telefono, equipo, servic
         pdf.multi_cell(190, 4.5, f'Observaciones: {obs}')
 
     pdf.ln(3)
-    
 
     # Encabezado de la tabla (Ancho total: 15 + 105 + 35 + 35 = 190 mm)
     pdf.set_font('Arial', 'B', 10)
@@ -1274,10 +1264,26 @@ def crear_nota():
                 })
                 total += subt_item
                 
-        import json
         serv_resumen = json.dumps(items, ensure_ascii=False)
         
         db = get_db_connection()
+        cur = db.execute('''INSERT INTO notas_venta 
+        (fecha, cliente, direccion, telefono, equipo, servicio, total, observaciones, email) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id''',
+        (datetime.now().strftime("%d/%m/%Y %H:%M"), cliente, direccion, telefono, equipo, serv_resumen, total, observaciones, email))
+        row = cur.fetchone()
+        nuevo_id = (row['id'] if isinstance(row, dict) else row[0]) if row else 1
+        db.commit()
+        folio = 1000 + nuevo_id
+        db.close()
+        
+        pdf_buf = generar_pdf_nota_binario(folio, cliente, direccion, telefono, equipo, items, total, observaciones)
+        response = send_file(pdf_buf, mimetype='application/pdf')
+        response.headers["Content-Disposition"] = f"inline; filename=Nota_{cliente.replace(' ', '_')}_{folio}.pdf"
+        return response
+
+    # Manejo de la petición GET (abrir el formulario o precargar desde presupuesto)
+    db = get_db_connection()
     presupuesto_id = request.args.get('desde_presupuesto')
     datos_precargados = None
     items_precargados = []
@@ -1288,7 +1294,6 @@ def crear_nota():
             datos_precargados = p
             if p['servicios']:
                 try:
-                    import json
                     items_precargados = json.loads(p['servicios'])
                 except Exception:
                     lineas = p['servicios'].split(', ')
@@ -1302,9 +1307,9 @@ def crear_nota():
                MAX(direccion) AS direccion, 
                MAX(telefono) AS telefono, 
                MAX(id) AS id
-        FROM notas_venta
-        WHERE cliente IS NOT NULL AND TRIM(cliente) != ''
-        GROUP BY cliente
+        FROM notas_venta 
+        WHERE cliente IS NOT NULL AND TRIM(cliente) != '' 
+        GROUP BY cliente 
         ORDER BY MAX(id) DESC
     """).fetchall()
     db.close()
@@ -1313,6 +1318,7 @@ def crear_nota():
                            clientes_registrados=clientes_registrados, 
                            precarga=datos_precargados, 
                            items_precarga=items_precargados)
+
 @app.route('/descargar_nota/<int:id>')
 def descargar_nota(id):
     if 'user_id' not in session: return redirect(url_for('login'))
@@ -1327,10 +1333,8 @@ def descargar_nota(id):
     items = []
     if n['servicio']:
         try:
-            import json
             items = json.loads(n['servicio'])
         except Exception:
-            # Respaldo por si se consulta una nota anterior guardada en texto plano
             items = [{'cant': 1, 'desc': n['servicio'], 'p_unit': float(n['total'] or 0.0), 'precio': float(n['total'] or 0.0)}]
             
     pdf_buf = generar_pdf_nota_binario(folio, n['cliente'], n['direccion'], n['telefono'], n['equipo'], items, float(n['total']), n['observaciones'])
@@ -1442,7 +1446,6 @@ def enviar_nota_email(id):
         items = []
         if n['servicio']:
             try:
-                import json
                 items = json.loads(n['servicio'])
             except Exception:
                 items = [{'cant': 1, 'desc': n['servicio'], 'p_unit': float(n['total'] or 0.0), 'precio': float(n['total'] or 0.0)}]
@@ -1555,9 +1558,6 @@ def borrar_usuario(id):
 
 def asegurar_admin_en_arranque():
     return
-
-# Ejecutar al iniciar la aplicacion
-# asegurar_admin_en_arranque()
 
 # =====================================================
 # MÓDULO DE LICENCIAS DE OFFICE
@@ -1677,7 +1677,6 @@ def crear_licencia_antivirus():
     estatus = request.form.get('estatus', 'Disponible').strip()
     observaciones = request.form.get('observaciones', '').strip()
     
-    # Tomar fecha enviada desde el formulario o calcularla
     raw_fecha_act = request.form.get('fecha_activacion', '').strip()
     fecha_vencimiento = request.form.get('fecha_vencimiento', '').strip()
     
@@ -1689,11 +1688,9 @@ def crear_licencia_antivirus():
     fecha_activacion = ''
     if raw_fecha_act:
         try:
-            # Viene en formato YYYY-MM-DD del input type="date"
             dt_act = datetime.strptime(raw_fecha_act, "%Y-%m-%d")
             fecha_activacion = dt_act.strftime("%d/%m/%Y")
             if not fecha_vencimiento:
-                # Si viniera vacía por cualquier motivo, calculamos meses
                 dias_aprox = int(duracion_meses * 30.4)
                 fecha_vencimiento = (dt_act + timedelta(days=dias_aprox)).strftime("%d/%m/%Y")
         except Exception:
