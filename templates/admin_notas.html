@@ -2,29 +2,49 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <title>Historial de Notas de Venta - G-Tek Soluciones Digitales</title>
+    <title>Histórico de Ventas y Caja - G-Tek Soluciones Digitales</title>
     <style>
         :root { --azul: #1b305b; --oro: #c5a059; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f4; padding: 20px; }
-        .container { max-width: 1100px; margin: auto; background: white; padding: 25px; border-radius: 10px; border-top: 5px solid var(--oro); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        h2 { color: var(--azul); margin: 0; }
-        .btn-nuevo { background: #27ae60; color: white; padding: 9px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 14px; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th { background: var(--azul); color: white; padding: 12px; text-align: left; font-size: 14px; }
-        td { padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; }
+        body { font-family: 'Segoe UI', sans-serif; background: #f4f6f9; padding: 25px 15px; margin: 0; }
+        .container { max-width: 1150px; margin: auto; background: white; padding: 30px; border-radius: 12px; border-top: 5px solid var(--oro); box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px; }
+        h2 { color: var(--azul); margin: 0; font-size: 1.6em; }
+        .btn-nuevo { background: #27ae60; color: white; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px; transition: 0.2s; }
+        .btn-nuevo:hover { background: #219150; }
+        
+        /* Tarjetas de métricas de caja */
+        .grid-caja { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 25px; }
+        .card-metrica { background: #fbfcfd; border: 1px solid #e1e8ed; border-radius: 8px; padding: 16px 20px; border-left: 4px solid var(--azul); }
+        .card-metrica.ingreso { border-left-color: #27ae60; }
+        .card-metrica.servicios { border-left-color: var(--oro); }
+        .card-titulo { font-size: 0.85em; color: #666; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
+        .card-valor { font-size: 1.6em; font-weight: bold; color: var(--azul); }
+        .card-valor.verde { color: #27ae60; }
+
+        /* Buscador */
+        .filtro-box { margin-bottom: 20px; }
+        .filtro-box input { width: 100%; padding: 11px 15px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; box-sizing: border-box; }
+
+        table { width: 100%; border-collapse: collapse; }
+        th { background: var(--azul); color: white; padding: 12px 14px; text-align: left; font-size: 13px; }
+        td { padding: 12px 14px; border-bottom: 1px solid #eee; font-size: 13.5px; vertical-align: middle; }
         tr:hover { background-color: #f9fbfd; }
         .folio-tag { color: #c0392b; font-weight: bold; }
-        .btn-pdf { background: #2980b9; color: white; text-decoration: none; padding: 6px 12px; border-radius: 4px; font-weight: bold; font-size: 13px; display: inline-block; }
-        .btn-del { color: #e74c3c; margin-left: 12px; text-decoration: none; font-weight: bold; font-size: 13px; }
         .monto { font-weight: bold; color: var(--azul); }
+
+        .btn-accion { text-decoration: none; padding: 6px 10px; border-radius: 4px; font-weight: bold; font-size: 12px; display: inline-block; margin: 2px; }
+        .btn-pdf { background: #2980b9; color: white; }
+        .btn-wsp { background: #25D366; color: white; }
+        .btn-mail { background: #e67e22; color: white; }
+        .btn-del { background: #e74c3c; color: white; border: none; cursor: pointer; }
+        .btn-del:hover { background: #c0392b; }
     </style>
 </head>
 <body>
 <div class="container">
     <div class="header-top">
-        <h2>🧾 Historial de Notas de Venta</h2>
-        <a href="{{ url_for('crear_nota') }}" class="btn-nuevo">+ Nueva Nota de Venta</a>
+        <h2>📊 Histórico de Trabajos y Caja</h2>
+        <a href="{{ url_for('crear_nota') }}" class="btn-nuevo">+ Registrar Nueva Venta / Nota</a>
     </div>
 
     {% with messages = get_flashed_messages() %}
@@ -37,15 +57,48 @@
       {% endif %}
     {% endwith %}
 
-    <table>
+    <!-- Métricas acumuladas -->
+    {% set total_caja = namespace(valor=0, cantidad=0) %}
+    {% for n in notas %}
+        {% set total_caja.valor = total_caja.valor + (n.total or 0) %}
+        {% set total_caja.cantidad = total_caja.cantidad + 1 %}
+    {% endfor %}
+
+    <div class="grid-caja">
+        <div class="card-metrica ingreso">
+            <div class="card-titulo">Total Ingresos Registrados</div>
+            <div class="card-valor verde">${{ "{:,.2f}".format(total_caja.valor) }} MXN</div>
+        </div>
+        <div class="card-metrica servicios">
+            <div class="card-titulo">Servicios Concluidos</div>
+            <div class="card-valor">{{ total_caja.cantidad }}</div>
+        </div>
+        <div class="card-metrica">
+            <div class="card-titulo">Ticket Promedio</div>
+            <div class="card-valor">
+                {% if total_caja.cantidad > 0 %}
+                    ${{ "{:,.2f}".format(total_caja.valor / total_caja.cantidad) }} MXN
+                {% else %}
+                    $0.00 MXN
+                {% endif %}
+            </div>
+        </div>
+    </div>
+
+    <!-- Buscador en tiempo real -->
+    <div class="filtro-box">
+        <input type="text" id="filtroNotas" onkeyup="filtrarNotas()" placeholder="🔍 Buscar por cliente, folio, equipo o monto...">
+    </div>
+
+    <table id="tablaNotas">
         <thead>
             <tr>
-                <th>Folio</th>
-                <th>Fecha</th>
-                <th>Cliente</th>
-                <th>Equipo</th>
-                <th>Total</th>
-                <th style="text-align: center;">Acciones</th>
+                <th style="width: 10%;">Folio</th>
+                <th style="width: 16%;">Fecha</th>
+                <th style="width: 22%;">Cliente</th>
+                <th style="width: 22%;">Equipo / Servicio</th>
+                <th style="width: 12%;">Cobrado</th>
+                <th style="width: 18%; text-align: center;">Acciones</th>
             </tr>
         </thead>
         <tbody>
@@ -54,22 +107,20 @@
                 <td><span class="folio-tag">#{{ 1000 + n.id }}</span></td>
                 <td>{{ n.fecha }}</td>
                 <td><strong>{{ n.cliente }}</strong></td>
-                <td>{{ n.equipo }}</td>
+                <td>{{ n.equipo or 'Equipo no especificado' }}</td>
                 <td><span class="monto">${{ "{:,.2f}".format(n.total) }}</span></td>
                 <td style="text-align: center;">
-                    <a href="{{ url_for('descargar_nota', id=n.id) }}" target="_blank" class="btn-pdf">📄 PDF</a>
+                    <a href="{{ url_for('descargar_nota', id=n.id) }}" target="_blank" class="btn-accion btn-pdf" title="Descargar PDF">📄 PDF</a>
                     {% set url_pdf = url_for('descargar_nota', id=n.id, _external=True) %}
-                    {% set mensaje_w = "Hola *" ~ (n.cliente if n.cliente else 'Cliente') ~ "*, le compartimos su nota de venta formal de *G-Tek Soluciones Digitales*. Puede verla aquí: " ~ url_pdf %}
-                    <a href="https://wa.me/52{{ n.telefono|string|replace(' ', '')|replace('-', '') if n.telefono else '' }}?text={{ mensaje_w|urlencode }}" target="_blank" style="background-color: #25D366; color: white; text-decoration: none; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; margin-left: 5px;">📲 WhatsApp</a>
-                    <a href="javascript:void(0);" data-id="{{ n.id }}" data-email="{{ n.email or '' }}" onclick="enviarPorCorreo(this)" style="background-color: #e67e22; color: white; text-decoration: none; padding: 4px 8px; border-radius: 4px; font-weight: bold; font-size: 11px; margin-left: 5px;">✉️ Correo</a>
-                    {% if session.get('user_rol') == 'admin' %}
-                    <a href="{{ url_for('borrar_nota', id=n.id) }}" class="btn-del" onclick="return confirm('¿Seguro que deseas eliminar esta nota?');">🗑️</a>
-                    {% endif %}
+                    {% set mensaje_w = "Hola *" ~ (n.cliente if n.cliente else 'Cliente') ~ "*, le compartimos su comprobante de servicio de *G-Tek Soluciones Digitales*: " ~ url_pdf %}
+                    <a href="https://wa.me/52{{ n.telefono|string|replace(' ', '')|replace('-', '') if n.telefono else '' }}?text={{ mensaje_w|urlencode }}" target="_blank" class="btn-accion btn-wsp" title="Enviar WhatsApp">📲</a>
+                    <a href="javascript:void(0);" data-id="{{ n.id }}" data-email="{{ n.email or '' }}" onclick="enviarPorCorreo(this)" class="btn-accion btn-mail" title="Enviar Correo">✉️</a>
+                    <a href="{{ url_for('borrar_nota', id=n.id) }}" class="btn-accion btn-del" onclick="return confirm('¿Seguro que deseas eliminar permanentemente esta nota de venta?');" title="Eliminar registro">🗑️</a>
                 </td>
             </tr>
             {% else %}
             <tr>
-                <td colspan="6" style="text-align: center; color: #777; padding: 25px;">No hay notas de venta registradas todavía.</td>
+                <td colspan="6" style="text-align: center; color: #777; padding: 30px;">No hay registros de ventas o servicios en el sistema.</td>
             </tr>
             {% endfor %}
         </tbody>
@@ -79,6 +130,16 @@
 </div>
 
 <script>
+function filtrarNotas() {
+    const texto = document.getElementById('filtroNotas').value.toLowerCase();
+    const filas = document.querySelectorAll('#tablaNotas tbody tr');
+    
+    filas.forEach(fila => {
+        const contenido = fila.innerText.toLowerCase();
+        fila.style.display = contenido.includes(texto) ? '' : 'none';
+    });
+}
+
 function enviarPorCorreo(btn) {
     const id = btn.getAttribute('data-id');
     let email = btn.getAttribute('data-email');
@@ -92,6 +153,5 @@ function enviarPorCorreo(btn) {
     }
 }
 </script>
-
 </body>
 </html>
