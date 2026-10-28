@@ -685,7 +685,17 @@ def crear_presupuesto():
         response.headers["Content-Disposition"] = f"inline; filename=Presupuesto_{cliente.replace(' ', '_')}_{folio}.pdf"
         return response
 
-    return render_template('generar_presupuesto.html')
+    db = get_db_connection()
+    clientes = db.execute("""
+        SELECT cliente, MAX(telefono) AS telefono, MAX(email) AS email, MAX(equipo) AS equipo
+        FROM notas_venta 
+        WHERE cliente IS NOT NULL AND TRIM(cliente) != '' 
+        GROUP BY cliente 
+        ORDER BY cliente ASC
+    """).fetchall()
+    db.close()
+
+    return render_template('generar_presupuesto.html', clientes=clientes)
 
 class PDFPresupuesto(FPDF):
     def rotate(self, angle, x=None, y=None):

@@ -26,22 +26,37 @@
 <div class="container">
     <h2>📄 Generar Presupuesto Técnico</h2>
     <form method="POST" target="_blank">
+        <!-- Selector de Cliente Registrado -->
+        <div style="margin-bottom: 18px;">
+            <label style="font-weight: bold; color: #1b305b; font-size: 13px; display: block; margin-bottom: 5px;">
+                👥 Seleccionar Cliente Existente (o escribir uno nuevo abajo):
+            </label>
+            <select id="select_cliente" onchange="autoCompletarPresupuesto(this)" style="width: 100%; padding: 9px; border: 1.5px solid #c5a059; border-radius: 6px; background-color: #fbfcfd; font-size: 13px;">
+                <option value="" data-tel="" data-email="" data-equipo="">-- Escribir cliente nuevo o seleccionar de la lista --</option>
+                {% for c in clientes %}
+                <option value="{{ c.cliente }}" data-tel="{{ c.telefono or '' }}" data-email="{{ c.email or '' }}" data-equipo="{{ c.equipo or '' }}">
+                    {{ c.cliente }} {% if c.telefono %}({{ c.telefono }}){% endif %}
+                </option>
+                {% endfor %}
+            </select>
+        </div>
+
         <div class="row">
             <div class="col">
                 <label>Nombre del Cliente:</label>
-                <input type="text" name="cliente" required placeholder="Ej. Maestra Kari">
+                <input type="text" name="cliente" id="in_cliente" required placeholder="Ej. Maestra Kari">
             </div>
             <div class="col">
                 <label>Teléfono de Contacto:</label>
-                <input type="text" name="telefono" placeholder="Ej. 55 4031 3150">
+                <input type="text" name="telefono" id="in_telefono" placeholder="Ej. 55 4031 3150">
             </div>
             <div class="col">
                 <label>Equipo / Modelo:</label>
-                <input type="text" name="equipo" placeholder="Ej. Laptop HP 15-dy5009la">
+                <input type="text" name="equipo" id="in_equipo" placeholder="Ej. Laptop HP 15-dy5009la">
             </div>
             <div class="col">
                 <label>Correo Electrónico (opcional):</label>
-                <input type="email" name="email" placeholder="Ej. cliente@ejemplo.com">
+                <input type="email" name="email" id="in_email" placeholder="Ej. cliente@ejemplo.com">
             </div>
         </div>
 
@@ -110,6 +125,21 @@ function calcularTotal() {
         total += cant * precio;
     });
     document.getElementById('lblTotal').innerText = total.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+}
+
+function autoCompletarPresupuesto(select) {
+    const opt = select.options[select.selectedIndex];
+    const nombre = opt.value;
+    const tel = opt.getAttribute('data-tel') || '';
+    const email = opt.getAttribute('data-email') || '';
+    const equipo = opt.getAttribute('data-equipo') || '';
+
+    if (nombre) {
+        document.getElementById('in_cliente').value = nombre;
+        if (document.getElementById('in_telefono')) document.getElementById('in_telefono').value = tel;
+        if (document.getElementById('in_email')) document.getElementById('in_email').value = email;
+        if (document.getElementById('in_equipo')) document.getElementById('in_equipo').value = equipo;
+    }
 }
 </script>
 </body>
