@@ -141,6 +141,29 @@ function autoCompletarPresupuesto(select) {
         if (document.getElementById('in_equipo')) document.getElementById('in_equipo').value = equipo;
     }
 }
+
+window.addEventListener('DOMContentLoaded', () => {
+    const params = new URLSearchParams(window.location.search);
+    const clienteParam = params.get('cliente');
+    const telParam = params.get('telefono');
+    const emailParam = params.get('email');
+    const equipoParam = params.get('equipo');
+    const servicioParam = params.get('servicio');
+
+    if (clienteParam) document.getElementById('in_cliente').value = clienteParam;
+    if (telParam && document.getElementById('in_telefono')) document.getElementById('in_telefono').value = telParam;
+    if (emailParam && document.getElementById('in_email')) document.getElementById('in_email').value = emailParam;
+    if (equipoParam && document.getElementById('in_equipo')) document.getElementById('in_equipo').value = equipoParam;
+
+    // Si viene un concepto de servicio sugerido, ponerlo en la primera fila
+    if (servicioParam) {
+        const primerConcepto = document.querySelector('input[name="descripcion[]"]');
+        if (primerConcepto && !primerConcepto.value) {
+            primerConcepto.value = servicioParam;
+        }
+    }
+});
+
 </script>
 </body>
 </html>

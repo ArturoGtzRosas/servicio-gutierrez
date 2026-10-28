@@ -30,9 +30,15 @@
 </head>
 <body>
 <nav>
-    <a href="{{ url_for('index') }}">VOLVER AL INICIO</a>
+    <a href="{{ url_for('index') }}">INICIO</a>
+    <a href="{{ url_for('servicios') }}">NUESTROS SERVICIOS</a>
+    <a href="{{ url_for('cotizar_cliente') }}">COTIZA</a>
+    <a href="{{ url_for('cotizador') }}" style="color: var(--oro);">CALCULADORA</a>
+    <a href="{{ url_for('contacto') }}">CONTACTO</a>
     {% if session.get('user_id') %}
-    <a href="{{ url_for('dashboard') }}" style="color: var(--oro);">VOLVER AL PANEL</a>
+    <a href="{{ url_for('dashboard') }}">VOLVER AL PANEL</a>
+    {% else %}
+    <a href="{{ url_for('login') }}">ADMIN</a>
     {% endif %}
 </nav>
 

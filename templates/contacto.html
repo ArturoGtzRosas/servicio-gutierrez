@@ -112,10 +112,12 @@
 <body>
 
 <nav>
-    <a href="/">INICIO</a>
-    <a href="/#servicios">SERVICIOS</a>
-    <a href="/cotizar_cliente">COTIZA TU SERVICIO</a>
-    <a href="/contacto">CONTACTO</a>
+    <a href="{{ url_for('index') }}">INICIO</a>
+    <a href="{{ url_for('servicios') }}">NUESTROS SERVICIOS</a>
+    <a href="{{ url_for('cotizar_cliente') }}">COTIZA</a>
+    <a href="{{ url_for('cotizador') }}">CALCULADORA</a>
+    <a href="{{ url_for('contacto') }}" style="color: var(--oro);">CONTACTO</a>
+    <a href="{{ url_for('login') }}">ADMIN</a>
 </nav>
 
 <div class="container">
