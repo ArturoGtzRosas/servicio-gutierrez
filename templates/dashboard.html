@@ -1,24 +1,105 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel de Control - G-Tek Soluciones Digitales</title>
     <link rel="shortcut icon" href="{{ url_for('static', filename='img/unam.png') }}" type="image/x-icon">
     <style>
-        :root { --azul: #1f3a5f; --oro: #c5a356; --fondo: #f8f9fa; --sidebar: #343a40; }
-        body { font-family: 'Segoe UI', sans-serif; background-color: var(--fondo); margin: 0; display: flex; min-height: 100vh; }
-        .sidebar { width: 260px; background: var(--sidebar); color: white; display: flex; flex-direction: column; padding: 20px; box-shadow: 2px 0 5px rgba(0,0,0,0.1); }
-        .sidebar h2 { color: var(--oro); font-size: 1.4em; text-align: center; margin-bottom: 30px; border-bottom: 1px solid #495057; padding-bottom: 15px; }
-        .sidebar-nav { display: flex; flex-direction: column; gap: 10px; flex-grow: 1; }
-        .sidebar-nav a { color: #adb5bd; text-decoration: none; padding: 12px 15px; border-radius: 6px; background: rgba(255,255,255,0.05); transition: 0.3s; text-align: center; font-weight: 500; }
-        .sidebar-nav a:hover { background: #495057; color: white; }
-        .btn-logout { background: #e74c3c; color: white; padding: 12px; border-radius: 6px; text-decoration: none; text-align: center; font-weight: bold; margin-top: 20px; }
-        .main-content { flex-grow: 1; padding: 40px; }
-        .resumen-card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 2px 15px rgba(0,0,0,0.05); border-left: 5px solid var(--oro); }
-        @media (max-width: 768px) { body { flex-direction: column; } .sidebar { width: 100%; } }
+        :root {
+            --azul: #1f3a5f;
+            --oro: #c5a356;
+            --fondo: #f8f9fa;
+            --sidebar: #343a40;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background-color: var(--fondo);
+            margin: 0;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .sidebar {
+            width: 260px;
+            background: var(--sidebar);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            padding: 20px;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .sidebar h2 {
+            color: var(--oro);
+            font-size: 1.4em;
+            text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 1px solid #495057;
+            padding-bottom: 15px;
+        }
+
+        .sidebar-nav {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            flex-grow: 1;
+        }
+
+        .sidebar-nav a {
+            color: #adb5bd;
+            text-decoration: none;
+            padding: 12px 15px;
+            border-radius: 6px;
+            background: rgba(255, 255, 255, 0.05);
+            transition: 0.3s;
+            text-align: center;
+            font-weight: 500;
+        }
+
+        .sidebar-nav a:hover {
+            background: #495057;
+            color: white;
+        }
+
+        .btn-logout {
+            background: #e74c3c;
+            color: white;
+            padding: 12px;
+            border-radius: 6px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .main-content {
+            flex-grow: 1;
+            padding: 40px;
+        }
+
+        .resumen-card {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+            border-left: 5px solid var(--oro);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                flex-direction: column;
+            }
+
+            .sidebar {
+                width: 100%;
+            }
+        }
     </style>
 </head>
+
 <body>
     <aside class="sidebar">
         <h2>G-Tek Soluciones Digitales</h2>
@@ -31,20 +112,25 @@
             <a href="{{ url_for('ver_notas') }}" class="btn-menu">📝 Notas de Venta</a>
             <a href="{{ url_for('admin_office') }}">📊 Licencias Office</a>
             <a href="{{ url_for('admin_antivirus') }}">🛡️ Licencias Antivirus</a>
-            <a href="{{ url_for('crear_presupuesto') }}" style="background-color: #27ae60; color: white;">➕ Generar Presupuesto PDF</a>
+            <a href="{{ url_for('crear_presupuesto') }}" style="background-color: #27ae60; color: white;">➕ Generar
+                Presupuesto PDF</a>
             {% if session.get('user_rol') == 'admin' %}
-            <a href="{{ url_for('admin_usuarios') }}" style="border-left: 3px solid var(--oro);">👥 Gestión de Usuarios</a>
+            <a href="{{ url_for('admin_usuarios') }}" style="border-left: 3px solid var(--oro);">👥 Gestión de
+                Usuarios</a>
             {% endif %}
         </div>
 
-    <!-- Enlace al Control de Versiones -->
-    <a href="{{ url_for('changelog') }}" style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; margin-bottom: 12px; background: rgba(197, 160, 89, 0.15); border: 1px solid var(--oro); border-radius: 6px; color: #fff; text-decoration: none; font-size: 13px;">
-        <span><i class="fas fa-code-branch" style="color: var(--oro); margin-right: 6px;"></i> Changelog</span>
-        <span style="background: var(--oro); color: #182b49; font-weight: bold; font-size: 11px; padding: 2px 7px; border-radius: 10px;">{{ app_version }}</span>
-    </a>
+        <!-- Enlace al Control de Versiones -->
+        <a href="{{ url_for('changelog') }}"
+            style="display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; margin-bottom: 12px; background: rgba(197, 160, 89, 0.15); border: 1px solid var(--oro); border-radius: 6px; color: #fff; text-decoration: none; font-size: 13px;">
+            <span><i class="fas fa-code-branch" style="color: var(--oro); margin-right: 6px;"></i> Changelog</span>
+            <span
+                style="background: var(--oro); color: #182b49; font-weight: bold; font-size: 11px; padding: 2px 7px; border-radius: 10px;">{{
+                app_version }}</span>
+        </a>
 
-    <a href="{{ url_for('logout') }}" class="btn-logout">Cerrar Sesión</a>
-</aside>
+        <a href="{{ url_for('logout') }}" class="btn-logout">Cerrar Sesión</a>
+    </aside>
     <main class="main-content">
         <h1>Bienvenido, {{ session['user_name'] }}</h1>
         <p>Desde este panel puedes gestionar todas las funciones de tu sistema.</p>
@@ -55,6 +141,23 @@
                 <li>● Estado: <strong>Operativo</strong></li>
             </ul>
         </div>
+        <div style="margin-top: 25px;">
+            <a href="{{ url_for('ver_notas') }}" style="text-decoration: none; display: block;">
+                <div
+                    style="background: white; padding: 20px; border-radius: 8px; border-left: 5px solid #27ae60; box-shadow: 0 2px 8px rgba(0,0,0,0.08); display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <h3 style="color: #1b305b; margin: 0 0 5px 0; font-size: 1.1em;">📊 Histórico de Trabajos y Caja
+                        </h3>
+                        <p style="color: #666; margin: 0; font-size: 0.9em;">Consulta de ingresos acumulados, notas de
+                            venta y depuración de registros.</p>
+                    </div>
+                    <span
+                        style="background: #27ae60; color: white; padding: 8px 14px; border-radius: 5px; font-weight: bold; font-size: 0.85em;">Ver
+                        Caja →</span>
+                </div>
+            </a>
+        </div>
     </main>
 </body>
+
 </html>
