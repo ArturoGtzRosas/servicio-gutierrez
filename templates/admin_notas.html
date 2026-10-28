@@ -6,24 +6,30 @@
     <style>
         :root { --azul: #1b305b; --oro: #c5a059; }
         body { font-family: 'Segoe UI', sans-serif; background: #f4f6f9; padding: 25px 15px; margin: 0; }
-        .container { max-width: 1150px; margin: auto; background: white; padding: 30px; border-radius: 12px; border-top: 5px solid var(--oro); box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .container { max-width: 1180px; margin: auto; background: white; padding: 30px; border-radius: 12px; border-top: 5px solid var(--oro); box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
         .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 25px; flex-wrap: wrap; gap: 15px; }
         h2 { color: var(--azul); margin: 0; font-size: 1.6em; }
         .btn-nuevo { background: #27ae60; color: white; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px; transition: 0.2s; }
         .btn-nuevo:hover { background: #219150; }
         
-        /* Tarjetas de métricas de caja */
+        /* Grid de métricas de caja: Día, Mes, Año, Histórico */
         .grid-caja { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 25px; }
-        .card-metrica { background: #fbfcfd; border: 1px solid #e1e8ed; border-radius: 8px; padding: 16px 20px; border-left: 4px solid var(--azul); }
-        .card-metrica.ingreso { border-left-color: #27ae60; }
-        .card-metrica.servicios { border-left-color: var(--oro); }
-        .card-titulo { font-size: 0.85em; color: #666; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
-        .card-valor { font-size: 1.6em; font-weight: bold; color: var(--azul); }
+        .card-metrica { background: #fbfcfd; border: 1px solid #e1e8ed; border-radius: 8px; padding: 16px 18px; border-left: 4px solid var(--azul); }
+        .card-metrica.dia { border-left-color: #27ae60; background: #f4faf6; }
+        .card-metrica.mes { border-left-color: #2980b9; }
+        .card-metrica.ano { border-left-color: var(--oro); }
+        .card-metrica.historico { border-left-color: #8e44ad; }
+        
+        .card-titulo { font-size: 0.8em; color: #555; font-weight: bold; text-transform: uppercase; margin-bottom: 5px; }
+        .card-valor { font-size: 1.55em; font-weight: bold; color: var(--azul); }
         .card-valor.verde { color: #27ae60; }
+        .card-subtext { font-size: 0.75em; color: #777; margin-top: 4px; }
 
-        /* Buscador */
-        .filtro-box { margin-bottom: 20px; }
-        .filtro-box input { width: 100%; padding: 11px 15px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; box-sizing: border-box; }
+        /* Barra de búsqueda y filtros rápidos */
+        .controles-barra { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .controles-barra input { flex: 1; min-width: 260px; padding: 10px 14px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; box-sizing: border-box; }
+        .btn-filtro-rapido { background: #eef2f7; color: var(--azul); border: 1px solid #ccd6e4; padding: 9px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; }
+        .btn-filtro-rapido:hover, .btn-filtro-rapido.activo { background: var(--azul); color: white; border-color: var(--azul); }
 
         table { width: 100%; border-collapse: collapse; }
         th { background: var(--azul); color: white; padding: 12px 14px; text-align: left; font-size: 13px; }
@@ -57,37 +63,89 @@
       {% endif %}
     {% endwith %}
 
-    <!-- Métricas acumuladas -->
-    {% set total_caja = namespace(valor=0, cantidad=0) %}
+    <!-- OBTENCIÓN DE FECHAS ACTUALES -->
+    {% set fecha_ahora = dict(dia=none, mes=none, ano=none) %}
+    {# Tomamos la fecha de la nota más reciente como referencia del sistema, o bien la fecha de ejecución #}
+    {% if notas and notas|length > 0 %}
+        {% set primer_registro = notas[0].fecha %}
+        {% set parte_fecha = primer_registro.split(' ')[0] %}
+        {% set f_dia = parte_fecha %}
+        {% set f_mes = parte_fecha[3:] %}
+        {% set f_ano = parte_fecha[6:] %}
+    {% else %}
+        {% set f_dia = '' %}
+        {% set f_mes = '' %}
+        {% set f_ano = '' %}
+    {% endif %}
+
+    <!-- CÁLCULO DE TOTALES: DÍA, MES, AÑO E HISTÓRICO -->
+    {% set totales = namespace(
+        dia_monto=0, dia_cant=0,
+        mes_monto=0, mes_cant=0,
+        ano_monto=0, ano_cant=0,
+        global_monto=0, global_cant=0
+    ) %}
+
     {% for n in notas %}
-        {% set total_caja.valor = total_caja.valor + (n.total or 0) %}
-        {% set total_caja.cantidad = total_caja.cantidad + 1 %}
+        {% set m_total = n.total or 0 %}
+        {% set f_reg = (n.fecha or '').split(' ')[0] %}
+        
+        {# Acumulador Global #}
+        {% set totales.global_monto = totales.global_monto + m_total %}
+        {% set totales.global_cant = totales.global_cant + 1 %}
+
+        {# Acumulador Año #}
+        {% if f_ano and f_reg.endswith(f_ano) %}
+            {% set totales.ano_monto = totales.ano_monto + m_total %}
+            {% set totales.ano_cant = totales.ano_cant + 1 %}
+        {% endif %}
+
+        {# Acumulador Mes #}
+        {% if f_mes and f_reg[3:] == f_mes %}
+            {% set totales.mes_monto = totales.mes_monto + m_total %}
+            {% set totales.mes_cant = totales.mes_cant + 1 %}
+        {% endif %}
+
+        {# Acumulador Día #}
+        {% if f_dia and f_reg == f_dia %}
+            {% set totales.dia_monto = totales.dia_monto + m_total %}
+            {% set totales.dia_cant = totales.dia_cant + 1 %}
+        {% endif %}
     {% endfor %}
 
+    <!-- 4 TARJETAS DE CORTE DE CAJA -->
     <div class="grid-caja">
-        <div class="card-metrica ingreso">
-            <div class="card-titulo">Total Ingresos Registrados</div>
-            <div class="card-valor verde">${{ "{:,.2f}".format(total_caja.valor) }} MXN</div>
+        <div class="card-metrica dia">
+            <div class="card-titulo">📅 Ingresos de Hoy</div>
+            <div class="card-valor verde">${{ "{:,.2f}".format(totales.dia_monto) }}</div>
+            <div class="card-subtext">{{ totales.dia_cant }} servicio(s) hoy ({{ f_dia }})</div>
         </div>
-        <div class="card-metrica servicios">
-            <div class="card-titulo">Servicios Concluidos</div>
-            <div class="card-valor">{{ total_caja.cantidad }}</div>
+
+        <div class="card-metrica mes">
+            <div class="card-titulo">🗓️ Corte del Mes</div>
+            <div class="card-valor">${{ "{:,.2f}".format(totales.mes_monto) }}</div>
+            <div class="card-subtext">{{ totales.mes_cant }} servicio(s) en {{ f_mes }}</div>
         </div>
-        <div class="card-metrica">
-            <div class="card-titulo">Ticket Promedio</div>
-            <div class="card-valor">
-                {% if total_caja.cantidad > 0 %}
-                    ${{ "{:,.2f}".format(total_caja.valor / total_caja.cantidad) }} MXN
-                {% else %}
-                    $0.00 MXN
-                {% endif %}
-            </div>
+
+        <div class="card-metrica ano">
+            <div class="card-titulo">📈 Corte del Año</div>
+            <div class="card-valor">${{ "{:,.2f}".format(totales.ano_monto) }}</div>
+            <div class="card-subtext">{{ totales.ano_cant }} servicio(s) en {{ f_ano }}</div>
+        </div>
+
+        <div class="card-metrica historico">
+            <div class="card-titulo">💼 Histórico Global</div>
+            <div class="card-valor">${{ "{:,.2f}".format(totales.global_monto) }}</div>
+            <div class="card-subtext">{{ totales.global_cant }} servicios totales cobrados</div>
         </div>
     </div>
 
-    <!-- Buscador en tiempo real -->
-    <div class="filtro-box">
-        <input type="text" id="filtroNotas" onkeyup="filtrarNotas()" placeholder="🔍 Buscar por cliente, folio, equipo o monto...">
+    <!-- BUSCADOR Y FILTROS RÁPIDOS POR PERIODO -->
+    <div class="controles-barra">
+        <input type="text" id="filtroNotas" onkeyup="filtrarNotas()" placeholder="🔍 Buscar por cliente, folio, equipo, fecha o monto...">
+        <button type="button" class="btn-filtro-rapido" onclick="filtrarPeriodo('{{ f_dia }}')">Hoy</button>
+        <button type="button" class="btn-filtro-rapido" onclick="filtrarPeriodo('{{ f_mes }}')">Este Mes</button>
+        <button type="button" class="btn-filtro-rapido" onclick="filtrarPeriodo('')">Ver Todos</button>
     </div>
 
     <table id="tablaNotas">
@@ -138,6 +196,11 @@ function filtrarNotas() {
         const contenido = fila.innerText.toLowerCase();
         fila.style.display = contenido.includes(texto) ? '' : 'none';
     });
+}
+
+function filtrarPeriodo(valor) {
+    document.getElementById('filtroNotas').value = valor;
+    filtrarNotas();
 }
 
 function enviarPorCorreo(btn) {
