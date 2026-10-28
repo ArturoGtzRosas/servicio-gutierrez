@@ -9,11 +9,15 @@
         body { font-family: 'Segoe UI', sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; }
         .container { max-width: 1200px; margin: auto; }
         
-        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
         .header h2 { color: var(--azul); margin: 0; }
-        .btn-volver { background: var(--azul); color: white; padding: 8px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 13px; }
+        .header-actions { display: flex; gap: 10px; align-items: center; }
         
-        .card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.06); border-top: 4px solid var(--oro); margin-bottom: 25px; }
+        .btn-nuevo { background: var(--verde); color: white; border: none; padding: 9px 16px; border-radius: 5px; font-weight: bold; cursor: pointer; font-size: 13px; text-decoration: none; display: inline-flex; align-items: center; gap: 5px; }
+        .btn-nuevo:hover { background: #219150; }
+        .btn-volver { background: var(--azul); color: white; padding: 9px 15px; border-radius: 5px; text-decoration: none; font-weight: bold; font-size: 13px; }
+        
+        .card { background: white; border-radius: 8px; padding: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.06); border-top: 4px solid var(--oro); margin-bottom: 25px; transition: all 0.3s ease; }
         .card h3 { color: var(--azul); margin-top: 0; font-size: 16px; margin-bottom: 15px; }
 
         .grid-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; }
@@ -46,11 +50,14 @@
 <div class="container">
     <div class="header">
         <h2>📊 Control de Licencias de Office</h2>
-        <a href="{{ url_for('dashboard') }}" class="btn-volver">← Volver al Panel</a>
+        <div class="header-actions">
+            <button type="button" class="btn-nuevo" onclick="toggleFormulario()">➕ Nuevo Registro</button>
+            <a href="{{ url_for('dashboard') }}" class="btn-volver">← Volver al Panel</a>
+        </div>
     </div>
 
-    <!-- Formulario para agregar / registrar -->
-    <div class="card">
+    <!-- Formulario para agregar / registrar (desplegable) -->
+    <div class="card" id="form-container" style="display: none;">
         <h3>➕ Registrar Clave / Asignación de Office</h3>
         <form action="{{ url_for('crear_licencia_office') }}" method="POST">
             <!-- Autocompletado desde clientes registrados -->
@@ -121,7 +128,10 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn-guardar">💾 Guardar Registro</button>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <button type="submit" class="btn-guardar" style="margin-top: 0;">💾 Guardar Registro</button>
+                <button type="button" onclick="toggleFormulario()" style="background: #95a5a6; color: white; border: none; padding: 10px 15px; border-radius: 5px; cursor: pointer; font-size: 13px;">Cancelar</button>
+            </div>
         </form>
     </div>
 
@@ -182,7 +192,7 @@
                 {% else %}
                 <tr>
                     <td colspan="9" style="text-align: center; color: #777; padding: 25px;">
-                        No hay licencias de Office registradas todavía. Agrega la primera arriba.
+                        No hay licencias de Office registradas todavía. Presiona <strong>"➕ Nuevo Registro"</strong> para agregar la primera.
                     </td>
                 </tr>
                 {% endfor %}
@@ -192,6 +202,11 @@
 </div>
 
 <script>
+function toggleFormulario() {
+    const f = document.getElementById('form-container');
+    f.style.display = (f.style.display === 'none' || f.style.display === '') ? 'block' : 'none';
+}
+
 function autoCompletar(select) {
     const opt = select.options[select.selectedIndex];
     const nombre = opt.value;
