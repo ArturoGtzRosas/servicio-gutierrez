@@ -218,7 +218,7 @@
                             Responder
                         </button>
 
-                        <a href="{{ url_for('generar_presupuesto') }}?cliente={{ m['nombre'] if m['nombre'] else m[1] }}&email={{ m['email'] if m['email'] else m[2] }}&equipo={{ m['asunto'] if m['asunto'] else m[3] }}&servicio={{ m['asunto'] if m['asunto'] else m[3] }}"
+                        <a href="{{ url_for('crear_presupuesto') }}?cliente={{ m['nombre'] if m['nombre'] else m[1] }}&email={{ m['email'] if m['email'] else m[2] }}&equipo={{ m['asunto'] if m['asunto'] else m[3] }}&servicio={{ m['asunto'] if m['asunto'] else m[3] }}"
                             class="btn-accion"
                             style="background: #27ae60; color: white; text-decoration: none; display: inline-block; padding: 6px 10px; border-radius: 4px; font-size: 12px; font-weight: bold;"
                             target="_blank">
