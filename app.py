@@ -1332,7 +1332,7 @@ def crear_nota():
 
 @app.route('/descargar_nota/<int:id>')
 def descargar_nota(id):
-        db = get_db_connection()
+    db = get_db_connection()
     n = db.execute("SELECT * FROM notas_venta WHERE id = ?", (id,)).fetchone()
     db.close()
     if not n:
