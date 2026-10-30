@@ -94,11 +94,17 @@
 
                 {% if nota.observaciones %}
                 <div class="campo-detalle">
-                    <div class="campo-label">Observaciones Técnicas</div>
-                    <div class="campo-valor" style="font-size: 0.9em; color: #475569;">{{ nota.observaciones }}</div>
+                    <div class="campo-label">Servicio Solicitado / Diagnóstico</div>
+                    <div class="campo-valor">
+                        {% if '[' in nota.servicio and '{' in nota.servicio %}
+                            {# Si viene en formato JSON o lista, extraemos la descripción limpia #}
+                            {% set texto_limpio = nota.servicio.split('"desc": "')[1].split('"')[0] if '"desc": "' in nota.servicio else (nota.servicio.split("'desc': '")[1].split("'")[0] if "'desc': '" in nota.servicio else nota.servicio) %}
+                            {{ texto_limpio }}
+                        {% else %}
+                            {{ nota.servicio }}
+                        {% endif %}
+                    </div>
                 </div>
-                {% endif %}
-            </div>
         {% else %}
             <div class="alerta-no">
                 ❌ No encontramos ninguna orden de servicio asociada a <strong>"{{ busqueda }}"</strong>.<br>
