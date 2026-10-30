@@ -1332,8 +1332,7 @@ def crear_nota():
 
 @app.route('/descargar_nota/<int:id>')
 def descargar_nota(id):
-    if 'user_id' not in session: return redirect(url_for('login'))
-    db = get_db_connection()
+        db = get_db_connection()
     n = db.execute("SELECT * FROM notas_venta WHERE id = ?", (id,)).fetchone()
     db.close()
     if not n:
