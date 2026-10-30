@@ -950,7 +950,7 @@ class PDFPresupuesto(FPDF):
         try:
             self.set_font('Arial', 'B', 30)
             self.set_text_color(240, 240, 240)
-            texto = "NOTA DE VENTA   NOTA DE VENTA   NOTA DE VENTA"
+            texto = "PRESUPUESTO   PRESUPUESTO   PRESUPUESTO"
             w = self.get_string_width(texto)
             with self.rotation(45, 105, 160):
                 self.text(105 - (w / 2), 160, texto)

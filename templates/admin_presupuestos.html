@@ -114,7 +114,7 @@
                 <td><span class="monto">${{ "{:,.2f}".format(p.total) if p.total else '0.00' }}</span></td>
                 <td style="text-align: center;">
                     <a href="{{ url_for('crear_nota', desde_presupuesto=p.id) }}" class="btn-accion" style="background-color: #27ae60; color: white;" title="Convertir en Nota de Venta">➡️ Nota</a>
-                    
+                    <a href="{{ url_for('descargar_presupuesto', id=p.id) }}" target="_blank" class="btn-accion" style="background-color: #17a2b8; color: white; margin-right: 5px;" title="Ver/Descargar PDF">📄 PDF</a>
                     {% set url_pdf = url_for('descargar_presupuesto', id=p.id, _external=True) %}
                     {% set mensaje_w = "Hola *" ~ (p.cliente if p.cliente else 'Cliente') ~ "*, le compartimos el presupuesto formal de *G-Tek Soluciones Digitales* para su equipo " ~ (p.equipo if p.equipo else '') ~ ". Puede descargarlo aquí: " ~ url_pdf %}
                     <a href="https://wa.me/52{{ p.telefono|string|replace(' ', '')|replace('-', '') if p.telefono else '' }}?text={{ mensaje_w|urlencode }}" target="_blank" class="btn-accion btn-wsp" title="Enviar WhatsApp">📲</a>
