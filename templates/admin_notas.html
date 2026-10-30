@@ -97,7 +97,8 @@
         {% set totales.global_monto = totales.global_monto + m_total %}
         {% set totales.global_cant = totales.global_cant + 1 %}
 
-        {% if f_ano and str_fecha.endswith(f_ano) %}
+        {# Acumulador Año #}
+        {% if f_ano and f_ano in str_fecha %}
             {% set totales.ano_monto = totales.ano_monto + m_total %}
             {% set totales.ano_cant = totales.ano_cant + 1 %}
         {% endif %}
@@ -161,11 +162,16 @@
             </tr>
         </thead>
         <tbody>
-            {% for n in notas %}
-            <tr>
+           {% for n in notas %}
+            <tr data-telefono="{{ n.telefono or '' }}">
                 <td><span class="folio-tag">#{{ 1000 + n.id }}</span></td>
                 <td>{{ n.fecha }}</td>
-                <td><strong>{{ n.cliente }}</strong></td>
+                <td>
+                    <strong>{{ n.cliente }}</strong>
+                    {% if n.telefono %}
+                    <br><small style="color: #64748b; font-size: 11px;">📞 {{ n.telefono }}</small>
+                    {% endif %}
+                </td>
                 <td>{{ n.equipo or 'Equipo no especificado' }}</td>
                 <td>
                     {% set st = n.estatus or 'En Diagnóstico' %}
@@ -208,12 +214,18 @@
 
 <script>
 function filtrarNotas() {
-    const texto = document.getElementById('filtroNotas').value.toLowerCase();
+    const texto = document.getElementById('filtroNotas').value.toLowerCase().replace(/[\s-]/g, '');
     const filas = document.querySelectorAll('#tablaNotas tbody tr');
     
     filas.forEach(fila => {
         const contenido = fila.innerText.toLowerCase();
-        fila.style.display = contenido.includes(texto) ? '' : 'none';
+        const telefono = (fila.getAttribute('data-telefono') || '').toLowerCase().replace(/[\s-]/g, '');
+        
+        if (contenido.includes(texto) || (telefono && telefono.includes(texto))) {
+            fila.style.display = '';
+        } else {
+            fila.style.display = 'none';
+        }
     });
 }
 
