@@ -1120,10 +1120,10 @@ class PDFNotaVenta(FPDF):
         self.set_y(42)
 
     def marca_de_agua(self):
-        self.set_font('Arial', 'B', 28)
-        self.set_text_color(235, 235, 235)
+        self.set_font('Arial', 'B', 36)
+        self.set_text_color(238, 238, 238)
         self.rotate(45, 105, 150)
-        self.text(0, 150, "ESTE NO ES UN COMPROBANTE FISCAL")
+        self.text(-40, 150, "E S T E   N O   E S   U N   C O M P R O B A N T E   F I S C A L")
         self.end_rotate()
 
     def footer(self):
