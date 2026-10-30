@@ -947,15 +947,12 @@ class PDFPresupuesto(FPDF):
         self.set_y(42)
 
     def marca_de_agua(self):
-        try:
-            self.set_font('Arial', 'B', 30)
-            self.set_text_color(240, 240, 240)
-            texto = "PRESUPUESTO   PRESUPUESTO   PRESUPUESTO"
-            w = self.get_string_width(texto)
-            with self.rotation(45, 105, 160):
-                self.text(105 - (w / 2), 160, texto)
-        except Exception:
-            pass
+        self.set_font('Arial', 'B', 28)
+        self.set_text_color(230, 230, 230)
+        # Se imprime de fondo sin causar errores de rotacion
+        self.text(45, 130, "PRESUPUESTO")
+        self.text(45, 175, "PRESUPUESTO")
+        self.text(45, 220, "PRESUPUESTO")
 
     def footer(self):
         self.set_y(-22)
@@ -1108,15 +1105,12 @@ class PDFNotaVenta(FPDF):
         self.set_y(42)
 
     def marca_de_agua(self):
-        try:
-            self.set_font('Arial', 'B', 30)
-            self.set_text_color(240, 240, 240)
-            texto = "ESTE NO ES UN COMPROBANTE FISCAL"
-            w = self.get_string_width(texto)
-            with self.rotation(45, 105, 160):
-                self.text(105 - (w / 2), 160, texto)
-        except Exception:
-            pass
+        self.set_font('Arial', 'B', 24)
+        self.set_text_color(225, 225, 225)
+        # Se imprime de fondo sin causar errores de rotacion
+        self.text(15, 130, "ESTE NO ES UN COMPROBANTE FISCAL")
+        self.text(15, 175, "ESTE NO ES UN COMPROBANTE FISCAL")
+        self.text(15, 220, "ESTE NO ES UN COMPROBANTE FISCAL")
 
     def footer(self):
         self.set_y(-22)
