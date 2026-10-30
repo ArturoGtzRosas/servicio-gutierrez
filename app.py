@@ -896,6 +896,13 @@ class PDFPresupuesto(FPDF):
     def end_rotate(self):
         self._out("Q")
 
+    def marca_de_agua(self):
+        self.set_font('Arial', 'B', 45)
+        self.set_text_color(235, 235, 235)
+        self.rotate(45, 105, 150)
+        self.text(35, 150, "PRESUPUESTO")
+        self.end_rotate()
+
     def header(self):
         # 1. Franja azul institucional idéntica a la Nota de Venta
         self.set_fill_color(24, 43, 73)
@@ -947,12 +954,11 @@ class PDFPresupuesto(FPDF):
         self.set_y(42)
 
     def marca_de_agua(self):
-        self.set_font('Arial', 'B', 28)
-        self.set_text_color(230, 230, 230)
-        # Se imprime de fondo sin causar errores de rotacion
-        self.text(45, 130, "PRESUPUESTO")
-        self.text(45, 175, "PRESUPUESTO")
-        self.text(45, 220, "PRESUPUESTO")
+        self.set_font('Arial', 'B', 45)
+        self.set_text_color(235, 235, 235)
+        self.rotate(45, 105, 150)
+        self.text(35, 150, "PRESUPUESTO")
+        self.end_rotate()
 
     def footer(self):
         self.set_y(-22)
@@ -1054,6 +1060,15 @@ def generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total, id_p
 # =====================================================
 
 class PDFNotaVenta(FPDF):
+    
+    def rotate(self, angle, x=None, y=None):
+        if x is None: x = self.x
+        if y is None: y = self.y
+        self._out(f"q {math.cos(math.radians(angle))} {math.sin(math.radians(angle))} {-math.sin(math.radians(angle))} {math.cos(math.radians(angle))} {x * self.k} {(self.h - y) * self.k} cm 1 0 0 1 {-x * self.k} {-(self.h - y) * self.k} cm")
+
+    def end_rotate(self):
+        self._out("Q")
+        
     def header(self):
         # 1. Franja azul institucional (más estilizada y compacta)
         self.set_fill_color(24, 43, 73)
@@ -1105,12 +1120,11 @@ class PDFNotaVenta(FPDF):
         self.set_y(42)
 
     def marca_de_agua(self):
-        self.set_font('Arial', 'B', 24)
-        self.set_text_color(225, 225, 225)
-        # Se imprime de fondo sin causar errores de rotacion
-        self.text(15, 130, "ESTE NO ES UN COMPROBANTE FISCAL")
-        self.text(15, 175, "ESTE NO ES UN COMPROBANTE FISCAL")
-        self.text(15, 220, "ESTE NO ES UN COMPROBANTE FISCAL")
+        self.set_font('Arial', 'B', 32)
+        self.set_text_color(235, 235, 235)
+        self.rotate(45, 105, 150)
+        self.text(10, 150, "ESTE NO ES UN COMPROBANTE FISCAL")
+        self.end_rotate()
 
     def footer(self):
         self.set_y(-22)
