@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rastreo de Servicio Técnico - G-Tek Soluciones Digitales</title>
+    <style>
+        :root { --azul: #1b305b; --oro: #c5a059; --verde: #27ae60; --fondo: #f4f6f9; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: var(--fondo); margin: 0; padding: 20px 15px; color: #333; }
+        .contenedor { max-width: 650px; margin: 30px auto; background: white; padding: 30px 25px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); border-top: 5px solid var(--oro); }
+        .logo-area { text-align: center; margin-bottom: 25px; }
+        .logo-area h1 { margin: 5px 0; color: var(--azul); font-size: 1.6em; }
+        .logo-area p { margin: 0; color: #666; font-size: 0.9em; }
+        
+        .caja-busqueda { background: #fbfcfd; border: 1px solid #e1e8ed; padding: 20px; border-radius: 8px; margin-bottom: 25px; }
+        .form-busqueda { display: flex; gap: 10px; flex-wrap: wrap; }
+        .input-busqueda { flex: 1; min-width: 200px; padding: 12px 14px; border: 1px solid #cbd5e1; border-radius: 6px; font-size: 15px; outline: none; }
+        .input-busqueda:focus { border-color: var(--azul); }
+        .btn-buscar { background: var(--azul); color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; transition: 0.2s; font-size: 15px; }
+        .btn-buscar:hover { background: #122241; }
+        
+        .tarjeta-resultado { border: 1px solid #e2e8f0; border-radius: 10px; padding: 20px; background: #ffffff; }
+        .encabezado-nota { display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 15px; margin-bottom: 20px; flex-wrap: wrap; gap: 10px; }
+        .folio-titulo { font-size: 1.25em; font-weight: bold; color: var(--azul); }
+        .fecha-sub { font-size: 0.85em; color: #64748b; }
+        
+        /* Insignias de estatus */
+        .badge-estatus { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 13px; font-weight: bold; }
+        .badge-diag { background-color: #fef9c3; color: #854d0e; border: 1px solid #fef08a; }
+        .badge-piezas { background-color: #fef3c7; color: #92400e; border: 1px solid #fde68a; }
+        .badge-proceso { background-color: #dbeafe; color: #1e40af; border: 1px solid #bfdbfe; }
+        .badge-listo { background-color: #d1fae5; color: #065f46; border: 1px solid #a7f3d0; }
+        .badge-entregado { background-color: #f3f4f6; color: #374151; border: 1px solid #e5e7eb; }
+
+        .campo-detalle { margin-bottom: 12px; }
+        .campo-label { font-size: 0.8em; color: #64748b; font-weight: bold; text-transform: uppercase; margin-bottom: 3px; }
+        .campo-valor { font-size: 1em; color: #1e293b; font-weight: 500; }
+
+        .alerta-no { background: #fee2e2; border: 1px solid #fca5a5; color: #991b1b; padding: 15px; border-radius: 8px; text-align: center; font-size: 0.95em; }
+        .pie-contacto { text-align: center; margin-top: 25px; padding-top: 15px; border-top: 1px solid #e2e8f0; font-size: 0.85em; color: #64748b; }
+        .pie-contacto a { color: var(--azul); text-decoration: none; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+<div class="contenedor">
+    <div class="logo-area">
+        <h1>🔍 Rastreo de Servicio Técnico</h1>
+        <p>G-Tek Soluciones Digitales | Consulta el estatus de tu reparación</p>
+    </div>
+
+    <div class="caja-busqueda">
+        <form method="POST" action="{{ url_for('rastreo') }}" class="form-busqueda">
+            <input type="text" name="busqueda" class="input-busqueda" placeholder="Ingresa tu Folio (ej. 1001) o tu Teléfono" value="{{ busqueda }}" required autofocus>
+            <button type="submit" class="btn-buscar">Consultar</button>
+        </form>
+    </div>
+
+    {% if realizada %}
+        {% if nota %}
+            {% set st = nota.estatus or 'En Diagnóstico' %}
+            {% set clase_b = 'badge-diag' %}
+            {% if st == 'Listo para Entrega' %}{% set clase_b = 'badge-listo' %}
+            {% elif st == 'En Proceso' %}{% set clase_b = 'badge-proceso' %}
+            {% elif st == 'En Espera de Refacciones' %}{% set clase_b = 'badge-piezas' %}
+            {% elif st == 'Entregado' %}{% set clase_b = 'badge-entregado' %}
+            {% endif %}
+
+            <div class="tarjeta-resultado">
+                <div class="encabezado-nota">
+                    <div>
+                        <div class="folio-titulo">Orden de Servicio #{{ 1000 + nota.id }}</div>
+                        <div class="fecha-sub">Ingreso: {{ nota.fecha }}</div>
+                    </div>
+                    <div>
+                        <span class="badge-estatus {{ clase_b }}">{{ st }}</span>
+                    </div>
+                </div>
+
+                <div class="campo-detalle">
+                    <div class="campo-label">Cliente</div>
+                    <div class="campo-valor">{{ nota.cliente }}</div>
+                </div>
+
+                <div class="campo-detalle">
+                    <div class="campo-label">Equipo Reportado</div>
+                    <div class="campo-valor">{{ nota.equipo or 'Equipo de cómputo' }}</div>
+                </div>
+
+                <div class="campo-detalle">
+                    <div class="campo-label">Servicio Solicitado / Diagnóstico</div>
+                    <div class="campo-valor">{{ nota.servicio }}</div>
+                </div>
+
+                {% if nota.observaciones %}
+                <div class="campo-detalle">
+                    <div class="campo-label">Observaciones Técnicas</div>
+                    <div class="campo-valor" style="font-size: 0.9em; color: #475569;">{{ nota.observaciones }}</div>
+                </div>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="alerta-no">
+                ❌ No encontramos ninguna orden de servicio asociada a <strong>"{{ busqueda }}"</strong>.<br>
+                Verifica que el folio o número telefónico sea correcto.
+            </div>
+        {% endif %}
+    {% endif %}
+
+    <div class="pie-contacto">
+        ¿Tienes dudas con tu equipo? Contáctanos directamente vía WhatsApp.<br>
+        <a href="{{ url_for('index') }}">← Ir al sitio principal</a>
+    </div>
+</div>
+
+</body>
+</html>

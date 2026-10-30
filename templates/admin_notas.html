@@ -12,7 +12,7 @@
         .btn-nuevo { background: #27ae60; color: white; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px; transition: 0.2s; }
         .btn-nuevo:hover { background: #219150; }
         
-        /* Grid de métricas de caja: Día, Mes, Año, Histórico */
+        /* Grid de métricas de caja */
         .grid-caja { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .card-metrica { background: #fbfcfd; border: 1px solid #e1e8ed; border-radius: 8px; padding: 16px 18px; border-left: 4px solid var(--azul); }
         .card-metrica.dia { border-left-color: #27ae60; background: #f4faf6; }
@@ -44,6 +44,14 @@
         .btn-mail { background: #e67e22; color: white; }
         .btn-del { background: #e74c3c; color: white; border: none; cursor: pointer; }
         .btn-del:hover { background: #c0392b; }
+
+        /* Clases CSS para los estatus (evitan falsos errores de sintaxis en el editor) */
+        .select-estatus { padding: 5px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; border-width: 1px; border-style: solid; cursor: pointer; outline: none; }
+        .st-diag { background-color: #fef9c3; color: #854d0e; border-color: #fef08a; }
+        .st-piezas { background-color: #fef3c7; color: #92400e; border-color: #fde68a; }
+        .st-proceso { background-color: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
+        .st-listo { background-color: #d1fae5; color: #065f46; border-color: #a7f3d0; }
+        .st-entregado { background-color: #f3f4f6; color: #374151; border-color: #e5e7eb; }
     </style>
 </head>
 <body>
@@ -65,7 +73,6 @@
 
     <!-- OBTENCIÓN DE FECHAS ACTUALES -->
     {% set fecha_ahora = dict(dia=none, mes=none, ano=none) %}
-    {# Tomamos la fecha de la nota más reciente como referencia del sistema, o bien la fecha de ejecución #}
     {% if notas and notas|length > 0 %}
         {% set primer_registro = notas[0].fecha %}
         {% set parte_fecha = primer_registro.split(' ')[0] %}
@@ -116,105 +123,4 @@
     <!-- 4 TARJETAS DE CORTE DE CAJA -->
     <div class="grid-caja">
         <div class="card-metrica dia">
-            <div class="card-titulo">📅 Ingresos de Hoy</div>
-            <div class="card-valor verde">${{ "{:,.2f}".format(totales.dia_monto) }}</div>
-            <div class="card-subtext">{{ totales.dia_cant }} servicio(s) hoy ({{ f_dia }})</div>
-        </div>
-
-        <div class="card-metrica mes">
-            <div class="card-titulo">🗓️ Corte del Mes</div>
-            <div class="card-valor">${{ "{:,.2f}".format(totales.mes_monto) }}</div>
-            <div class="card-subtext">{{ totales.mes_cant }} servicio(s) en {{ f_mes }}</div>
-        </div>
-
-        <div class="card-metrica ano">
-            <div class="card-titulo">📈 Corte del Año</div>
-            <div class="card-valor">${{ "{:,.2f}".format(totales.ano_monto) }}</div>
-            <div class="card-subtext">{{ totales.ano_cant }} servicio(s) en {{ f_ano }}</div>
-        </div>
-
-        <div class="card-metrica historico">
-            <div class="card-titulo">💼 Histórico Global</div>
-            <div class="card-valor">${{ "{:,.2f}".format(totales.global_monto) }}</div>
-            <div class="card-subtext">{{ totales.global_cant }} servicios totales cobrados</div>
-        </div>
-    </div>
-
-    <!-- BUSCADOR Y FILTROS RÁPIDOS POR PERIODO -->
-    <div class="controles-barra">
-        <input type="text" id="filtroNotas" onkeyup="filtrarNotas()" placeholder="🔍 Buscar por cliente, folio, equipo, fecha o monto...">
-        <button type="button" class="btn-filtro-rapido" onclick="filtrarPeriodo('{{ f_dia }}')">Hoy</button>
-        <button type="button" class="btn-filtro-rapido" onclick="filtrarPeriodo('{{ f_mes }}')">Este Mes</button>
-        <button type="button" class="btn-filtro-rapido" onclick="filtrarPeriodo('')">Ver Todos</button>
-    </div>
-
-    <table id="tablaNotas">
-        <thead>
-            <tr>
-                <th style="width: 10%;">Folio</th>
-                <th style="width: 16%;">Fecha</th>
-                <th style="width: 22%;">Cliente</th>
-                <th style="width: 22%;">Equipo / Servicio</th>
-                <th style="width: 12%;">Cobrado</th>
-                <th style="width: 18%; text-align: center;">Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for n in notas %}
-            <tr>
-                <td><span class="folio-tag">#{{ 1000 + n.id }}</span></td>
-                <td>{{ n.fecha }}</td>
-                <td><strong>{{ n.cliente }}</strong></td>
-                <td>{{ n.equipo or 'Equipo no especificado' }}</td>
-                <td><span class="monto">${{ "{:,.2f}".format(n.total) }}</span></td>
-                <td style="text-align: center;">
-                    <a href="{{ url_for('descargar_nota', id=n.id) }}" target="_blank" class="btn-accion btn-pdf" title="Descargar PDF">📄 PDF</a>
-                    {% set url_pdf = url_for('descargar_nota', id=n.id, _external=True) %}
-                    {% set mensaje_w = "Hola *" ~ (n.cliente if n.cliente else 'Cliente') ~ "*, le compartimos su comprobante de servicio de *G-Tek Soluciones Digitales*: " ~ url_pdf %}
-                    <a href="https://wa.me/52{{ n.telefono|string|replace(' ', '')|replace('-', '') if n.telefono else '' }}?text={{ mensaje_w|urlencode }}" target="_blank" class="btn-accion btn-wsp" title="Enviar WhatsApp">📲</a>
-                    <a href="javascript:void(0);" data-id="{{ n.id }}" data-email="{{ n.email or '' }}" onclick="enviarPorCorreo(this)" class="btn-accion btn-mail" title="Enviar Correo">✉️</a>
-                    <a href="{{ url_for('borrar_nota', id=n.id) }}" class="btn-accion btn-del" onclick="return confirm('¿Seguro que deseas eliminar permanentemente esta nota de venta?');" title="Eliminar registro">🗑️</a>
-                </td>
-            </tr>
-            {% else %}
-            <tr>
-                <td colspan="6" style="text-align: center; color: #777; padding: 30px;">No hay registros de ventas o servicios en el sistema.</td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
-    <br><br>
-    <a href="{{ url_for('dashboard') }}" style="text-decoration:none; color:var(--azul); font-weight:bold;">← Volver al Panel</a>
-</div>
-
-<script>
-function filtrarNotas() {
-    const texto = document.getElementById('filtroNotas').value.toLowerCase();
-    const filas = document.querySelectorAll('#tablaNotas tbody tr');
-    
-    filas.forEach(fila => {
-        const contenido = fila.innerText.toLowerCase();
-        fila.style.display = contenido.includes(texto) ? '' : 'none';
-    });
-}
-
-function filtrarPeriodo(valor) {
-    document.getElementById('filtroNotas').value = valor;
-    filtrarNotas();
-}
-
-function enviarPorCorreo(btn) {
-    const id = btn.getAttribute('data-id');
-    let email = btn.getAttribute('data-email');
-    
-    if (!email || email.trim() === "") {
-        email = prompt("Esta nota no tiene correo guardado. Introduce el correo al que deseas enviarla:");
-    }
-    
-    if (email && email.trim() !== "") {
-        window.location.href = `/enviar_nota_email/${id}?email_destino=${encodeURIComponent(email.trim())}`;
-    }
-}
-</script>
-</body>
-</html>
+            <div class="card-titulo">

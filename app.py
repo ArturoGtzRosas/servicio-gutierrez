@@ -34,7 +34,7 @@ from flask import send_file
 app = Flask(__name__)
 app.secret_key = 'servicio_gutierrez_master_key_2026'
 
-APP_VERSION = "v2.1.0"
+APP_VERSION = "v2.2.0"
 
 @app.context_processor
 def inject_version():
@@ -121,6 +121,17 @@ def migrar_db_notas_email():
         pass
 
 migrar_db_notas_email()
+
+def migrar_db_notas_estatus():
+    try:
+        conn = get_db_connection()
+        conn.execute("ALTER TABLE notas_venta ADD COLUMN estatus TEXT DEFAULT 'En Diagnóstico'")
+        conn.commit()
+        conn.close()
+    except Exception:
+        pass
+
+migrar_db_notas_estatus()
 
 def init_db_licencias():
     try:
@@ -1268,9 +1279,9 @@ def crear_nota():
         
         db = get_db_connection()
         cur = db.execute('''INSERT INTO notas_venta 
-        (fecha, cliente, direccion, telefono, equipo, servicio, total, observaciones, email) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id''',
-        (datetime.now().strftime("%d/%m/%Y %H:%M"), cliente, direccion, telefono, equipo, serv_resumen, total, observaciones, email))
+        (fecha, cliente, direccion, telefono, equipo, servicio, total, observaciones, email, estatus) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?) RETURNING id''',
+        (datetime.now().strftime("%d/%m/%Y %H:%M"), cliente, direccion, telefono, equipo, serv_resumen, total, observaciones, email, 'En Diagnóstico'))
         row = cur.fetchone()
         nuevo_id = (row['id'] if isinstance(row, dict) else row[0]) if row else 1
         db.commit()
@@ -1723,6 +1734,70 @@ def borrar_licencia_antivirus(id):
     
     flash("Registro de antivirus eliminado.")
     return redirect(url_for('admin_antivirus'))
+@app.route('/actualizar_estatus_nota/<int:id>', methods=['POST'])
+def actualizar_estatus_nota(id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    nuevo_estatus = request.form.get('estatus', '').strip()
+    if nuevo_estatus:
+        db = get_db_connection()
+        db.execute("UPDATE notas_venta SET estatus = ? WHERE id = ?", (nuevo_estatus, id))
+        db.commit()
+        db.close()
+        flash(f"Estatus de la nota #{1000 + id} actualizado a: {nuevo_estatus}")
+
+    return redirect(url_for('ver_notas'))
+
+@app.route('/actualizar_estatus_nota/<int:id>', methods=['POST'])
+def actualizar_estatus_nota(id):
+    if 'user_id' not in session:
+        return redirect(url_for('login'))
+
+    nuevo_estatus = request.form.get('estatus', '').strip()
+    if nuevo_estatus:
+        db = get_db_connection()
+        db.execute("UPDATE notas_venta SET estatus = ? WHERE id = ?", (nuevo_estatus, id))
+        db.commit()
+        db.close()
+        flash(f"Estatus de la nota #{1000 + id} actualizado a: {nuevo_estatus}")
+
+    return redirect(url_for('ver_notas'))
+
+
+# --- RASTREO PÚBLICO DE EQUIPOS ---
+@app.route('/rastreo', methods=['GET', 'POST'])
+def rastreo():
+    nota_encontrada = None
+    busqueda_realizada = False
+    query = ""
+
+    if request.method == 'POST':
+        query = request.form.get('busqueda', '').strip()
+        busqueda_realizada = True
+
+        if query:
+            db = get_db_connection()
+            id_busqueda = None
+            if query.isdigit():
+                num = int(query)
+                id_busqueda = num - 1000 if num > 1000 else num
+
+            if id_busqueda is not None:
+                nota_encontrada = db.execute(
+                    "SELECT * FROM notas_venta WHERE id = ? OR telefono LIKE ? ORDER BY id DESC LIMIT 1",
+                    (id_busqueda, f"%{query}%")
+                ).fetchone()
+            else:
+                nota_encontrada = db.execute(
+                    "SELECT * FROM notas_venta WHERE telefono LIKE ? ORDER BY id DESC LIMIT 1",
+                    (f"%{query}%",)
+                ).fetchone()
+
+            db.close()
+
+    return render_template('rastreo.html', nota=nota_encontrada, busqueda=query, realizada=busqueda_realizada)
+
 
 @app.route('/changelog')
 def changelog():
