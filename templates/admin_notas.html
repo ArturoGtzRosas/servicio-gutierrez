@@ -12,7 +12,6 @@
         .btn-nuevo { background: #27ae60; color: white; padding: 10px 18px; border-radius: 6px; text-decoration: none; font-weight: bold; font-size: 14px; transition: 0.2s; }
         .btn-nuevo:hover { background: #219150; }
         
-        /* Grid de métricas de caja */
         .grid-caja { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-bottom: 25px; }
         .card-metrica { background: #fbfcfd; border: 1px solid #e1e8ed; border-radius: 8px; padding: 16px 18px; border-left: 4px solid var(--azul); }
         .card-metrica.dia { border-left-color: #27ae60; background: #f4faf6; }
@@ -25,7 +24,6 @@
         .card-valor.verde { color: #27ae60; }
         .card-subtext { font-size: 0.75em; color: #777; margin-top: 4px; }
 
-        /* Barra de búsqueda y filtros rápidos */
         .controles-barra { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
         .controles-barra input { flex: 1; min-width: 260px; padding: 10px 14px; border: 1px solid #ccc; border-radius: 6px; font-size: 14px; box-sizing: border-box; }
         .btn-filtro-rapido { background: #eef2f7; color: var(--azul); border: 1px solid #ccd6e4; padding: 9px 14px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px; }
@@ -45,7 +43,6 @@
         .btn-del { background: #e74c3c; color: white; border: none; cursor: pointer; }
         .btn-del:hover { background: #c0392b; }
 
-        /* Clases CSS para los estatus (evitan falsos errores de sintaxis en el editor) */
         .select-estatus { padding: 5px 8px; border-radius: 12px; font-size: 11px; font-weight: bold; border-width: 1px; border-style: solid; cursor: pointer; outline: none; }
         .st-diag { background-color: #fef9c3; color: #854d0e; border-color: #fef08a; }
         .st-piezas { background-color: #fef3c7; color: #92400e; border-color: #fde68a; }
@@ -71,21 +68,20 @@
       {% endif %}
     {% endwith %}
 
-    <!-- OBTENCIÓN DE FECHAS ACTUALES -->
-    {% set fecha_ahora = dict(dia=none, mes=none, ano=none) %}
-    {% if notas and notas|length > 0 %}
-        {% set primer_registro = notas[0].fecha %}
-        {% set parte_fecha = primer_registro.split(' ')[0] %}
+    <!-- OBTENCIÓN DE FECHAS SEGURAS -->
+    {% set f_dia = '' %}
+    {% set f_mes = '' %}
+    {% set f_ano = '' %}
+    {% if notas and notas|length > 0 and notas[0].fecha %}
+        {% set parte_fecha = (notas[0].fecha|string).split(' ')[0] %}
         {% set f_dia = parte_fecha %}
-        {% set f_mes = parte_fecha[3:] %}
-        {% set f_ano = parte_fecha[6:] %}
-    {% else %}
-        {% set f_dia = '' %}
-        {% set f_mes = '' %}
-        {% set f_ano = '' %}
+        {% if parte_fecha|length >= 10 %}
+            {% set f_mes = parte_fecha[3:] %}
+            {% set f_ano = parte_fecha[6:] %}
+        {% endif %}
     {% endif %}
 
-    <!-- CÁLCULO DE TOTALES: DÍA, MES, AÑO E HISTÓRICO -->
+    <!-- CÁLCULO DE TOTALES -->
     {% set totales = namespace(
         dia_monto=0, dia_cant=0,
         mes_monto=0, mes_cant=0,
@@ -95,25 +91,22 @@
 
     {% for n in notas %}
         {% set m_total = n.total or 0 %}
-        {% set f_reg = (n.fecha or '').split(' ')[0] %}
+        {% set str_fecha = (n.fecha or '')|string %}
+        {% set f_reg = str_fecha.split(' ')[0] if ' ' in str_fecha else str_fecha %}
         
-        {# Acumulador Global #}
         {% set totales.global_monto = totales.global_monto + m_total %}
         {% set totales.global_cant = totales.global_cant + 1 %}
 
-        {# Acumulador Año #}
-        {% if f_ano and f_reg.endswith(f_ano) %}
+        {% if f_ano and str_fecha.endswith(f_ano) %}
             {% set totales.ano_monto = totales.ano_monto + m_total %}
             {% set totales.ano_cant = totales.ano_cant + 1 %}
         {% endif %}
 
-        {# Acumulador Mes #}
-        {% if f_mes and f_reg[3:] == f_mes %}
+        {% if f_mes and f_reg|length >= 10 and f_reg[3:] == f_mes %}
             {% set totales.mes_monto = totales.mes_monto + m_total %}
             {% set totales.mes_cant = totales.mes_cant + 1 %}
         {% endif %}
 
-        {# Acumulador Día #}
         {% if f_dia and f_reg == f_dia %}
             {% set totales.dia_monto = totales.dia_monto + m_total %}
             {% set totales.dia_cant = totales.dia_cant + 1 %}
@@ -123,4 +116,124 @@
     <!-- 4 TARJETAS DE CORTE DE CAJA -->
     <div class="grid-caja">
         <div class="card-metrica dia">
-            <div class="card-titulo">
+            <div class="card-titulo">📅 Ingresos de Hoy</div>
+            <div class="card-valor verde">${{ "{:,.2f}".format(totales.dia_monto) }}</div>
+            <div class="card-subtext">{{ totales.dia_cant }} servicio(s) hoy ({{ f_dia }})</div>
+        </div>
+
+        <div class="card-metrica mes">
+            <div class="card-titulo">🗓️ Corte del Mes</div>
+            <div class="card-valor">${{ "{:,.2f}".format(totales.mes_monto) }}</div>
+            <div class="card-subtext">{{ totales.mes_cant }} servicio(s) en {{ f_mes }}</div>
+        </div>
+
+        <div class="card-metrica ano">
+            <div class="card-titulo">📈 Corte del Año</div>
+            <div class="card-valor">${{ "{:,.2f}".format(totales.ano_monto) }}</div>
+            <div class="card-subtext">{{ totales.ano_cant }} servicio(s) en {{ f_ano }}</div>
+        </div>
+
+        <div class="card-metrica historico">
+            <div class="card-titulo">💼 Histórico Global</div>
+            <div class="card-valor">${{ "{:,.2f}".format(totales.global_monto) }}</div>
+            <div class="card-subtext">{{ totales.global_cant }} servicios totales cobrados</div>
+        </div>
+    </div>
+
+    <!-- BUSCADOR Y FILTROS RÁPIDOS -->
+    <div class="controles-barra">
+        <input type="text" id="filtroNotas" onkeyup="filtrarNotas()" placeholder="🔍 Buscar por cliente, folio, equipo, fecha o monto...">
+        <button type="button" class="btn-filtro-rapido" onclick="filtrarPeriodo('{{ f_dia }}')">Hoy</button>
+        <button type="button" class="btn-filtro-rapido" onclick="filtrarPeriodo('{{ f_mes }}')">Este Mes</button>
+        <button type="button" class="btn-filtro-rapido" onclick="filtrarPeriodo('')">Ver Todos</button>
+    </div>
+
+    <table id="tablaNotas">
+        <thead>
+            <tr>
+                <th style="width: 8%;">Folio</th>
+                <th style="width: 13%;">Fecha</th>
+                <th style="width: 18%;">Cliente</th>
+                <th style="width: 18%;">Equipo / Servicio</th>
+                <th style="width: 15%;">Estatus</th>
+                <th style="width: 10%;">Cobrado</th>
+                <th style="width: 18%; text-align: center;">Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for n in notas %}
+            <tr>
+                <td><span class="folio-tag">#{{ 1000 + n.id }}</span></td>
+                <td>{{ n.fecha }}</td>
+                <td><strong>{{ n.cliente }}</strong></td>
+                <td>{{ n.equipo or 'Equipo no especificado' }}</td>
+                <td>
+                    {% set st = n.estatus or 'En Diagnóstico' %}
+                    {% set clase_st = 'st-diag' %}
+                    {% if st == 'Listo para Entrega' %}{% set clase_st = 'st-listo' %}
+                    {% elif st == 'En Proceso' %}{% set clase_st = 'st-proceso' %}
+                    {% elif st == 'En Espera de Refacciones' %}{% set clase_st = 'st-piezas' %}
+                    {% elif st == 'Entregado' %}{% set clase_st = 'st-entregado' %}
+                    {% endif %}
+                    <form action="{{ url_for('actualizar_estatus_nota', id=n.id) }}" method="POST" style="margin: 0;">
+                        <select name="estatus" onchange="this.form.submit()" class="select-estatus {{ clase_st }}">
+                            <option value="En Diagnóstico" {% if st == 'En Diagnóstico' %}selected{% endif %}>🟡 En Diagnóstico</option>
+                            <option value="En Espera de Refacciones" {% if st == 'En Espera de Refacciones' %}selected{% endif %}>🟠 Esperando Piezas</option>
+                            <option value="En Proceso" {% if st == 'En Proceso' %}selected{% endif %}>🔵 En Proceso</option>
+                            <option value="Listo para Entrega" {% if st == 'Listo para Entrega' %}selected{% endif %}>🟢 Listo para Entrega</option>
+                            <option value="Entregado" {% if st == 'Entregado' %}selected{% endif %}>⚪ Entregado</option>
+                        </select>
+                    </form>
+                </td>
+                <td><span class="monto">${{ "{:,.2f}".format(n.total or 0) }}</span></td>
+                <td style="text-align: center;">
+                    <a href="{{ url_for('descargar_nota', id=n.id) }}" target="_blank" class="btn-accion btn-pdf" title="Descargar PDF">📄 PDF</a>
+                    {% set url_pdf = url_for('descargar_nota', id=n.id, _external=True) %}
+                    {% set mensaje_w = "Hola *" ~ (n.cliente if n.cliente else 'Cliente') ~ "*, le compartimos su comprobante de servicio de *G-Tek Soluciones Digitales*: " ~ url_pdf %}
+                    <a href="https://wa.me/52{{ n.telefono|string|replace(' ', '')|replace('-', '') if n.telefono else '' }}?text={{ mensaje_w|urlencode }}" target="_blank" class="btn-accion btn-wsp" title="Enviar WhatsApp">📲</a>
+                    <a href="javascript:void(0);" data-id="{{ n.id }}" data-email="{{ n.email or '' }}" onclick="enviarPorCorreo(this)" class="btn-accion btn-mail" title="Enviar Correo">✉️</a>
+                    <a href="{{ url_for('borrar_nota', id=n.id) }}" class="btn-accion btn-del" onclick="return confirm('¿Seguro que deseas eliminar permanentemente esta nota de venta?');" title="Eliminar registro">🗑️</a>
+                </td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="7" style="text-align: center; color: #777; padding: 30px;">No hay registros de ventas o servicios en el sistema.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <br><br>
+    <a href="{{ url_for('dashboard') }}" style="text-decoration:none; color:var(--azul); font-weight:bold;">← Volver al Panel</a>
+</div>
+
+<script>
+function filtrarNotas() {
+    const texto = document.getElementById('filtroNotas').value.toLowerCase();
+    const filas = document.querySelectorAll('#tablaNotas tbody tr');
+    
+    filas.forEach(fila => {
+        const contenido = fila.innerText.toLowerCase();
+        fila.style.display = contenido.includes(texto) ? '' : 'none';
+    });
+}
+
+function filtrarPeriodo(valor) {
+    document.getElementById('filtroNotas').value = valor;
+    filtrarNotas();
+}
+
+function enviarPorCorreo(btn) {
+    const id = btn.getAttribute('data-id');
+    let email = btn.getAttribute('data-email');
+    
+    if (!email || email.trim() === "") {
+        email = prompt("Esta nota no tiene correo guardado. Introduce el correo al que deseas enviarla:");
+    }
+    
+    if (email && email.trim() !== "") {
+        window.location.href = `/enviar_nota_email/${id}?email_destino=${encodeURIComponent(email.trim())}`;
+    }
+}
+</script>
+</body>
+</html>
