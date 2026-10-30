@@ -1123,7 +1123,7 @@ class PDFNotaVenta(FPDF):
         self.set_font('Arial', 'B', 28)
         self.set_text_color(235, 235, 235)
         self.rotate(45, 105, 150)
-        self.text(-12, 150, "ESTE NO ES UN COMPROBANTE FISCAL")
+        self.text(-08, 150, "ESTE NO ES UN COMPROBANTE FISCAL")
         self.end_rotate()
 
     def footer(self):
