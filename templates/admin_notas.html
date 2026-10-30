@@ -195,7 +195,8 @@
                 <td style="text-align: center;">
                     <a href="{{ url_for('descargar_nota', id=n.id) }}" target="_blank" class="btn-accion btn-pdf" title="Descargar PDF">📄 PDF</a>
                     {% set url_pdf = url_for('descargar_nota', id=n.id, _external=True) %}
-                    {% set mensaje_w = "Hola *" ~ (n.cliente if n.cliente else 'Cliente') ~ "*, le compartimos su comprobante de servicio de *G-Tek Soluciones Digitales*: " ~ url_pdf %}
+                    {% set url_rastreo = url_for('rastreo', _external=True) %}
+                    {% set mensaje_w = "Hola *" ~ (n.cliente if n.cliente else 'Cliente') ~ "*, le compartimos su comprobante de *G-Tek Soluciones Digitales*: " ~ url_pdf ~ "\n\nPuede consultar el estatus de su equipo en tiempo real aquí: " ~ url_rastreo ~ " con su Folio #" ~ (1000 + n.id) %}
                     <a href="https://wa.me/52{{ n.telefono|string|replace(' ', '')|replace('-', '') if n.telefono else '' }}?text={{ mensaje_w|urlencode }}" target="_blank" class="btn-accion btn-wsp" title="Enviar WhatsApp">📲</a>
                     <a href="javascript:void(0);" data-id="{{ n.id }}" data-email="{{ n.email or '' }}" onclick="enviarPorCorreo(this)" class="btn-accion btn-mail" title="Enviar Correo">✉️</a>
                     <a href="{{ url_for('borrar_nota', id=n.id) }}" class="btn-accion btn-del" onclick="return confirm('¿Seguro que deseas eliminar permanentemente esta nota de venta?');" title="Eliminar registro">🗑️</a>
