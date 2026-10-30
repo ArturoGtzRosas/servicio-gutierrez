@@ -1734,20 +1734,6 @@ def borrar_licencia_antivirus(id):
     
     flash("Registro de antivirus eliminado.")
     return redirect(url_for('admin_antivirus'))
-@app.route('/actualizar_estatus_nota/<int:id>', methods=['POST'])
-def actualizar_estatus_nota(id):
-    if 'user_id' not in session:
-        return redirect(url_for('login'))
-
-    nuevo_estatus = request.form.get('estatus', '').strip()
-    if nuevo_estatus:
-        db = get_db_connection()
-        db.execute("UPDATE notas_venta SET estatus = ? WHERE id = ?", (nuevo_estatus, id))
-        db.commit()
-        db.close()
-        flash(f"Estatus de la nota #{1000 + id} actualizado a: {nuevo_estatus}")
-
-    return redirect(url_for('ver_notas'))
 
 @app.route('/actualizar_estatus_nota/<int:id>', methods=['POST'])
 def actualizar_estatus_nota(id):
