@@ -1,50 +1,104 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Solicitar Cotización - G-Tek Soluciones Digitales</title>
     <style>
-        :root { --azul: #1f3a5f; --oro: #c5a356; }
-        body { 
-            font-family: 'Segoe UI', sans-serif; 
-            background: #f4f4f4; 
-            margin: 0; 
-            display: flex; 
+        :root {
+            --azul: #1f3a5f;
+            --oro: #c5a356;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f4f4f4;
+            margin: 0;
+            display: flex;
             flex-direction: column;
             min-height: 100vh;
         }
-        
-        nav { background: var(--azul); padding: 15px; display: flex; justify-content: center; gap: 20px; border-bottom: 4px solid var(--oro); }
-        nav a { color: white; text-decoration: none; font-weight: bold; font-size: 0.9em; }
 
-        .container-flex { flex: 1; display: flex; align-items: center; justify-content: center; padding: 25px 15px; }
+        nav {
+            background: var(--azul);
+            padding: 15px;
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            border-bottom: 4px solid var(--oro);
+        }
 
-        .box { 
-            width: 100%; 
-            max-width: 540px; 
-            background: white; 
-            padding: 35px; 
-            border-radius: 15px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.08); 
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .container-flex {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 25px 15px;
+        }
+
+        .box {
+            width: 100%;
+            max-width: 540px;
+            background: white;
+            padding: 35px;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08);
             box-sizing: border-box;
             text-align: center;
             border-top: 5px solid var(--oro);
         }
 
-        h2 { color: var(--azul); margin-top: 0; font-size: 1.7em; margin-bottom: 8px; }
-        p.subtitle { color: #666; font-size: 0.9em; margin-bottom: 20px; }
+        h2 {
+            color: var(--azul);
+            margin-top: 0;
+            font-size: 1.7em;
+            margin-bottom: 8px;
+        }
 
-        .form-group { text-align: left; margin-bottom: 16px; }
-        label { display: block; margin-bottom: 6px; color: var(--azul); font-weight: bold; font-size: 0.88em; }
-        
-        input, select { 
-            width: 100%; padding: 11px; border: 1px solid #ccc; 
-            border-radius: 8px; box-sizing: border-box; font-size: 15px; 
+        p.subtitle {
+            color: #666;
+            font-size: 0.9em;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            text-align: left;
+            margin-bottom: 16px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 6px;
+            color: var(--azul);
+            font-weight: bold;
+            font-size: 0.88em;
+        }
+
+        input,
+        select {
+            width: 100%;
+            padding: 11px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            font-size: 15px;
             background-color: #fff;
         }
 
-        input:focus, select:focus { outline: none; border-color: var(--oro); box-shadow: 0 0 5px rgba(197, 163, 86, 0.4); }
+        input:focus,
+        select:focus {
+            outline: none;
+            border-color: var(--oro);
+            box-shadow: 0 0 5px rgba(197, 163, 86, 0.4);
+        }
 
         .campo-especifico {
             background: #fbfbfd;
@@ -65,18 +119,30 @@
         .campo-especifico .sub-row {
             margin-bottom: 10px;
         }
+
         .campo-especifico .sub-row:last-child {
             margin-bottom: 0;
         }
 
-        .btn-enviar { 
-            width: 100%; background: var(--azul); color: var(--oro); 
-            padding: 14px; border: none; border-radius: 8px; 
-            font-weight: bold; font-size: 1em; cursor: pointer; 
-            transition: 0.3s; margin-top: 10px; text-transform: uppercase;
+        .btn-enviar {
+            width: 100%;
+            background: var(--azul);
+            color: var(--oro);
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-weight: bold;
+            font-size: 1em;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+            text-transform: uppercase;
         }
 
-        .btn-enviar:hover { background: #162a45; transform: translateY(-2px); }
+        .btn-enviar:hover {
+            background: #162a45;
+            transform: translateY(-2px);
+        }
 
         .leyenda-legal {
             margin-top: 20px;
@@ -90,313 +156,374 @@
             line-height: 1.4;
         }
 
-        .back-link { display: block; margin-top: 18px; color: var(--azul); text-decoration: none; font-size: 0.88em; font-weight: bold; }
+        .back-link {
+            display: block;
+            margin-top: 18px;
+            color: var(--azul);
+            text-decoration: none;
+            font-size: 0.88em;
+            font-weight: bold;
+        }
     </style>
 </head>
+
 <body>
 
-<nav>
-    <a href="{{ url_for('index') }}">INICIO</a>
-    <a href="{{ url_for('servicios') }}">NUESTROS SERVICIOS</a>
-    <a href="{{ url_for('cotizar_cliente') }}" style="color: var(--oro);">COTIZA</a>
-    <a href="{{ url_for('cotizador') }}">CALCULADORA</a>
-    <a href="{{ url_for('contacto') }}">CONTACTO</a>
-    <a href="{{ url_for('login') }}">ADMIN</a>
-</nav>
+    <nav>
+        <a href="{{ url_for('index') }}">INICIO</a>
+        <a href="{{ url_for('servicios') }}">NUESTROS SERVICIOS</a>
+        <a href="{{ url_for('cotizar_cliente') }}" style="color: var(--oro);">COTIZA</a>
+        <a href="{{ url_for('cotizador') }}">CALCULADORA</a>
+        <a href="{{ url_for('contacto') }}">CONTACTO</a>
+        <a href="{{ url_for('login') }}">ADMIN</a>
+    </nav>
 
-<div class="container-flex">
-    <div class="box">
-        <h2>Solicitud de Cotización</h2>
-        <p class="subtitle">Selecciona tu servicio y especifica los detalles técnicos de tu equipo.</p>
-        
-        <form action="{{ url_for('procesar_cotizacion') }}" method="POST" onsubmit="prepararEnvio()">
-            
-            <!-- Datos del cliente -->
-            <div class="form-group">
-                <label>Nombre Completo:</label>
-                <input type="text" name="nombre" required placeholder="Ej: Juan Pérez">
+    <div class="container-flex">
+        <div class="box">
+            <h2>Solicitud de Cotización</h2>
+            <p class="subtitle">Selecciona tu servicio y especifica los detalles técnicos de tu equipo.</p>
+
+            <form action="{{ url_for('procesar_cotizacion') }}" method="POST" onsubmit="prepararEnvio()">
+
+                <!-- Datos del cliente -->
+                <div class="form-group">
+                    <label>Nombre Completo:</label>
+                    <input type="text" name="nombre" required placeholder="Ej: Juan Pérez">
+                </div>
+
+                <div class="form-group">
+                    <label>Teléfono / WhatsApp:</label>
+                    <input type="tel" name="telefono" id="input_telefono" required placeholder="Ej: 55 1234 5678">
+                </div>
+
+                <div class="form-group">
+                    <label>Correo Electrónico:</label>
+                    <input type="email" name="correo" id="input_correo" required placeholder="Ej: cliente@correo.com">
+                </div>
+
+                <!-- Menú principal de servicios -->
+                <div class="form-group">
+                    <label>Servicio Requerido:</label>
+                    <select name="servicio_base" id="select_servicio" onchange="mostrarOpcionesServicio()">
+                        <option value="">-- Selecciona un servicio --</option>
+                        <option value="SSD">Instalación / Aumento de Disco SSD</option>
+                        <option value="RAM">Aumento de Memoria RAM</option>
+                        <option value="Pantalla">Cambio de Pantalla / Display</option>
+                        <option value="Bateria">Cambio de Batería</option>
+                        <option value="SO">Instalación de Sistema Operativo</option>
+                        <option value="Software">Instalación de Software / Programas</option>
+                        <option value="Mantenimiento">Limpieza Interna y Pasta Térmica</option>
+                        <option value="equipos" {% if request.args.get('servicio')=='equipos' %}selected{% endif %}>Venta de Equipos de Cómputo Nuevos</option>
+                        <option value="cctv" {% if request.args.get('servicio')=='cctv' %}selected{% endif %}>Instalación de Videovigilancia (CCTV)</option>
+                    </select>
+                </div>
+
+                <!-- 1. Opciones para SSD -->
+                <div id="opc_SSD" class="campo-especifico">
+                    <div class="sub-row">
+                        <label>Capacidad de Almacenamiento:</label>
+                        <select id="ssd_capacidad">
+                            <option value="240GB / 256GB">240 GB / 256 GB (Uso estándar)</option>
+                            <option value="480GB / 512GB">480 GB / 512 GB (Recomendado)</option>
+                            <option value="1TB">1 TB (Alto almacenamiento)</option>
+                            <option value="2TB">2 TB (Profesional / Gaming)</option>
+                        </select>
+                    </div>
+                    <div class="sub-row">
+                        <label>Tipo / Formato de SSD:</label>
+                        <select id="ssd_tipo">
+                            <option value="SSD 2.5 SATA">SATA 2.5" (Laptop o PC convencional)</option>
+                            <option value="SSD M.2 NVMe">M.2 NVMe PCIe (Alta velocidad)</option>
+                            <option value="No estoy seguro (requiere diagnóstico)">No estoy seguro / A revisión</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 2. Opciones para RAM -->
+                <div id="opc_RAM" class="campo-especifico">
+                    <div class="sub-row">
+                        <label>Tipo de Equipo:</label>
+                        <select id="ram_tipo">
+                            <option value="Laptop (SO-DIMM)">Laptop (SO-DIMM)</option>
+                            <option value="Escritorio (UDIMM)">PC Escritorio (UDIMM)</option>
+                        </select>
+                    </div>
+                    <div class="sub-row">
+                        <label>Capacidad a la que deseas subir:</label>
+                        <select id="ram_capacidad">
+                            <option value="Subir a 8 GB">Aumento a 8 GB</option>
+                            <option value="Subir a 16 GB">Aumento a 16 GB (Recomendado)</option>
+                            <option value="Subir a 32 GB">Aumento a 32 GB (Profesional / Render)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 3. Opciones para Pantalla -->
+                <div id="opc_Pantalla" class="campo-especifico">
+                    <div class="sub-row">
+                        <label>Tipo de Equipo:</label>
+                        <select id="pantalla_tipo">
+                            <option value="Laptop">Laptop convencional</option>
+                            <option value="All-in-One">Computadora Todo en Uno (All-in-One)</option>
+                        </select>
+                    </div>
+                    <div class="sub-row">
+                        <label>Marca:</label>
+                        <select id="pantalla_marca">
+                            <option value="HP">HP</option>
+                            <option value="Dell">Dell</option>
+                            <option value="Lenovo">Lenovo</option>
+                            <option value="ASUS">ASUS</option>
+                            <option value="Acer">Acer</option>
+                            <option value="Apple MacBook">Apple MacBook</option>
+                            <option value="Otra marca">Otra marca</option>
+                        </select>
+                    </div>
+                    <div class="sub-row">
+                        <label>Tamaño aprox. de pantalla:</label>
+                        <select id="pantalla_tamano">
+                            <option value="14.0 pulgadas">14.0 pulgadas</option>
+                            <option value="15.6 pulgadas">15.6 pulgadas (La más común)</option>
+                            <option value="13.3 pulgadas">13.3 pulgadas</option>
+                            <option value="17.3 pulgadas o especial">17.3 pulgadas / Especial</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 4. Opciones para Batería -->
+                <div id="opc_Bateria" class="campo-especifico">
+                    <div class="sub-row">
+                        <label>Tipo de Batería:</label>
+                        <select id="bateria_tipo">
+                            <option value="Interna (Integrada)">Batería Interna (Sellada dentro del equipo)</option>
+                            <option value="Externa (Desmontable)">Batería Externa (Removible con seguro)</option>
+                        </select>
+                    </div>
+                    <div class="sub-row">
+                        <label>Marca:</label>
+                        <select id="bateria_marca">
+                            <option value="HP">HP</option>
+                            <option value="Dell">Dell</option>
+                            <option value="Lenovo">Lenovo</option>
+                            <option value="ASUS">ASUS</option>
+                            <option value="Acer">Acer</option>
+                            <option value="Apple MacBook">Apple MacBook</option>
+                            <option value="Otra marca">Otra marca</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 5. Opciones para Sistema Operativo -->
+                <div id="opc_SO" class="campo-especifico">
+                    <div class="sub-row">
+                        <label>Sistema Operativo deseado:</label>
+                        <select id="so_version">
+                            <option value="Windows 11 Pro 64-bit">Windows 11 Pro (64 bits)</option>
+                            <option value="Windows 10 Pro 64-bit">Windows 10 Pro (64 bits)</option>
+                            <option value="Windows 10 LTSC (Bajos recursos)">Windows 10 LTSC (Ligero para equipos lentos)</option>
+                            <option value="Linux Mint">Linux Mint (Fácil y ligero)</option>
+                            <option value="Ubuntu LTS">Ubuntu LTS (Estable / Desarrollador)</option>
+                        </select>
+                    </div>
+                    <div class="sub-row">
+                        <label>¿Requiere Respaldo de Archivos?:</label>
+                        <select id="so_respaldo">
+                            <option value="Sin respaldo (Formateo limpio)">Sin respaldo previo (Instalación limpia directa)</option>
+                            <option value="Con respaldo completo de información">Con respaldo de archivos y fotos previo</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 6. Opciones para Software -->
+                <div id="opc_Software" class="campo-especifico">
+                    <div class="sub-row">
+                        <label>Categoría de Software:</label>
+                        <select id="soft_categoria">
+                            <option value="Ofimática (Microsoft Office / 365)">Paquetería Office (Word, Excel, PowerPoint)</option>
+                            <option value="Antivirus y Protección Corporativa">Antivirus y Seguridad</option>
+                            <option value="Diseño (Adobe Photoshop / Illustrator)">Diseño Gráfico (Adobe Suite)</option>
+                            <option value="Arquitectura e Ingeniería (AutoCAD)">Arquitectura / Planos (AutoCAD)</option>
+                            <option value="Paquete básico utilitario (PDF, compresores, navegadores)">Paquete utilitario básico (PDF, WinRAR, navegadores)</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 7. Opciones para Mantenimiento -->
+                <div id="opc_Mantenimiento" class="campo-especifico">
+                    <div class="sub-row">
+                        <label>Tipo de Computadora:</label>
+                        <select id="mant_tipo">
+                            <option value="Laptop estándar">Laptop tradicional / oficina</option>
+                            <option value="Laptop Gamer / Alto rendimiento">Laptop Gamer (Doble ventilador / disipador robusto)</option>
+                            <option value="PC Escritorio estándar">Gabinete PC Escritorio tradicional</option>
+                            <option value="PC Escritorio Gamer / Workstation">PC Gamer / Workstation (Disipador torre / líquido)</option>
+                        </select>
+                    </div>
+                    <div class="sub-row">
+                        <small style="color: #666;">Incluye sopleteado a presión, limpieza de placa, lubricación de ventiladores y cambio de compuesto térmico de alta conductividad.</small>
+                    </div>
+                </div>
+
+                <!-- 8. Opciones para Equipos Nuevos -->
+                <div id="opc_equipos" class="campo-especifico">
+                    <div class="sub-row">
+                        <label>Tipo de Equipo requerido:</label>
+                        <select id="equipos_categoria">
+                            <option value="PC de Escritorio (Oficina / Escolar)">PC G-Tek Home & Office (Escritorio)</option>
+                            <option value="Laptop Multimarca (HP, Dell, Lenovo, Asus)">Laptop Multimarca (HP, Dell, Lenovo, ASUS)</option>
+                            <option value="Ensamble a Medida / Alto Rendimiento">Ensamble a Medida / Alto Rendimiento (Pro / Gaming)</option>
+                        </select>
+                    </div>
+                    <div class="sub-row">
+                        <label>Uso principal previsto:</label>
+                        <select id="equipos_uso">
+                            <option value="Trabajo administrativo y escolar">Trabajo administrativo, escolar y navegación</option>
+                            <option value="Comercio / Punto de venta">Comercio, facturación y punto de venta</option>
+                            <option value="Diseño gráfico / Edición multimedia">Diseño gráfico y edición multimedia</option>
+                            <option value="Ingeniería / Render / Gaming">Ingeniería, arquitectura, render o gaming</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- 9. Opciones para Videovigilancia (CCTV) -->
+                <div id="opc_cctv" class="campo-especifico">
+                    <div class="sub-row">
+                        <label>Sistema de Videovigilancia requerido:</label>
+                        <select id="cctv_kit">
+                            <option value="Kit 4 Cámaras Full HD">Kit 4 Cámaras Full HD (Hogar / Negocio Pequeño)</option>
+                            <option value="Kit 8 Cámaras Full HD">Kit 8 Cámaras Full HD (Escuelas / Locales Comerciales)</option>
+                            <option value="Sistema 16 Canales Pro">Sistema 16 Canales Pro (Empresarial / Institucional)</option>
+                            <option value="Mantenimiento o Reubicación de Cámaras">Mantenimiento o Reubicación de Cámaras existentes</option>
+                        </select>
+                    </div>
+                    <div class="sub-row">
+                        <label>Tipo de inmueble para instalación:</label>
+                        <select id="cctv_inmueble">
+                            <option value="Casa / Residencia">Casa o Residencia</option>
+                            <option value="Local comercial / Oficina">Local comercial u Oficina</option>
+                            <option value="Plantel escolar / Jardín de niños">Plantel escolar / Jardín de niños</option>
+                            <option value="Bodega / Terreno industrial">Bodega o Área industrial</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Modelo del equipo -->
+                <div class="form-group">
+                    <label>Marca y Modelo exacto del equipo (o detalles del inmueble):</label>
+                    <input type="text" id="input_modelo" required placeholder="Ej: HP Pavilion 15-dw1085la / Local 2 plantas / Casa particular">
+                </div>
+
+                <!-- Campos ocultos para envio -->
+                <input type="hidden" name="servicio" id="hidden_servicio">
+                <input type="hidden" name="modelo" id="hidden_modelo">
+
+                <button type="submit" class="btn-enviar">Solicitar Cotización y Agendar</button>
+            </form>
+
+            <div class="leyenda-legal">
+                <strong>Nota importante:</strong> Este registro es un presupuesto preliminar y agendamiento de recepción. El costo final se confirmará únicamente tras la inspección física o levantamiento técnico de servicio.
             </div>
 
-            <div class="form-group">
-                <label>Teléfono / WhatsApp:</label>
-                <input type="tel" name="telefono" id="input_telefono" required placeholder="Ej: 55 1234 5678">
-            </div>
-
-            <div class="form-group">
-                <label>Correo Electrónico:</label>
-                <input type="email" name="correo" id="input_correo" required placeholder="Ej: cliente@correo.com">
-            </div>
-
-            <!-- Menú principal de servicios -->
-            <div class="form-group">
-                <label>Servicio Requerido:</label>
-                <select name="servicio_base" id="select_servicio" onchange="mostrarOpcionesServicio()">
-                    <option value="">-- Selecciona un servicio --</option>
-                    <option value="SSD">Instalación / Aumento de Disco SSD</option>
-                    <option value="RAM">Aumento de Memoria RAM</option>
-                    <option value="Pantalla">Cambio de Pantalla / Display</option>
-                    <option value="Bateria">Cambio de Batería</option>
-                    <option value="SO">Instalación de Sistema Operativo</option>
-                    <option value="Software">Instalación de Software / Programas</option>
-                    <option value="Mantenimiento">Limpieza Interna y Pasta Térmica</option>
-                    <option value="cctv" {% if request.args.get('servicio') == 'cctv' %}selected{% endif %}>Instalación de Videovigilancia (CCTV)</option>
-                    <option value="equipos" {% if request.args.get('servicio') == 'equipos' %}selected{% endif %}>Venta de Equipos de Cómputo Nuevos</option>
-                    <option value="cctv" {% if request.args.get('servicio') == 'cctv' %}selected{% endif %}>Instalación de Videovigilancia (CCTV)</option>
-                </select>
-            </div>
-
-            <!-- 1. Opciones para SSD -->
-            <div id="opc_SSD" class="campo-especifico">
-                <div class="sub-row">
-                    <label>Capacidad de Almacenamiento:</label>
-                    <select id="ssd_capacidad">
-                        <option value="240GB / 256GB">240 GB / 256 GB (Uso estándar)</option>
-                        <option value="480GB / 512GB">480 GB / 512 GB (Recomendado)</option>
-                        <option value="1TB">1 TB (Alto almacenamiento)</option>
-                        <option value="2TB">2 TB (Profesional / Gaming)</option>
-                    </select>
-                </div>
-                <div class="sub-row">
-                    <label>Tipo / Formato de SSD:</label>
-                    <select id="ssd_tipo">
-                        <option value="SSD 2.5 SATA">SATA 2.5" (Laptop o PC convencional)</option>
-                        <option value="SSD M.2 NVMe">M.2 NVMe PCIe (Alta velocidad)</option>
-                        <option value="No estoy seguro (requiere diagnóstico)">No estoy seguro / A revisión</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- 2. Opciones para RAM -->
-            <div id="opc_RAM" class="campo-especifico">
-                <div class="sub-row">
-                    <label>Tipo de Equipo:</label>
-                    <select id="ram_tipo">
-                        <option value="Laptop (SO-DIMM)">Laptop (SO-DIMM)</option>
-                        <option value="Escritorio (UDIMM)">PC Escritorio (UDIMM)</option>
-                    </select>
-                </div>
-                <div class="sub-row">
-                    <label>Capacidad a la que deseas subir:</label>
-                    <select id="ram_capacidad">
-                        <option value="Subir a 8 GB">Aumento a 8 GB</option>
-                        <option value="Subir a 16 GB">Aumento a 16 GB (Recomendado)</option>
-                        <option value="Subir a 32 GB">Aumento a 32 GB (Profesional / Render)</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- 3. Opciones para Pantalla -->
-            <div id="opc_Pantalla" class="campo-especifico">
-                <div class="sub-row">
-                    <label>Tipo de Equipo:</label>
-                    <select id="pantalla_tipo">
-                        <option value="Laptop">Laptop convencional</option>
-                        <option value="All-in-One">Computadora Todo en Uno (All-in-One)</option>
-                    </select>
-                </div>
-                <div class="sub-row">
-                    <label>Marca:</label>
-                    <select id="pantalla_marca">
-                        <option value="HP">HP</option>
-                        <option value="Dell">Dell</option>
-                        <option value="Lenovo">Lenovo</option>
-                        <option value="ASUS">ASUS</option>
-                        <option value="Acer">Acer</option>
-                        <option value="Apple MacBook">Apple MacBook</option>
-                        <option value="Otra marca">Otra marca</option>
-                    </select>
-                </div>
-                <div class="sub-row">
-                    <label>Tamaño aprox. de pantalla:</label>
-                    <select id="pantalla_tamano">
-                        <option value="14.0 pulgadas">14.0 pulgadas</option>
-                        <option value="15.6 pulgadas">15.6 pulgadas (La más común)</option>
-                        <option value="13.3 pulgadas">13.3 pulgadas</option>
-                        <option value="17.3 pulgadas o especial">17.3 pulgadas / Especial</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- 4. Opciones para Batería -->
-            <div id="opc_Bateria" class="campo-especifico">
-                <div class="sub-row">
-                    <label>Tipo de Batería:</label>
-                    <select id="bateria_tipo">
-                        <option value="Interna (Integrada)">Batería Interna (Sellada dentro del equipo)</option>
-                        <option value="Externa (Desmontable)">Batería Externa (Removible con seguro)</option>
-                    </select>
-                </div>
-                <div class="sub-row">
-                    <label>Marca:</label>
-                    <select id="bateria_marca">
-                        <option value="HP">HP</option>
-                        <option value="Dell">Dell</option>
-                        <option value="Lenovo">Lenovo</option>
-                        <option value="ASUS">ASUS</option>
-                        <option value="Acer">Acer</option>
-                        <option value="Apple MacBook">Apple MacBook</option>
-                        <option value="Otra marca">Otra marca</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- 5. Opciones para Sistema Operativo -->
-            <div id="opc_SO" class="campo-especifico">
-                <div class="sub-row">
-                    <label>Sistema Operativo deseado:</label>
-                    <select id="so_version">
-                        <option value="Windows 11 Pro 64-bit">Windows 11 Pro (64 bits)</option>
-                        <option value="Windows 10 Pro 64-bit">Windows 10 Pro (64 bits)</option>
-                        <option value="Windows 10 LTSC (Bajos recursos)">Windows 10 LTSC (Ligero para equipos lentos)</option>
-                        <option value="Linux Mint">Linux Mint (Fácil y ligero)</option>
-                        <option value="Ubuntu LTS">Ubuntu LTS (Estable / Desarrollador)</option>
-                    </select>
-                </div>
-                <div class="sub-row">
-                    <label>¿Requiere Respaldo de Archivos?:</label>
-                    <select id="so_respaldo">
-                        <option value="Sin respaldo (Formateo limpio)">Sin respaldo previo (Instalación limpia directa)</option>
-                        <option value="Con respaldo completo de información">Con respaldo de archivos y fotos previo</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- 6. Opciones para Software -->
-            <div id="opc_Software" class="campo-especifico">
-                <div class="sub-row">
-                    <label>Categoría de Software:</label>
-                    <select id="soft_categoria">
-                        <option value="Ofimática (Microsoft Office / 365)">Paquetería Office (Word, Excel, PowerPoint)</option>
-                        <option value="Antivirus y Protección Corporativa">Antivirus y Seguridad</option>
-                        <option value="Diseño (Adobe Photoshop / Illustrator)">Diseño Gráfico (Adobe Suite)</option>
-                        <option value="Arquitectura e Ingeniería (AutoCAD)">Arquitectura / Planos (AutoCAD)</option>
-                        <option value="Paquete básico utilitario (PDF, compresores, navegadores)">Paquete utilitario básico (PDF, WinRAR, navegadores)</option>
-                    </select>
-                </div>
-            </div>
-
-            <!-- 7. Opciones para Mantenimiento -->
-            <div id="opc_Mantenimiento" class="campo-especifico">
-                <div class="sub-row">
-                    <label>Tipo de Computadora:</label>
-                    <select id="mant_tipo">
-                        <option value="Laptop estándar">Laptop tradicional / oficina</option>
-                        <option value="Laptop Gamer / Alto rendimiento">Laptop Gamer (Doble ventilador / disipador robusto)</option>
-                        <option value="PC Escritorio estándar">Gabinete PC Escritorio tradicional</option>
-                        <option value="PC Escritorio Gamer / Workstation">PC Gamer / Workstation (Disipador torre / líquido)</option>
-                    </select>
-                </div>
-                <div class="sub-row">
-                    <small style="color: #666;">Incluye sopleteado a presión, limpieza de placa, lubricación de ventiladores y cambio de compuesto térmico de alta conductividad.</small>
-                </div>
-            </div>
-
-            <!-- Modelo del equipo -->
-            <div class="form-group">
-                <label>Marca y Modelo exacto del equipo:</label>
-                <input type="text" id="input_modelo" required placeholder="Ej: HP Pavilion 15-dw1085la / Dell Inspiron 3501">
-            </div>
-
-            <!-- Campos ocultos para envio -->
-            <input type="hidden" name="servicio" id="hidden_servicio">
-            <input type="hidden" name="modelo" id="hidden_modelo">
-
-            <button type="submit" class="btn-enviar">Solicitar Cotización y Agendar</button>
-        </form>
-
-        <div class="leyenda-legal">
-            <strong>Nota importante:</strong> Este registro es un presupuesto preliminar y agendamiento de recepción. El costo final se confirmará únicamente tras la inspección física del equipo en nuestro local de servicio.
+            <a href="{{ url_for('index') }}" class="back-link">← Volver al Inicio</a>
         </div>
-
-        <a href="{{ url_for('index') }}" class="back-link">← Volver al Inicio</a>
     </div>
-</div>
 
-<script>
-    const contenedores = ['SSD', 'RAM', 'Pantalla', 'Bateria', 'SO', 'Software', 'Mantenimiento'];
+    <script>
+        const contenedores = ['SSD', 'RAM', 'Pantalla', 'Bateria', 'SO', 'Software', 'Mantenimiento', 'equipos', 'cctv'];
 
-    function ocultarTodos() {
-        contenedores.forEach(id => {
-            const el = document.getElementById('opc_' + id);
-            if (el) el.style.display = 'none';
-        });
-    }
-
-    function mostrarOpcionesServicio() {
-        const val = document.getElementById('select_servicio').value;
-        ocultarTodos();
-        if (val && document.getElementById('opc_' + val)) {
-            document.getElementById('opc_' + val).style.display = 'block';
+        function ocultarTodos() {
+            contenedores.forEach(id => {
+                const el = document.getElementById('opc_' + id);
+                if (el) el.style.display = 'none';
+            });
         }
-    }
 
-    window.addEventListener('DOMContentLoaded', () => {
-        const params = new URLSearchParams(window.location.search);
-        const servicioParam = params.get('servicio');
-
-        if (servicioParam) {
-            const select = document.getElementById('select_servicio');
-            const mapa = {
-                'ssd': 'SSD',
-                'ram': 'RAM',
-                'pantalla': 'Pantalla',
-                'display': 'Pantalla',
-                'bateria': 'Bateria',
-                'so': 'SO',
-                'sistema': 'SO',
-                'software': 'Software',
-                'mantenimiento': 'Mantenimiento',
-                'limpieza': 'Mantenimiento'
-            };
-
-            const destino = mapa[servicioParam.toLowerCase()];
-            if (destino) {
-                select.value = destino;
-                mostrarOpcionesServicio();
+        function mostrarOpcionesServicio() {
+            const val = document.getElementById('select_servicio').value;
+            ocultarTodos();
+            if (val && document.getElementById('opc_' + val)) {
+                document.getElementById('opc_' + val).style.display = 'block';
             }
         }
-    });
 
-    function prepararEnvio() {
-        const servicioBase = document.getElementById('select_servicio').value;
-        const modeloUsuario = document.getElementById('input_modelo').value.trim();
-        const telUsuario = document.getElementById('input_telefono').value.trim();
-        const correoUsuario = document.getElementById('input_correo').value.trim();
-        let detalleServicio = servicioBase;
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const servicioParam = params.get('servicio');
 
-        if (servicioBase === 'SSD') {
-            const cap = document.getElementById('ssd_capacidad').value;
-            const tipo = document.getElementById('ssd_tipo').value;
-            detalleServicio = "Disco SSD (" + cap + " - " + tipo + ")";
-        } else if (servicioBase === 'RAM') {
-            const tipo = document.getElementById('ram_tipo').value;
-            const cap = document.getElementById('ram_capacidad').value;
-            detalleServicio = "Memoria RAM (" + cap + " - " + tipo + ")";
-        } else if (servicioBase === 'Pantalla') {
-            const tipo = document.getElementById('pantalla_tipo').value;
-            const marca = document.getElementById('pantalla_marca').value;
-            const tam = document.getElementById('pantalla_tamano').value;
-            detalleServicio = "Cambio de Display (" + tipo + " " + marca + " " + tam + ")";
-        } else if (servicioBase === 'Bateria') {
-            const tipo = document.getElementById('bateria_tipo').value;
-            const marca = document.getElementById('bateria_marca').value;
-            detalleServicio = "Cambio de Batería (" + tipo + " - " + marca + ")";
-        } else if (servicioBase === 'SO') {
-            const ver = document.getElementById('so_version').value;
-            const resp = document.getElementById('so_respaldo').value;
-            detalleServicio = "Sistema Operativo (" + ver + " - " + resp + ")";
-        } else if (servicioBase === 'Software') {
-            const cat = document.getElementById('soft_categoria').value;
-            detalleServicio = "Instalación de Software (" + cat + ")";
-        } else if (servicioBase === 'Mantenimiento') {
-            const tipo = document.getElementById('mant_tipo').value;
-            detalleServicio = "Mantenimiento y Pasta Térmica (" + tipo + ")";
+            if (servicioParam) {
+                const select = document.getElementById('select_servicio');
+                const mapa = {
+                    'ssd': 'SSD',
+                    'ram': 'RAM',
+                    'pantalla': 'Pantalla',
+                    'display': 'Pantalla',
+                    'bateria': 'Bateria',
+                    'so': 'SO',
+                    'sistema': 'SO',
+                    'software': 'Software',
+                    'mantenimiento': 'Mantenimiento',
+                    'limpieza': 'Mantenimiento',
+                    'equipos': 'equipos',
+                    'cctv': 'cctv'
+                };
+
+                const destino = mapa[servicioParam.toLowerCase()];
+                if (destino) {
+                    select.value = destino;
+                    mostrarOpcionesServicio();
+                }
+            }
+        });
+
+        function prepararEnvio() {
+            const servicioBase = document.getElementById('select_servicio').value;
+            const modeloUsuario = document.getElementById('input_modelo').value.trim();
+            const telUsuario = document.getElementById('input_telefono').value.trim();
+            const correoUsuario = document.getElementById('input_correo').value.trim();
+            let detalleServicio = servicioBase;
+
+            if (servicioBase === 'SSD') {
+                const cap = document.getElementById('ssd_capacidad').value;
+                const tipo = document.getElementById('ssd_tipo').value;
+                detalleServicio = "Disco SSD (" + cap + " - " + tipo + ")";
+            } else if (servicioBase === 'RAM') {
+                const tipo = document.getElementById('ram_tipo').value;
+                const cap = document.getElementById('ram_capacidad').value;
+                detalleServicio = "Memoria RAM (" + cap + " - " + tipo + ")";
+            } else if (servicioBase === 'Pantalla') {
+                const tipo = document.getElementById('pantalla_tipo').value;
+                const marca = document.getElementById('pantalla_marca').value;
+                const tam = document.getElementById('pantalla_tamano').value;
+                detalleServicio = "Cambio de Display (" + tipo + " " + marca + " " + tam + ")";
+            } else if (servicioBase === 'Bateria') {
+                const tipo = document.getElementById('bateria_tipo').value;
+                const marca = document.getElementById('bateria_marca').value;
+                detalleServicio = "Cambio de Batería (" + tipo + " - " + marca + ")";
+            } else if (servicioBase === 'SO') {
+                const ver = document.getElementById('so_version').value;
+                const resp = document.getElementById('so_respaldo').value;
+                detalleServicio = "Sistema Operativo (" + ver + " - " + resp + ")";
+            } else if (servicioBase === 'Software') {
+                const cat = document.getElementById('soft_categoria').value;
+                detalleServicio = "Instalación de Software (" + cat + ")";
+            } else if (servicioBase === 'Mantenimiento') {
+                const tipo = document.getElementById('mant_tipo').value;
+                detalleServicio = "Mantenimiento y Pasta Térmica (" + tipo + ")";
+            } else if (servicioBase === 'equipos') {
+                const cat = document.getElementById('equipos_categoria').value;
+                const uso = document.getElementById('equipos_uso').value;
+                detalleServicio = "Venta de Equipos (" + cat + " | Uso: " + uso + ")";
+            } else if (servicioBase === 'cctv') {
+                const kit = document.getElementById('cctv_kit').value;
+                const inm = document.getElementById('cctv_inmueble').value;
+                detalleServicio = "Videovigilancia CCTV (" + kit + " | Inmueble: " + inm + ")";
+            }
+
+            document.getElementById('hidden_servicio').value = detalleServicio;
+            document.getElementById('hidden_modelo').value = modeloUsuario + " | Tel: " + telUsuario + " | Email: " + correoUsuario;
         }
-
-        document.getElementById('hidden_servicio').value = detalleServicio;
-        document.getElementById('hidden_modelo').value = modeloUsuario + " | Tel: " + telUsuario + " | Email: " + correoUsuario;
-    }
-</script>
+    </script>
 
 </body>
+
 </html>
