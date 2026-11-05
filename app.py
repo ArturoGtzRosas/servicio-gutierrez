@@ -670,7 +670,7 @@ def responder_mensaje():
 
     cuerpo_html = f"""
     <html>
-    <body style="font-family: Arial, sans-serif; color: #333; line-height: 1.6;">
+    <body style="font-family: Arial, sans-serif; color: #333; line-6: 1.6;">
         <div style="background-color: #1f3a5f; padding: 15px; text-align: center; border-bottom: 4px solid #c5a356;">
             <h2 style="color: white; margin: 0;">G-Tek Soluciones Digitales</h2>
         </div>
@@ -890,11 +890,14 @@ def crear_presupuesto():
         db = get_db_connection()
         servicios_json = json.dumps(items)
         cursor = db.execute('''INSERT INTO presupuestos (fecha, cliente, telefono, email, equipo, servicios, total)
-                               VALUES (?, ?, ?, ?, ?, ?, ?) RETURNING id''',
+                               VALUES (?, ?, ?, ?, ?, ?, ?)''',
                             (datetime.now().strftime("%d/%m/%Y %H:%M"), cliente, telefono, email, equipo, servicios_json, total))
-        
-        fila = cursor.fetchone()
-        nuevo_id = fila['id'] if fila else 1
+
+        nuevo_id = cursor.lastrowid
+        if not nuevo_id:
+            fila = db.execute("SELECT id FROM presupuestos ORDER BY id DESC LIMIT 1").fetchone()
+            nuevo_id = fila['id'] if fila else 1
+            
         db.commit()
         db.close()
 
@@ -1042,10 +1045,29 @@ def generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total, id_p
         precio_unit = float(item.get('precio', 0.0))
         importe_renglon = precio_unit * cant
         
-        pdf.cell(15, 8, f" {cant}", 1, 0, 'C')
-        pdf.cell(105, 8, f" {desc}", 1, 0, 'L')
-        pdf.cell(35, 8, f"${precio_unit:,.2f}", 1, 0, 'R')
-        pdf.cell(35, 8, f"${importe_renglon:,.2f}", 1, 1, 'R')
+        # 1. Guardar la coordenada inicial del renglón
+        x_ini = pdf.get_x()
+        y_ini = pdf.get_y()
+
+        # 2. Imprimir la descripción con multi_cell en su columna (ancho 105)
+        pdf.set_xy(x_ini + 15, y_ini)
+        pdf.multi_cell(105, 6, f" {desc}", border=1, align='L')
+        y_fin = pdf.get_y()
+        altura_fila = max(y_fin - y_ini, 8)  # Toma la altura que ocupó el texto (mínimo 8 mm)
+
+        # 3. Imprimir la celda de Cantidad con la misma altura total
+        pdf.set_xy(x_ini, y_ini)
+        pdf.cell(15, altura_fila, f" {cant}", border=1, align='C')
+
+        # 4. Imprimir Precio Unitario e Importe con la misma altura total
+        pdf.set_xy(x_ini + 15 + 105, y_ini)
+        pdf.cell(35, altura_fila, f"${precio_unit:,.2f}", border=1, align='R')
+
+        pdf.set_xy(x_ini + 15 + 105 + 35, y_ini)
+        pdf.cell(35, altura_fila, f"${importe_renglon:,.2f}", border=1, align='R')
+
+        # 5. Colocar el cursor abajo para la siguiente fila
+        pdf.set_xy(x_ini, y_fin)
     
     pdf.ln(4)
     pdf.cell(155, 7, 'Subtotal:', 0, 0, 'R')
@@ -1059,8 +1081,9 @@ def generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total, id_p
     pdf.cell(155, 9, 'TOTAL PRESUPUESTADO (IVA inc):', 1, 0, 'R', True)
     pdf.cell(35, 9, f'${total:,.2f}', 1, 1, 'R', True)
 
-    # Generación e inserción de Código QR dinámico
+   # Generación e inserción de Código QR dinámico
     try:
+        import tempfile
         id_qr = id_presupuesto if id_presupuesto else folio
         url_qr = f"https://gtek-soluciones.onrender.com/descargar_presupuesto/{id_qr}"
         qr = qrcode.QRCode(box_size=3, border=1)
@@ -1068,13 +1091,12 @@ def generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total, id_p
         qr.make(fit=True)
         img_qr = qr.make_image(fill_color="black", back_color="white")
 
-        ruta_qr = f"/tmp/qr_{folio}.png"
+        ruta_qr = os.path.join(tempfile.gettempdir(), f"qr_pres_{folio}.png")
         img_qr.save(ruta_qr)
 
-        # Posición a la izquierda de la tabla de totales sin encimarse
-        pos_y_actual = pdf.get_y()
-        pdf.image(ruta_qr, x=15, y=pos_y_actual - 26, w=22, h=22)
-        pdf.set_xy(15, pos_y_actual - 3)
+        pos_y_qr = pdf.get_y() - 25
+        pdf.image(ruta_qr, x=15, y=pos_y_qr, w=22, h=22)
+        pdf.set_xy(15, pos_y_qr + 22)
         pdf.set_font('Arial', '', 7)
         pdf.cell(22, 4, 'Escanear presupuesto', 0, 0, 'C')
     except Exception as e:
@@ -1625,7 +1647,6 @@ def cambiar_password_admin(id):
 
 # ---------------- AUTO-INICIALIZACIÓN ADMIN ----------------
 
-# -------------------- AUTO-INICIALIZACIÓN ADMIN --------------------
 def asegurar_admin_en_arranque():
     try:
         EMAIL_ADMIN = "admin@gtek-soluciones.com"
