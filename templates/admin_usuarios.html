@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -14,6 +15,7 @@
             --rojo: #e53e3e;
             --verde: #38a169;
         }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: var(--fondo);
@@ -21,18 +23,22 @@
             margin: 0;
             padding: 20px;
         }
+
         .container {
             max-width: 900px;
             margin: 0 auto;
             background: #fff;
             padding: 30px;
             border-radius: 8px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
         }
-        h2, h3 {
+
+        h2,
+        h3 {
             color: var(--azul);
             margin-top: 0;
         }
+
         .flash-msg {
             background-color: #ebf8ff;
             color: #2b6cb0;
@@ -41,6 +47,7 @@
             margin-bottom: 20px;
             border-left: 4px solid #3182ce;
         }
+
         .form-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
@@ -51,19 +58,23 @@
             margin-bottom: 30px;
             border: 1px solid var(--borde);
         }
+
         .form-group label {
             display: block;
             font-weight: 600;
             font-size: 0.85rem;
             margin-bottom: 5px;
         }
-        .form-group input, .form-group select {
+
+        .form-group input,
+        .form-group select {
             width: 100%;
             padding: 8px 10px;
             border: 1px solid var(--borde);
             border-radius: 4px;
             box-sizing: border-box;
         }
+
         .btn-submit {
             grid-column: 1 / -1;
             background-color: var(--verde);
@@ -74,23 +85,29 @@
             cursor: pointer;
             font-weight: bold;
         }
+
         .btn-submit:hover {
             opacity: 0.9;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
             margin-top: 15px;
         }
-        th, td {
+
+        th,
+        td {
             text-align: left;
             padding: 12px;
             border-bottom: 1px solid var(--borde);
         }
+
         th {
             background-color: #edf2f7;
             font-size: 0.9rem;
         }
+
         .badge-admin {
             background-color: #feebc8;
             color: #c05621;
@@ -99,6 +116,7 @@
             font-size: 0.8rem;
             font-weight: bold;
         }
+
         .badge-user {
             background-color: #e2e8f0;
             color: #4a5568;
@@ -106,6 +124,7 @@
             border-radius: 12px;
             font-size: 0.8rem;
         }
+
         .btn-del {
             background-color: var(--rojo);
             color: white;
@@ -114,6 +133,7 @@
             text-decoration: none;
             font-size: 0.8rem;
         }
+
         .volver-link {
             display: inline-block;
             margin-top: 25px;
@@ -123,16 +143,17 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h2>Gestión de Usuarios</h2>
 
         {% with messages = get_flashed_messages() %}
-          {% if messages %}
-            {% for msg in messages %}
-              <div class="flash-msg">{{ msg }}</div>
-            {% endfor %}
-          {% endif %}
+        {% if messages %}
+        {% for msg in messages %}
+        <div class="flash-msg">{{ msg }}</div>
+        {% endfor %}
+        {% endif %}
         {% endwith %}
 
         <h3>Registrar Nuevo Usuario</h3>
@@ -178,17 +199,29 @@
                     <td>{{ u.email }}</td>
                     <td>
                         {% if u.rol == 'admin' %}
-                            <span class="badge-admin">Administrador</span>
+                        <span class="badge-admin">Administrador</span>
                         {% else %}
-                            <span class="badge-user">Usuario</span>
+                        <span class="badge-user">Usuario</span>
                         {% endif %}
                     </td>
                     <td style="text-align: center;">
                         {% if u.id == session.get('user_id') %}
-                            <span style="font-size: 0.8rem; color: #a0aec0;">(Sesión activa)</span>
+                        <span style="font-size: 0.8rem; color: #a0aec0;">(Sesión activa)</span>
                         {% else %}
-                            <a href="{{ url_for('borrar_usuario', id=u.id) }}" class="btn-del" onclick="return confirm('¿Estás seguro de eliminar este usuario?');">Eliminar</a>
+                        <a href="{{ url_for('borrar_usuario', id=u.id) }}" class="btn-del"
+                            onclick="return confirm('¿Estás seguro de eliminar este usuario?');">Eliminar</a>
                         {% endif %}
+                        <form action="{{ url_for('cambiar_password_admin', id=u.id) }}" method="POST"
+                            style="display:inline-flex; gap: 5px; margin-top: 5px;">
+                            <input type="password" name="nueva_password" placeholder="Nueva contraseña" required
+                                minlength="8"
+                                style="padding: 2px 6px; font-size: 0.85rem; width: 140px; border-radius: 4px; border: 1px solid #ccc;">
+                            <button type="submit" class="btn btn-sm btn-warning"
+                                onclick="return confirm('¿Deseas actualizar la contraseña de este usuario?');"
+                                style="font-size: 0.8rem; padding: 2px 8px; cursor: pointer;">
+                                Cambiar
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 {% endfor %}
@@ -198,4 +231,5 @@
         <a href="{{ url_for('dashboard') }}" class="volver-link">← Volver al Panel de Control</a>
     </div>
 </body>
+
 </html>

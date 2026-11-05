@@ -114,10 +114,9 @@
             <a href="{{ url_for('admin_antivirus') }}">🛡️ Licencias Antivirus</a>
             <a href="{{ url_for('crear_presupuesto') }}" style="background-color: #27ae60; color: white;">➕ Generar
                 Presupuesto PDF</a>
-            {% if session.get('user_rol') == 'admin' %}
-            <a href="{{ url_for('admin_usuarios') }}" style="border-left: 3px solid var(--oro);">👥 Gestión de
-                Usuarios</a>
-            {% endif %}
+            <a href="{{ url_for('admin_usuarios') }}" class="btn-menu">
+                👥 Usuarios
+            </a>
         </div>
 
         <!-- Enlace al Control de Versiones -->

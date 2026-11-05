@@ -591,7 +591,7 @@ def login():
             if coincide:
                 session['user_id'] = user['id']
                 session['user_name'] = user['nombre']
-                session['user_rol'] = user['rol'] if 'rol' in user and user['rol'] else 'usuario'
+                session['user_rol'] = user['rol'] if 'rol' in user.keys() and user['rol'] else 'admin'
                 return redirect(url_for('dashboard'))
     return render_template('login.html')
 
@@ -1573,11 +1573,51 @@ def borrar_usuario(id):
     flash("Usuario eliminado correctamente.")
     return redirect(url_for('admin_usuarios'))
 
+@app.route('/cambiar_password_admin/<int:id>', methods=['POST'])
+def cambiar_password_admin(id):
+    if 'user_id' not in session or session.get('user_rol') != 'admin':
+        flash("Acceso denegado.")
+        return redirect(url_for('dashboard'))
+
+    nueva_pass = request.form.get('nueva_password', '').strip()
+    if not nueva_pass or len(nueva_pass) < 8:
+        flash("La contraseña debe tener al menos 8 caracteres.")
+        return redirect(url_for('admin_usuarios'))
+
+    hash_pass = generate_password_hash(nueva_pass, method="pbkdf2:sha256")
+    db = get_db_connection()
+    db.execute("UPDATE usuarios SET password = ? WHERE id = ?", (hash_pass, id))
+    db.commit()
+    db.close()
+
+    flash("Contraseña actualizada exitosamente.")
+    return redirect(url_for('admin_usuarios'))
 
 # ---------------- AUTO-INICIALIZACIÓN ADMIN ----------------
 
+# -------------------- AUTO-INICIALIZACIÓN ADMIN --------------------
 def asegurar_admin_en_arranque():
-    return
+    try:
+        EMAIL_ADMIN = "admin@gtek-soluciones.com"
+        PASSWORD_ADMIN = "Pacman77.FCA"  # Coloca aquí tu misma contraseña robusta
+        
+        db = get_db_connection()
+        # Verificar si la columna rol existe por si corre en sqlite/postgres fresco
+        user = db.execute("SELECT id FROM usuarios WHERE email = ?", (EMAIL_ADMIN,)).fetchone()
+        
+        hash_pass = generate_password_hash(PASSWORD_ADMIN, method="pbkdf2:sha256")
+        
+        if user:
+            db.execute("UPDATE usuarios SET password = ?, rol = 'admin' WHERE email = ?", (hash_pass, EMAIL_ADMIN))
+        else:
+            db.execute("INSERT INTO usuarios (nombre, email, password, rol) VALUES (?, ?, ?, 'admin')", 
+                       ("Francisco Arturo", EMAIL_ADMIN, hash_pass))
+        
+        db.commit()
+        db.close()
+        print("✅ Administrador inicializado/actualizado con contraseña robusta.")
+    except Exception as e:
+        print(f"⚠️ Nota en inicialización de admin: {e}")
 
 # =====================================================
 # MÓDULO DE LICENCIAS DE OFFICE
@@ -1799,3 +1839,8 @@ def changelog():
     if 'user_id' not in session:
         return redirect(url_for('login'))
     return render_template('changelog.html')
+
+asegurar_admin_en_arranque()
+
+if __name__ == '__main__':
+    app.run(debug=False, threaded=False)
