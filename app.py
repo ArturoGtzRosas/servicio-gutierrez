@@ -1085,7 +1085,7 @@ def generar_pdf_presupuesto(folio, cliente, telefono, equipo, items, total, id_p
     try:
         import tempfile
         id_qr = id_presupuesto if id_presupuesto else folio
-        url_qr = f"https://gtek-soluciones.onrender.com/descargar_presupuesto/{id_qr}"
+        url_qr = f"https://gtek-soluciones.com/descargar_presupuesto/{id_qr}"
         qr = qrcode.QRCode(box_size=3, border=1)
         qr.add_data(url_qr)
         qr.make(fit=True)
