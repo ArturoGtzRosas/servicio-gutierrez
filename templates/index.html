@@ -140,7 +140,6 @@
         <a href="{{ url_for('login') }}" style="color: var(--oro);">ADMIN</a>
         <a href="{{ url_for('equipos') }}">EQUIPOS NUEVOS</a>
         <a href="{{ url_for('cctv') }}">VIDEOVIGILANCIA (CCTV)</a>
-        
     </nav>
 
     <section class="hero">
@@ -156,14 +155,17 @@
     <h2 style="text-align: center; color: var(--azul); margin-top: 50px; font-size: 2em;">Soluciones Tecnológicas a tu Medida</h2>
     
     <section class="servicios" id="servicios">
+        <!-- 1. Aumento de RAM y SSD -->
         <div class="card">
-            <img src="{{ url_for('static', filename='img/ram.jpg') }}" alt="RAM">
+            <img src="{{ url_for('static', filename='img/ssd_upgrade.jpg') }}" alt="Aumento de RAM y SSD">
             <div class="card-info">
                 <h3>Aumento de RAM y SSD</h3>
-                <p>Mejora la velocidad de tu equipo hasta 10 veces más.</p>
-                <a href="{{ url_for('cotizar_cliente') }}" class="btn-card">Cotizar</a>
+                <p>Mejora la velocidad de tu equipo hasta 10 veces más con discos de estado sólido.</p>
+                <a href="{{ url_for('servicio_detalle', servicio_id='ssd') }}" class="btn-card">Ver Detalles</a>
             </div>
         </div>
+
+        <!-- 2. Diseño y Desarrollo Web -->
         <div class="card">
             <img src="{{ url_for('static', filename='img/diseno_web.jpg') }}" alt="Diseño y Desarrollo Web">
             <div class="card-info">
@@ -171,29 +173,65 @@
                 <p>Sitios web corporativos, catálogos en línea y páginas adaptadas a móviles.</p>
                 <a href="{{ url_for('servicio_detalle', servicio_id='diseno-web') }}" class="btn-card">Ver Detalles</a>
             </div>
-            </div>
+        </div>
+
+        <!-- 3. Cambio de Pantalla -->
         <div class="card">
-            <img src="{{ url_for('static', filename='img/pantalla.jpg') }}" alt="Pantalla">
+            <img src="{{ url_for('static', filename='img/pantalla_laptop.jpg') }}" alt="Cambio de Pantalla">
             <div class="card-info">
                 <h3>Cambio de Pantalla</h3>
-                <p>Reparación de displays y fallas de imagen.</p>
-                <a href="{{ url_for('cotizar_cliente') }}" class="btn-card">Cotizar</a>
+                <p>Reparación de displays, paneles rotos y solución a fallas de imagen en laptops.</p>
+                <a href="{{ url_for('servicio_detalle', servicio_id='pantalla') }}" class="btn-card">Ver Detalles</a>
             </div>
         </div>
+
+        <!-- 4. Limpieza y Pasta Térmica -->
         <div class="card">
-            <img src="{{ url_for('static', filename='img/mantenimiento.jpg') }}" alt="Mantenimiento">
+            <img src="{{ url_for('static', filename='img/mantenimiento_pc.jpg') }}" alt="Limpieza y Pasta">
             <div class="card-info">
                 <h3>Limpieza y Pasta</h3>
-                <p>Evita sobrecalentamientos y alarga la vida de tu procesador.</p>
-                <a href="{{ url_for('cotizar_cliente') }}" class="btn-card">Cotizar</a>
+                <p>Evita sobrecalentamientos y alarga la vida de tu procesador con servicio profundo.</p>
+                <a href="{{ url_for('servicio_detalle', servicio_id='mantenimiento') }}" class="btn-card">Ver Detalles</a>
             </div>
         </div>
+
+        <!-- 5. Instalación de Software -->
         <div class="card">
-            <img src="{{ url_for('static', filename='img/software.jpg') }}" alt="Software">
+            <img src="{{ url_for('static', filename='img/sistema_operativo.jpg') }}" alt="Instalación de Software">
             <div class="card-info">
                 <h3>Instalación de Software</h3>
-                <p>Formateo, paquetería Office y optimización de sistema operativo.</p>
-                <a href="{{ url_for('cotizar_cliente') }}" class="btn-card">Cotizar</a>
+                <p>Sistemas operativos limpios, paquetería Office, antivirus y optimización general.</p>
+                <a href="{{ url_for('servicio_detalle', servicio_id='software') }}" class="btn-card">Ver Detalles</a>
+            </div>
+        </div>
+
+        <!-- 6. Ampliación de Memoria RAM -->
+        <div class="card">
+            <img src="{{ url_for('static', filename='img/memoria_ram.jpg') }}" alt="Memoria RAM">
+            <div class="card-info">
+                <h3>Memoria RAM</h3>
+                <p>Fluidez multitarea para trabajar con múltiples pestañas y programas sin congelamientos.</p>
+                <a href="{{ url_for('servicio_detalle', servicio_id='ram') }}" class="btn-card">Ver Detalles</a>
+            </div>
+        </div>
+
+        <!-- 7. Venta de Equipos Nuevos -->
+        <div class="card">
+            <img src="{{ url_for('static', filename='img/equipos_banner.jpg') }}" alt="Venta de Equipos Nuevos">
+            <div class="card-info">
+                <h3>Equipos Nuevos</h3>
+                <p>Laptops, computadoras de escritorio y ensambles a medida con garantía por escrito.</p>
+                <a href="{{ url_for('equipos') }}" class="btn-card">Ver Equipos</a>
+            </div>
+        </div>
+
+        <!-- 8. Videovigilancia (CCTV) -->
+        <div class="card">
+            <img src="{{ url_for('static', filename='img/cctv_banner.jpg') }}" alt="Videovigilancia CCTV">
+            <div class="card-info">
+                <h3>Videovigilancia (CCTV)</h3>
+                <p>Circuitos cerrados en Full HD con visión nocturna y monitoreo remoto en smartphone y PC.</p>
+                <a href="{{ url_for('cctv') }}" class="btn-card">Ver Sistemas</a>
             </div>
         </div>
     </section>
