@@ -139,6 +139,8 @@
                     <option value="SO">Instalación de Sistema Operativo</option>
                     <option value="Software">Instalación de Software / Programas</option>
                     <option value="Mantenimiento">Limpieza Interna y Pasta Térmica</option>
+                    <option value="cctv" {% if request.args.get('servicio') == 'cctv' %}selected{% endif %}>Instalación de Videovigilancia (CCTV)</option>
+                    <option value="equipos" {% if request.args.get('servicio') == 'equipos' %}selected{% endif %}>Venta de Equipos de Cómputo Nuevos</option>
                 </select>
             </div>
 

@@ -412,6 +412,7 @@ CATALOGO_DETALLE = {
         'servicio_param': 'so'
     },
     'equipos': {
+        'badge': 'Equipos de Cómputo',
         'titulo': 'Venta de Equipos de Cómputo Nuevos',
         'subtitulo': 'Equipos de escritorio, portátiles y ensambles de alto rendimiento con garantía por escrito.',
         'imagen': 'equipos_banner.jpg',
@@ -426,6 +427,7 @@ CATALOGO_DETALLE = {
         'servicio_param': 'equipos'
     },
     'cctv': {
+        'badge': 'Seguridad Electrónica',
         'titulo': 'Sistemas de Videovigilancia (CCTV)',
         'subtitulo': 'Circuitos cerrados de televisión en alta definición con monitoreo remoto en smartphone y PC.',
         'imagen': 'cctv_banner.jpg',
