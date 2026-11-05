@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -42,7 +43,8 @@
             transition: color 0.2s;
         }
 
-        nav a:hover, nav a.active {
+        nav a:hover,
+        nav a.active {
             color: var(--oro);
         }
 
@@ -231,148 +233,228 @@
         }
     </style>
 </head>
+
 <body>
 
-<nav>
-    <a href="{{ url_for('index') }}">Inicio</a>
-    <a href="{{ url_for('servicios') }}" class="active">Nuestros Servicios</a>
-    <a href="{{ url_for('cotizar_cliente') }}">Cotiza</a>
-    <a href="{{ url_for('cotizador') }}">Calculadora</a>
-    <a href="{{ url_for('contacto') }}">Contacto</a>
-    <a href="{{ url_for('login') }}">Admin</a>
-</nav>
+    <nav>
+        <a href="{{ url_for('index') }}">Inicio</a>
+        <a href="{{ url_for('servicios') }}" class="active">Nuestros Servicios</a>
+        <a href="{{ url_for('cotizar_cliente') }}">Cotiza</a>
+        <a href="{{ url_for('cotizador') }}">Calculadora</a>
+        <a href="{{ url_for('contacto') }}">Contacto</a>
+        <a href="{{ url_for('login') }}">Admin</a>
+    </nav>
 
-<div class="hero-servicios">
-    <h1>Catálogo de Soluciones Tecnológicas</h1>
-    <p>Servicios especializados en mantenimiento, optimización de hardware, infraestructura de redes y desarrollo de plataformas digitales.</p>
-</div>
-
-<div class="container">
-    <div class="grid-servicios">
-
-        <!-- 1. Diseño Web y Soluciones Digitales -->
-        <div class="card-servicio" style="border-top-color: var(--azul);">
-            <div>
-                <span class="card-badge">Presencia en Línea</span>
-                <h3>Diseño y Desarrollo Web</h3>
-                <p class="desc">Impulsa tu negocio con sitios web modernos, rápidos y adaptados a cualquier pantalla (PC y celular).</p>
-                <ul class="lista-puntos">
-                    <li>Páginas corporativas y de servicios</li>
-                    <li>Landing pages para captación de clientes</li>
-                    <li>Cotizadores y catálogos en línea</li>
-                    <li>Configuración de hosting y dominio</li>
-                </ul>
-            </div>
-            <div class="card-botones">
-                <a href="{{ url_for('servicio_detalle', servicio_id='diseno-web') }}" class="btn-info">Ver Detalles</a>
-                <a href="{{ url_for('cotizar_cliente') }}" class="btn-cotizar-rapido">Cotizar</a>
-            </div>
-        </div>
-
-        <!-- 2. Actualización a Discos SSD -->
-        <div class="card-servicio">
-            <div>
-                <span class="card-badge">Velocidad y Almacenamiento</span>
-                <h3>Instalación de Discos SSD</h3>
-                <p class="desc">Aumenta la velocidad de arranque y respuesta de tu equipo hasta 10 veces sustituyendo el disco tradicional.</p>
-                <ul class="lista-puntos">
-                    <li>Formatos SATA 2.5" y M.2 NVMe PCIe</li>
-                    <li>Clonación de información sin pérdidas</li>
-                    <li>Unidades de 240GB, 480GB, 1TB y 2TB</li>
-                    <li>Pruebas de velocidad y rendimiento térmico</li>
-                </ul>
-            </div>
-            <div class="card-botones">
-                <a href="{{ url_for('servicio_detalle', servicio_id='ssd') }}" class="btn-info">Ver Detalles</a>
-                <a href="{{ url_for('cotizar_cliente') }}?servicio=ssd" class="btn-cotizar-rapido">Cotizar</a>
-            </div>
-        </div>
-
-        <!-- 3. Ampliación de Memoria RAM -->
-        <div class="card-servicio">
-            <div>
-                <span class="card-badge">Multitarea</span>
-                <h3>Ampliación de Memoria RAM</h3>
-                <p class="desc">Elimina congelamientos al tener varios programas o pestañas abiertas trabajando en simultáneo.</p>
-                <ul class="lista-puntos">
-                    <li>Módulos DDR3, DDR4 y DDR5 garantizados</li>
-                    <li>Compatibilidad para laptops y PC escritorio</li>
-                    <li>Configuraciones de 8GB, 16GB y 32GB</li>
-                    <li>Habilitación de doble canal (Dual Channel)</li>
-                </ul>
-            </div>
-            <div class="card-botones">
-                <a href="{{ url_for('servicio_detalle', servicio_id='ram') }}" class="btn-info">Ver Detalles</a>
-                <a href="{{ url_for('cotizar_cliente') }}?servicio=ram" class="btn-cotizar-rapido">Cotizar</a>
-            </div>
-        </div>
-
-        <!-- 4. Mantenimiento y Enfriamiento -->
-        <div class="card-servicio">
-            <div>
-                <span class="card-badge">Prevención y Rendimiento</span>
-                <h3>Mantenimiento y Pasta Térmica</h3>
-                <p class="desc">Reduce calentamientos, ruidos de ventilador y prolonga la vida útil de procesadores y tarjetas gráficas.</p>
-                <ul class="lista-puntos">
-                    <li>Sopleteado y limpieza antiestática de placa</li>
-                    <li>Aplicación de pasta térmica de alto rendimiento</li>
-                    <li>Lubricación y desobstrucción de disipadores</li>
-                    <li>Monitoreo de temperaturas bajo carga</li>
-                </ul>
-            </div>
-            <div class="card-botones">
-                <a href="{{ url_for('servicio_detalle', servicio_id='mantenimiento') }}" class="btn-info">Ver Detalles</a>
-                <a href="{{ url_for('cotizar_cliente') }}?servicio=mantenimiento" class="btn-cotizar-rapido">Cotizar</a>
-            </div>
-        </div>
-
-        <!-- 5. Pantallas y Displays -->
-        <div class="card-servicio">
-            <div>
-                <span class="card-badge">Hardware y Video</span>
-                <h3>Cambio de Pantallas / Display</h3>
-                <p class="desc">Reemplazo de paneles rotos, estrellados, con rayas o sin brillo para laptops y equipos All-in-One.</p>
-                <ul class="lista-puntos">
-                    <li>Resoluciones HD, Full HD y paneles IPS</li>
-                    <li>Medidas estándar (14.0", 15.6", etc.)</li>
-                    <li>Revisión de flexor y conectores de video</li>
-                    <li>Garantía de nitidez y cero píxeles muertos</li>
-                </ul>
-            </div>
-            <div class="card-botones">
-                <a href="{{ url_for('servicio_detalle', servicio_id='pantalla') }}" class="btn-info">Ver Detalles</a>
-                <a href="{{ url_for('cotizar_cliente') }}?servicio=pantalla" class="btn-cotizar-rapido">Cotizar</a>
-            </div>
-        </div>
-
-        <!-- 6. Sistemas Operativos y Software -->
-        <div class="card-servicio">
-            <div>
-                <span class="card-badge">Software</span>
-                <h3>Sistemas Operativos y Programas</h3>
-                <p class="desc">Configuración de entornos limpios, estables y protegidos listos para trabajar, estudiar o jugar.</p>
-                <ul class="lista-puntos">
-                    <li>Instalación de Windows 10/11 y distribuciones Linux</li>
-                    <li>Respaldo íntegro y seguro de archivos</li>
-                    <li>Paquetería de oficina y herramientas utilitarias</li>
-                    <li>Optimización contra malware y arranque lento</li>
-                </ul>
-            </div>
-            <div class="card-botones">
-                <a href="{{ url_for('servicio_detalle', servicio_id='software') }}" class="btn-info">Ver Detalles</a>
-                <a href="{{ url_for('cotizar_cliente') }}?servicio=so" class="btn-cotizar-rapido">Cotizar</a>
-            </div>
-        </div>
-
+    <div class="hero-servicios">
+        <h1>Catálogo de Soluciones Tecnológicas</h1>
+        <p>Servicios especializados en mantenimiento, optimización de hardware, infraestructura de redes y desarrollo de
+            plataformas digitales.</p>
     </div>
 
-    <!-- Bloque de asesoría técnica -->
-    <div class="banner-asesoria">
-        <h4>¿No sabes qué servicio específico necesita tu equipo?</h4>
-        <p>Escríbenos directamente para asesorarte y ofrecerte la alternativa técnica más adecuada.</p>
-        <a href="{{ url_for('contacto') }}">Contactar con un Especialista</a>
+    <div class="container">
+        <div class="grid-servicios">
+
+            <!-- 1. Diseño Web y Soluciones Digitales -->
+            <div class="card-servicio" style="border-top-color: var(--azul);">
+                <div>
+                    <span class="card-badge">Presencia en Línea</span>
+                    <h3>Diseño y Desarrollo Web</h3>
+                    <p class="desc">Impulsa tu negocio con sitios web modernos, rápidos y adaptados a cualquier pantalla
+                        (PC y celular).</p>
+                    <ul class="lista-puntos">
+                        <li>Páginas corporativas y de servicios</li>
+                        <li>Landing pages para captación de clientes</li>
+                        <li>Cotizadores y catálogos en línea</li>
+                        <li>Configuración de hosting y dominio</li>
+                    </ul>
+                </div>
+                <div class="card-botones">
+                    <a href="{{ url_for('servicio_detalle', servicio_id='diseno-web') }}" class="btn-info">Ver
+                        Detalles</a>
+                    <a href="{{ url_for('cotizar_cliente') }}" class="btn-cotizar-rapido">Cotizar</a>
+                </div>
+            </div>
+
+            <!-- 2. Actualización a Discos SSD -->
+            <div class="card-servicio">
+                <div>
+                    <span class="card-badge">Velocidad y Almacenamiento</span>
+                    <h3>Instalación de Discos SSD</h3>
+                    <p class="desc">Aumenta la velocidad de arranque y respuesta de tu equipo hasta 10 veces
+                        sustituyendo el disco tradicional.</p>
+                    <ul class="lista-puntos">
+                        <li>Formatos SATA 2.5" y M.2 NVMe PCIe</li>
+                        <li>Clonación de información sin pérdidas</li>
+                        <li>Unidades de 240GB, 480GB, 1TB y 2TB</li>
+                        <li>Pruebas de velocidad y rendimiento térmico</li>
+                    </ul>
+                </div>
+                <div class="card-botones">
+                    <a href="{{ url_for('servicio_detalle', servicio_id='ssd') }}" class="btn-info">Ver Detalles</a>
+                    <a href="{{ url_for('cotizar_cliente') }}?servicio=ssd" class="btn-cotizar-rapido">Cotizar</a>
+                </div>
+            </div>
+
+            <!-- 3. Ampliación de Memoria RAM -->
+            <div class="card-servicio">
+                <div>
+                    <span class="card-badge">Multitarea</span>
+                    <h3>Ampliación de Memoria RAM</h3>
+                    <p class="desc">Elimina congelamientos al tener varios programas o pestañas abiertas trabajando en
+                        simultáneo.</p>
+                    <ul class="lista-puntos">
+                        <li>Módulos DDR3, DDR4 y DDR5 garantizados</li>
+                        <li>Compatibilidad para laptops y PC escritorio</li>
+                        <li>Configuraciones de 8GB, 16GB y 32GB</li>
+                        <li>Habilitación de doble canal (Dual Channel)</li>
+                    </ul>
+                </div>
+                <div class="card-botones">
+                    <a href="{{ url_for('servicio_detalle', servicio_id='ram') }}" class="btn-info">Ver Detalles</a>
+                    <a href="{{ url_for('cotizar_cliente') }}?servicio=ram" class="btn-cotizar-rapido">Cotizar</a>
+                </div>
+            </div>
+
+            <!-- 4. Mantenimiento y Enfriamiento -->
+            <div class="card-servicio">
+                <div>
+                    <span class="card-badge">Prevención y Rendimiento</span>
+                    <h3>Mantenimiento y Pasta Térmica</h3>
+                    <p class="desc">Reduce calentamientos, ruidos de ventilador y prolonga la vida útil de procesadores
+                        y tarjetas gráficas.</p>
+                    <ul class="lista-puntos">
+                        <li>Sopleteado y limpieza antiestática de placa</li>
+                        <li>Aplicación de pasta térmica de alto rendimiento</li>
+                        <li>Lubricación y desobstrucción de disipadores</li>
+                        <li>Monitoreo de temperaturas bajo carga</li>
+                    </ul>
+                </div>
+                <div class="card-botones">
+                    <a href="{{ url_for('servicio_detalle', servicio_id='mantenimiento') }}" class="btn-info">Ver
+                        Detalles</a>
+                    <a href="{{ url_for('cotizar_cliente') }}?servicio=mantenimiento"
+                        class="btn-cotizar-rapido">Cotizar</a>
+                </div>
+            </div>
+
+            <!-- 5. Pantallas y Displays -->
+            <div class="card-servicio">
+                <div>
+                    <span class="card-badge">Hardware y Video</span>
+                    <h3>Cambio de Pantallas / Display</h3>
+                    <p class="desc">Reemplazo de paneles rotos, estrellados, con rayas o sin brillo para laptops y
+                        equipos All-in-One.</p>
+                    <ul class="lista-puntos">
+                        <li>Resoluciones HD, Full HD y paneles IPS</li>
+                        <li>Medidas estándar (14.0", 15.6", etc.)</li>
+                        <li>Revisión de flexor y conectores de video</li>
+                        <li>Garantía de nitidez y cero píxeles muertos</li>
+                    </ul>
+                </div>
+                <div class="card-botones">
+                    <a href="{{ url_for('servicio_detalle', servicio_id='pantalla') }}" class="btn-info">Ver
+                        Detalles</a>
+                    <a href="{{ url_for('cotizar_cliente') }}?servicio=pantalla" class="btn-cotizar-rapido">Cotizar</a>
+                </div>
+            </div>
+
+            <!-- 6. Sistemas Operativos y Software -->
+            <div class="card-servicio">
+                <div>
+                    <span class="card-badge">Software</span>
+                    <h3>Sistemas Operativos y Programas</h3>
+                    <p class="desc">Configuración de entornos limpios, estables y protegidos listos para trabajar,
+                        estudiar o jugar.</p>
+                    <ul class="lista-puntos">
+                        <li>Instalación de Windows 10/11 y distribuciones Linux</li>
+                        <li>Respaldo íntegro y seguro de archivos</li>
+                        <li>Paquetería de oficina y herramientas utilitarias</li>
+                        <li>Optimización contra malware y arranque lento</li>
+                    </ul>
+                </div>
+                <!-- TARJETA: Venta de Equipos Nuevos -->
+                <div class="servicio-card">
+                    <span class="badge-cat"
+                        style="font-size: 0.75rem; font-weight: bold; text-transform: uppercase; color: #1b305b; background: #eef2f7; padding: 3px 8px; border-radius: 4px; display: inline-block; margin-bottom: 8px;">EQUIPOS
+                        DE CÓMPUTO</span>
+                    <h3 style="color: #1b305b; margin-top: 5px; margin-bottom: 10px; font-size: 1.25rem;">Venta de
+                        Equipos Nuevos</h3>
+                    <p style="color: #555; font-size: 0.9rem; line-height: 1.4; margin-bottom: 15px;">Equipos de
+                        escritorio, portátiles y ensambles configurados con piezas nuevas y garantía directa por
+                        escrito.</p>
+                    <ul style="list-style: none; padding: 0; margin: 0 0 20px 0; font-size: 0.88rem; color: #444;">
+                        <li style="padding: 4px 0;"><i class="fas fa-check"
+                                style="color: #27ae60; margin-right: 6px;"></i> Computadoras para oficina, hogar y
+                            estudio</li>
+                        <li style="padding: 4px 0;"><i class="fas fa-check"
+                                style="color: #27ae60; margin-right: 6px;"></i> Laptops multimarca (Lenovo, Asus, Dell,
+                            HP)</li>
+                        <li style="padding: 4px 0;"><i class="fas fa-check"
+                                style="color: #27ae60; margin-right: 6px;"></i> Ensambles personalizados de alto
+                            rendimiento</li>
+                        <li style="padding: 4px 0;"><i class="fas fa-check"
+                                style="color: #27ae60; margin-right: 6px;"></i> 1 año de garantía y soporte técnico
+                            local</li>
+                    </ul>
+                    <div style="display: flex; gap: 10px; margin-top: auto;">
+                        <a href="{{ url_for('equipos') }}" class="btn-detalles"
+                            style="flex: 1; text-align: center; padding: 8px; background: #1b305b; color: white; text-decoration: none; border-radius: 5px; font-weight: 500; font-size: 0.9rem;">Ver
+                            Detalles</a>
+                        <a href="https://wa.me/525540313150?text=Hola,%20me%20interesa%20cotizar%20un%20equipo%20de%20c%C3%B3mputo%20nuevo"
+                            target="_blank" class="btn-cotizar"
+                            style="flex: 1; text-align: center; padding: 8px; background: white; color: #1b305b; border: 1px solid #1b305b; text-decoration: none; border-radius: 5px; font-weight: 500; font-size: 0.9rem;">Cotizar</a>
+                    </div>
+                </div>
+
+                <!-- TARJETA: Videovigilancia (CCTV) -->
+                <div class="servicio-card">
+                    <span class="badge-cat"
+                        style="font-size: 0.75rem; font-weight: bold; text-transform: uppercase; color: #1b305b; background: #eef2f7; padding: 3px 8px; border-radius: 4px; display: inline-block; margin-bottom: 8px;">SEGURIDAD
+                        ELECTRÓNICA</span>
+                    <h3 style="color: #1b305b; margin-top: 5px; margin-bottom: 10px; font-size: 1.25rem;">
+                        Videovigilancia (CCTV)</h3>
+                    <p style="color: #555; font-size: 0.9rem; line-height: 1.4; margin-bottom: 15px;">Instalación y
+                        configuración de circuitos cerrados con monitoreo en vivo desde smartphone y PC.</p>
+                    <ul style="list-style: none; padding: 0; margin: 0 0 20px 0; font-size: 0.88rem; color: #444;">
+                        <li style="padding: 4px 0;"><i class="fas fa-check"
+                                style="color: #27ae60; margin-right: 6px;"></i> Kits de 4, 8 y 16 cámaras de alta
+                            definición</li>
+                        <li style="padding: 4px 0;"><i class="fas fa-check"
+                                style="color: #27ae60; margin-right: 6px;"></i> Visión nocturna infrarroja para
+                            intemperie</li>
+                        <li style="padding: 4px 0;"><i class="fas fa-check"
+                                style="color: #27ae60; margin-right: 6px;"></i> Cableado estructurado UTP y DVR con
+                            disco duro</li>
+                        <li style="padding: 4px 0;"><i class="fas fa-check"
+                                style="color: #27ae60; margin-right: 6px;"></i> Puesta a punto y acceso remoto en app
+                            móvil</li>
+                    </ul>
+                    <div style="display: flex; gap: 10px; margin-top: auto;">
+                        <a href="{{ url_for('cctv') }}" class="btn-detalles"
+                            style="flex: 1; text-align: center; padding: 8px; background: #1b305b; color: white; text-decoration: none; border-radius: 5px; font-weight: 500; font-size: 0.9rem;">Ver
+                            Detalles</a>
+                        <a href="https://wa.me/525540313150?text=Hola,%20me%20interesa%20cotizar%20un%20sistema%20de%20videovigilancia%20CCTV"
+                            target="_blank" class="btn-cotizar"
+                            style="flex: 1; text-align: center; padding: 8px; background: white; color: #1b305b; border: 1px solid #1b305b; text-decoration: none; border-radius: 5px; font-weight: 500; font-size: 0.9rem;">Cotizar</a>
+                    </div>
+                </div>
+                <div class="card-botones">
+                    <a href="{{ url_for('servicio_detalle', servicio_id='software') }}" class="btn-info">Ver
+                        Detalles</a>
+                    <a href="{{ url_for('cotizar_cliente') }}?servicio=so" class="btn-cotizar-rapido">Cotizar</a>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Bloque de asesoría técnica -->
+        <div class="banner-asesoria">
+            <h4>¿No sabes qué servicio específico necesita tu equipo?</h4>
+            <p>Escríbenos directamente para asesorarte y ofrecerte la alternativa técnica más adecuada.</p>
+            <a href="{{ url_for('contacto') }}">Contactar con un Especialista</a>
+        </div>
     </div>
-</div>
 
 </body>
+
 </html>
