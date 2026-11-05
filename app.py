@@ -1840,6 +1840,10 @@ def changelog():
         return redirect(url_for('login'))
     return render_template('changelog.html')
 
+@app.route('/cctv')
+def cctv():
+    return render_template('cctv.html')
+
 @app.route('/equipos')
 def equipos():
     return render_template('equipos.html')
