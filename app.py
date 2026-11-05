@@ -1840,6 +1840,10 @@ def changelog():
         return redirect(url_for('login'))
     return render_template('changelog.html')
 
+@app.route('/equipos')
+def equipos():
+    return render_template('equipos.html')
+
 asegurar_admin_en_arranque()
 
 if __name__ == '__main__':

@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Venta de Equipos Nuevos | G-Tek Soluciones Digitales</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos.css') }}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        .catalogo-container {
+            max-width: 1200px;
+            margin: 40px auto;
+            padding: 0 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .catalogo-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+        .catalogo-header h1 {
+            color: #1b305b;
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        .catalogo-header p {
+            color: #555;
+            font-size: 1.1rem;
+        }
+        .equipos-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        .equipo-card {
+            background: #ffffff;
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            border: 1px solid #e1e8ed;
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .equipo-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 25px rgba(0,0,0,0.12);
+        }
+        .badge-cat {
+            background: #c5a059;
+            color: #ffffff;
+            padding: 4px 12px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 10px;
+            text-transform: uppercase;
+        }
+        .card-body {
+            padding: 25px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+        }
+        .card-body h3 {
+            color: #1b305b;
+            font-size: 1.3rem;
+            margin-top: 0;
+            margin-bottom: 12px;
+        }
+        .specs-list {
+            list-style: none;
+            padding: 0;
+            margin: 0 0 20px 0;
+            flex-grow: 1;
+        }
+        .specs-list li {
+            padding: 6px 0;
+            color: #444;
+            font-size: 0.95rem;
+            border-bottom: 1px dashed #f0f0f0;
+        }
+        .specs-list li i {
+            color: #27ae60;
+            margin-right: 8px;
+        }
+        .garantia-tag {
+            font-size: 0.85rem;
+            color: #666;
+            background: #f8f9fa;
+            padding: 6px 10px;
+            border-radius: 5px;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .btn-cotizar-wa {
+            display: block;
+            text-align: center;
+            background: #25D366;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 12px;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            transition: background 0.2s;
+        }
+        .btn-cotizar-wa:hover {
+            background: #1eb855;
+        }
+        .banner-personalizado {
+            background: #1b305b;
+            color: white;
+            padding: 30px;
+            border-radius: 10px;
+            margin-top: 40px;
+            text-align: center;
+        }
+        .banner-personalizado h2 {
+            margin-top: 0;
+            color: #c5a059;
+        }
+        .banner-personalizado p {
+            max-width: 700px;
+            margin: 10px auto 20px auto;
+            color: #e0e0e0;
+        }
+        .volver-btn {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #1b305b;
+            text-decoration: none;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body style="background-color: #f4f6f9; margin: 0;">
+
+    <div class="catalogo-container">
+        <a href="{{ url_for('index') }}" class="volver-btn">
+            <i class="fas fa-arrow-left"></i> Volver a Inicio
+        </a>
+
+        <div class="catalogo-header">
+            <span class="badge-cat">G-Tek Equipos</span>
+            <h1>Venta de Equipos de Cómputo Nuevos</h1>
+            <p>Sistemas configurados y optimizados para trabajo administrativo, escolar y profesional con garantía directa por escrito.</p>
+        </div>
+
+        <div class="equipos-grid">
+            <!-- Tarjeta 1: Oficina y Hogar -->
+            <div class="equipo-card">
+                <div class="card-body">
+                    <span class="badge-cat" style="background: #2980b9;">Oficina / Escolar</span>
+                    <h3>PC G-Tek Home & Office</h3>
+                    <ul class="specs-list">
+                        <li><i class="fas fa-microchip"></i> Procesador Intel Core i3 / Ryzen 3</li>
+                        <li><i class="fas fa-memory"></i> 8 GB / 16 GB Memoria RAM DDR4</li>
+                        <li><i class="fas fa-hdd"></i> SSD 480 GB / 500 GB NVMe Alta Velocidad</li>
+                        <li><i class="fas fa-desktop"></i> Gabinete Slim o Torre con Fuente Certificada</li>
+                        <li><i class="fab fa-windows"></i> Windows 11 Pro + Suite Ofimática</li>
+                    </ul>
+                    <div class="garantia-tag">
+                        <i class="fas fa-shield-alt" style="color: #c5a059;"></i> 1 año de garantía por escrito
+                    </div>
+                    <a href="https://wa.me/525540313150?text=Hola,%20me%20interesa%20cotizar%20la%20PC%20G-Tek%20Home%20%26%20Office" target="_blank" class="btn-cotizar-wa">
+                        <i class="fab fa-whatsapp"></i> Cotizar por WhatsApp
+                    </a>
+                </div>
+            </div>
+
+            <!-- Tarjeta 2: Laptops -->
+            <div class="equipo-card">
+                <div class="card-body">
+                    <span class="badge-cat" style="background: #27ae60;">Portátiles</span>
+                    <h3>Laptops Multimarca</h3>
+                    <ul class="specs-list">
+                        <li><i class="fas fa-laptop"></i> Marcas líderes: ASUS, Lenovo, Dell, HP</li>
+                        <li><i class="fas fa-microchip"></i> Intel Core i3 / i5 / AMD Ryzen 5</li>
+                        <li><i class="fas fa-memory"></i> 8 GB a 16 GB RAM (Expandibles)</li>
+                        <li><i class="fas fa-hdd"></i> Almacenamiento NVMe PCIe de rápido arranque</li>
+                        <li><i class="fas fa-check-circle"></i> Configuración inicial y optimización incluida</li>
+                    </ul>
+                    <div class="garantia-tag">
+                        <i class="fas fa-shield-alt" style="color: #c5a059;"></i> Garantía oficial de fabricante
+                    </div>
+                    <a href="https://wa.me/525540313150?text=Hola,%20quisiera%20consultar%20modelos%20disponibles%20de%20Laptops%20nuevas" target="_blank" class="btn-cotizar-wa">
+                        <i class="fab fa-whatsapp"></i> Consultar Modelos
+                    </a>
+                </div>
+            </div>
+
+            <!-- Tarjeta 3: Ensambles a Medida -->
+            <div class="equipo-card">
+                <div class="card-body">
+                    <span class="badge-cat" style="background: #8e44ad;">Alto Rendimiento</span>
+                    <h3>Ensamble a Medida / Pro</h3>
+                    <ul class="specs-list">
+                        <li><i class="fas fa-microchip"></i> Intel Core i5/i7 o AMD Ryzen 7</li>
+                        <li><i class="fas fa-memory"></i> 16 GB / 32 GB RAM DDR4 / DDR5</li>
+                        <li><i class="fas fa-tachometer-alt"></i> SSD M.2 NVMe Gen 4 de alto rendimiento</li>
+                        <li><i class="fas fa-network-wired"></i> Opciones con gráficos dedicados o integrados</li>
+                        <li><i class="fas fa-tools"></i> Ensamble profesional, pruebas de estrés y gestión de cables</li>
+                    </ul>
+                    <div class="garantia-tag">
+                        <i class="fas fa-shield-alt" style="color: #c5a059;"></i> Componentes nuevos con garantía
+                    </div>
+                    <a href="https://wa.me/525540313150?text=Hola,%20deseo%20una%20cotizaci%C3%B3n%20para%20un%20ensamble%20a%20medida" target="_blank" class="btn-cotizar-wa">
+                        <i class="fab fa-whatsapp"></i> Solicitar Ensamble
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="banner-personalizado">
+            <h2>¿Buscas componentes o una configuración específica?</h2>
+            <p>Manejamos venta de módulos de memoria RAM, unidades de estado sólido SSD NVMe / SATA, fuentes de poder y periféricos nuevos con instalación y clonación de sistema disponible.</p>
+            <a href="https://wa.me/525540313150?text=Hola,%20busco%20informaci%C3%B3n%20sobre%20componentes%20y%20piezas%20nuevas" target="_blank" class="btn-cotizar-wa" style="display: inline-block; padding: 12px 30px;">
+                <i class="fab fa-whatsapp"></i> Contactar a un Asesor
+            </a>
+        </div>
+    </div>
+
+</body>
+</html>
