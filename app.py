@@ -410,6 +410,34 @@ CATALOGO_DETALLE = {
             'Actualización oficial de controladores de fabricante (drivers)'
         ],
         'servicio_param': 'so'
+    },
+    'equipos': {
+        'titulo': 'Venta de Equipos de Cómputo Nuevos',
+        'subtitulo': 'Equipos de escritorio, portátiles y ensambles de alto rendimiento con garantía por escrito.',
+        'imagen': 'equipos_banner.jpg',
+        'descripcion': 'Ofrecemos venta de computadoras ensambladas a la medida, laptops de las mejores marcas y componentes nuevos garantizados. Cada equipo se entrega configurado, optimizado y listo para trabajar en oficina, escuela o negocio.',
+        'beneficios': [
+            'Equipos ensamblados con componentes 100% nuevos y marcas líderes',
+            'Portátiles optimizadas desde el primer encendido con paquetería lista',
+            'Póliza de garantía por escrito y soporte técnico local',
+            'Asesoría personalizada para elegir la configuración adecuada a tu presupuesto',
+            'Opciones de expansión en RAM y almacenamiento de alta velocidad NVMe'
+        ],
+        'servicio_param': 'equipos'
+    },
+    'cctv': {
+        'titulo': 'Sistemas de Videovigilancia (CCTV)',
+        'subtitulo': 'Circuitos cerrados de televisión en alta definición con monitoreo remoto en smartphone y PC.',
+        'imagen': 'cctv_banner.jpg',
+        'descripcion': 'Diseño, cableado estructurado e instalación de kits de cámaras de videovigilancia de 4, 8 y 16 canales. Protege tu patrimonio, hogar, escuela o empresa con sistemas de grabación continua y acceso seguro en vivo desde cualquier lugar.',
+        'beneficios': [
+            'Cámaras Full HD con visión nocturna infrarroja para interior y exterior',
+            'DVR con disco duro dedicado para grabación ininterrumpida 24/7',
+            'Configuración remota completa en dispositivos móviles (Android / iOS)',
+            'Instalación estética con cableado estructurado UTP y tubería según requerimiento',
+            'Servicio de mantenimiento preventivo, reubicación y soporte técnico'
+        ],
+        'servicio_param': 'cctv'
     }
 }
 
