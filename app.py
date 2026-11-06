@@ -911,7 +911,11 @@ def crear_presupuesto():
     db = get_db_connection()
     clientes = db.execute("""
         SELECT cliente, MAX(telefono) AS telefono, MAX(email) AS email, MAX(equipo) AS equipo
-        FROM notas_venta 
+        FROM (
+            SELECT cliente, telefono, email, equipo FROM notas_venta
+            UNION
+            SELECT cliente, telefono, email, equipo FROM presupuestos
+        )
         WHERE cliente IS NOT NULL AND TRIM(cliente) != '' 
         GROUP BY cliente 
         ORDER BY cliente ASC
@@ -1289,6 +1293,39 @@ def generar_pdf_nota_binario(folio, cliente, direccion, telefono, equipo, servic
     pdf.set_fill_color(230, 230, 230)
     pdf.cell(155, 9, 'TOTAL A PAGAR (IVA inc):', 1, 0, 'R', True)
     pdf.cell(35, 9, f'${total:,.2f}', 1, 1, 'R', True)
+    
+    # Bloque de liquidación final
+    pdf.set_font('Arial', '', 10)
+    pdf.cell(155, 6, 'Subtotal:', 0, 0, 'R')
+    pdf.cell(35, 6, f'${subtotal:,.2f}', 0, 1, 'R')
+    
+    pdf.cell(155, 6, 'I.V.A. (16%):', 0, 0, 'R')
+    pdf.cell(35, 6, f'${iva:,.2f}', 0, 1, 'R')
+    
+    pdf.set_font('Arial', 'B', 11)
+    pdf.set_fill_color(230, 230, 230)
+    pdf.cell(155, 9, 'TOTAL A PAGAR (IVA inc):', 1, 0, 'R', True)
+    pdf.cell(35, 9, f'${total:,.2f}', 1, 1, 'R', True)
+    
+    # Código QR dinámico para Nota de Venta
+    try:
+        import tempfile
+        url_qr_nota = f"https://gtek-soluciones.com/descargar_nota/{folio}"
+        qr = qrcode.QRCode(box_size=3, border=1)
+        qr.add_data(url_qr_nota)
+        qr.make(fit=True)
+        img_qr = qr.make_image(fill_color="black", back_color="white")
+
+        ruta_qr = os.path.join(tempfile.gettempdir(), f"qr_nota_{folio}.png")
+        img_qr.save(ruta_qr)
+
+        pos_y_actual = pdf.get_y()
+        pdf.image(ruta_qr, x=15, y=pos_y_actual - 22, w=22, h=22)
+        pdf.set_xy(15, pos_y_actual + 1)
+        pdf.set_font('Arial', '', 7)
+        pdf.cell(22, 4, 'Escanear nota', 0, 0, 'C')
+    except Exception as e:
+        print(f"[QR NOTA ERROR]: {e}")
     
     pdf_bytes = pdf.output(dest='S')
     if isinstance(pdf_bytes, str):
