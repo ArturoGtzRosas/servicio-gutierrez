@@ -1,169 +1,298 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <title>Generar Presupuesto - G-Tek Soluciones Digitales</title>
     <style>
-        :root { --azul: #1f3a5f; --oro: #c5a356; }
-        body { font-family: 'Segoe UI', sans-serif; background: #f4f4f4; padding: 20px; }
-        .container { max-width: 900px; margin: auto; background: white; padding: 25px; border-radius: 10px; border-top: 5px solid var(--oro); box-shadow: 0 4px 10px rgba(0,0,0,0.1); }
-        h2 { color: var(--azul); margin-top: 0; }
-        .row { display: flex; gap: 15px; margin-bottom: 15px; }
-        .col { flex: 1; display: flex; flex-direction: column; }
-        label { font-weight: bold; font-size: 13px; margin-bottom: 5px; color: #333; }
-        input { padding: 9px 12px; border: 1px solid #ccc; border-radius: 5px; font-size: 14px; box-sizing: border-box; }
-        table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        th { background: var(--azul); color: white; padding: 10px; text-align: left; font-size: 13px; }
-        td { padding: 8px; border-bottom: 1px solid #eee; }
-        .btn-add { background: var(--oro); color: white; border: none; padding: 9px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; margin-top: 12px; }
-        .btn-del { background: #e74c3c; color: white; border: none; padding: 6px 12px; border-radius: 4px; cursor: pointer; font-weight: bold; }
-        .btn-submit { background: #27ae60; color: white; border: none; padding: 14px 20px; border-radius: 6px; cursor: pointer; font-size: 16px; font-weight: bold; width: 100%; margin-top: 20px; }
-        .resumen { text-align: right; margin-top: 20px; font-size: 18px; font-weight: bold; color: var(--azul); }
-        .aviso { background: #fff3cd; color: #856404; padding: 12px; border-radius: 5px; font-size: 13px; margin-top: 15px; border: 1px solid #ffeeba; }
+        :root {
+            --azul: #1f3a5f;
+            --oro: #c5a356;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            background: #f4f4f4;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            border-top: 5px solid var(--oro);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: var(--azul);
+            margin-top: 0;
+        }
+
+        .row {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        .col {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 13px;
+            margin-bottom: 5px;
+            color: #333;
+        }
+
+        input {
+            padding: 9px 12px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 14px;
+            box-sizing: border-box;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 15px;
+        }
+
+        th {
+            background: var(--azul);
+            color: white;
+            padding: 10px;
+            text-align: left;
+            font-size: 13px;
+        }
+
+        td {
+            padding: 8px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .btn-add {
+            background: var(--oro);
+            color: white;
+            border: none;
+            padding: 9px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            margin-top: 12px;
+        }
+
+        .btn-del {
+            background: #e74c3c;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .btn-submit {
+            background: #27ae60;
+            color: white;
+            border: none;
+            padding: 14px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            width: 100%;
+            margin-top: 20px;
+        }
+
+        .resumen {
+            text-align: right;
+            margin-top: 20px;
+            font-size: 18px;
+            font-weight: bold;
+            color: var(--azul);
+        }
+
+        .aviso {
+            background: #fff3cd;
+            color: #856404;
+            padding: 12px;
+            border-radius: 5px;
+            font-size: 13px;
+            margin-top: 15px;
+            border: 1px solid #ffeeba;
+        }
     </style>
 </head>
+
 <body>
-<div class="container">
-    <h2>📄 Generar Presupuesto Técnico</h2>
-    <form method="POST" target="_blank">
-        <!-- Selector de Cliente Registrado -->
-        <div style="margin-bottom: 18px;">
-            <label style="font-weight: bold; color: #1b305b; font-size: 13px; display: block; margin-bottom: 5px;">
-                👥 Seleccionar Cliente Existente (o escribir uno nuevo abajo):
-            </label>
-            <select id="select_cliente" onchange="autoCompletarPresupuesto(this)" style="width: 100%; padding: 9px; border: 1.5px solid #c5a059; border-radius: 6px; background-color: #fbfcfd; font-size: 13px;">
-                <option value="" data-tel="" data-email="" data-equipo="">-- Escribir cliente nuevo o seleccionar de la lista --</option>
-                {% for c in clientes %}
-                <option value="{{ c.cliente }}" data-tel="{{ c.telefono or '' }}" data-email="{{ c.email or '' }}" data-equipo="{{ c.equipo or '' }}">
-                    {{ c.cliente }} {% if c.telefono %}({{ c.telefono }}){% endif %}
-                </option>
-                {% endfor %}
-            </select>
-        </div>
-
-        <div class="row">
-            <div class="col">
-                <label>Nombre del Cliente:</label>
-                <input type="text" name="cliente" id="in_cliente" required placeholder="Ej. Maestra Kari">
+    <div class="container">
+        <h2>📄 Generar Presupuesto Técnico</h2>
+        <form method="POST" target="_blank">
+            <!-- Selector de Cliente Registrado -->
+            <div style="margin-bottom: 18px;">
+                <label style="font-weight: bold; color: #1b305b; font-size: 13px; display: block; margin-bottom: 5px;">
+                    👥 Seleccionar Cliente Existente (o escribir uno nuevo abajo):
+                </label>
+                <select id="select_cliente" onchange="autoCompletarPresupuesto(this)"
+                    style="width: 100%; padding: 9px; border: 1.5px solid #c5a059; border-radius: 6px; background-color: #fbfcfd; font-size: 13px;">
+                    <option value="" data-tel="" data-email="" data-equipo="">-- Escribir cliente nuevo o seleccionar de
+                        la lista --</option>
+                    {% for c in clientes %}
+                    <option value="{{ c.cliente }}" data-tel="{{ c.telefono or '' }}" data-email="{{ c.email or '' }}"
+                        data-equipo="{{ c.equipo or '' }}">
+                        {{ c.cliente }} {% if c.telefono %}({{ c.telefono }}){% endif %}
+                    </option>
+                    {% endfor %}
+                </select>
             </div>
-            <div class="col">
-                <label>Teléfono de Contacto:</label>
-                <input type="text" name="telefono" id="in_telefono" placeholder="Ej. 55 4031 3150">
+
+            <div class="row">
+                <div class="col">
+                    <label>Nombre del Cliente:</label>
+                    <input type="text" name="cliente" id="in_cliente" required placeholder="Ej. Maestra Kari">
+                </div>
+                <div class="col">
+                    <label>Teléfono de Contacto:</label>
+                    <input type="text" name="telefono" id="in_telefono" placeholder="Ej. 55 4031 3150">
+                </div>
+                <div class="col">
+                    <label>Equipo / Modelo:</label>
+                    <input type="text" name="equipo" id="in_equipo" placeholder="Ej. Laptop HP 15-dy5009la">
+                </div>
+                <div class="col">
+                    <label>Correo Electrónico (opcional):</label>
+                    <input type="email" name="email" id="in_email" placeholder="Ej. cliente@ejemplo.com">
+                </div>
             </div>
-            <div class="col">
-                <label>Equipo / Modelo:</label>
-                <input type="text" name="equipo" id="in_equipo" placeholder="Ej. Laptop HP 15-dy5009la">
+
+            <table id="tabla-items">
+                <thead>
+                    <tr>
+                        <th style="width: 10%;">Cant.</th>
+                        <th style="width: 55%;">Producto o Servicio</th>
+                        <th style="width: 25%;">Costo / Precio ($)</th>
+                        <th style="width: 10%; text-align: center;">Acción</th>
+                    </tr>
+                </thead>
+                <tbody id="cuerpo-items">
+                    <tr>
+                        <td><input type="number" name="cantidad[]" value="1" min="1" style="width: 100%;"
+                                onchange="calcularTotal()"></td>
+                        <td><input type="text" name="descripcion[]" required
+                                placeholder="Ej. Mantenimiento Preventivo / Antivirus" style="width: 100%;"></td>
+                        <td><input type="number" step="0.01" name="precio[]" required placeholder="0.00"
+                                class="input-precio" style="width: 100%;" oninput="calcularTotal()"></td>
+                        <td style="text-align: center;"><button type="button" class="btn-del"
+                                onclick="eliminarFila(this)">✕</button></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <button type="button" class="btn-add" onclick="agregarFila()">+ Agregar otro concepto</button>
+
+            <div class="resumen">
+                <span>Total Presupuestado: $<span id="lblTotal">0.00</span> MXN</span>
             </div>
-            <div class="col">
-                <label>Correo Electrónico (opcional):</label>
-                <input type="email" name="email" id="in_email" placeholder="Ej. cliente@ejemplo.com">
+
+            <div class="aviso">
+                ⚠️ <strong>Aviso:</strong> El documento PDF generado incluirá automáticamente la leyenda: <em>"Este
+                    presupuesto puede cambiar sin previo aviso y tiene una vigencia de 15 días a partir de su
+                    emisión."</em>
             </div>
-        </div>
 
-        <table id="tabla-items">
-            <thead>
-                <tr>
-                    <th style="width: 10%;">Cant.</th>
-                    <th style="width: 55%;">Producto o Servicio</th>
-                    <th style="width: 25%;">Costo / Precio ($)</th>
-                    <th style="width: 10%; text-align: center;">Acción</th>
-                </tr>
-            </thead>
-            <tbody id="cuerpo-items">
-                <tr>
-                    <td><input type="number" name="cantidad[]" value="1" min="1" style="width: 100%;" onchange="calcularTotal()"></td>
-                    <td><input type="text" name="descripcion[]" required placeholder="Ej. Mantenimiento Preventivo / Antivirus" style="width: 100%;"></td>
-                    <td><input type="number" step="0.01" name="precio[]" required placeholder="0.00" class="input-precio" style="width: 100%;" oninput="calcularTotal()"></td>
-                    <td style="text-align: center;"><button type="button" class="btn-del" onclick="eliminarFila(this)">✕</button></td>
-                </tr>
-            </tbody>
-        </table>
+            <button type="submit" class="btn-submit">📥 Generar y Descargar Presupuesto en PDF</button>
 
-        <button type="button" class="btn-add" onclick="agregarFila()">+ Agregar otro concepto</button>
+            <div style="display: flex; gap: 12px; margin-top: 15px;">
+                <button type="submit" class="btn-submit" style="flex: 2; margin-top: 0;">📄 Generar y Descargar
+                    Presupuesto en PDF</button>
+                <a href="{{ url_for('crear_presupuesto') }}"
+                    style="flex: 1; text-align: center; text-decoration: none; padding: 12px; background-color: #6c757d; color: white; border-radius: 6px; font-weight: bold; display: flex; align-items: center; justify-content: center; font-size: 0.95em; transition: 0.2s;"
+                    onmouseover="this.style.backgroundColor='#5a6268'"
+                    onmouseout="this.style.backgroundColor='#6c757d'">🔄 Nuevo Presupuesto</a>
+            </div>
+        </form>
+        <br>
+        <a href="{{ url_for('dashboard') }}" style="text-decoration:none; color:var(--azul); font-weight:bold;">← Volver
+            al Panel</a>
+    </div>
 
-        <div class="resumen">
-            <span>Total Presupuestado: $<span id="lblTotal">0.00</span> MXN</span>
-        </div>
-
-        <div class="aviso">
-            ⚠️ <strong>Aviso:</strong> El documento PDF generado incluirá automáticamente la leyenda: <em>"Este presupuesto puede cambiar sin previo aviso y tiene una vigencia de 15 días a partir de su emisión."</em>
-        </div>
-
-        <button type="submit" class="btn-submit">📥 Generar y Descargar Presupuesto en PDF</button>
-    </form>
-    <br>
-    <a href="{{ url_for('dashboard') }}" style="text-decoration:none; color:var(--azul); font-weight:bold;">← Volver al Panel</a>
-</div>
-
-<script>
-function agregarFila() {
-    const tbody = document.getElementById('cuerpo-items');
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
+    <script>
+        function agregarFila() {
+            const tbody = document.getElementById('cuerpo-items');
+            const tr = document.createElement('tr');
+            tr.innerHTML = `
         <td><input type="number" name="cantidad[]" value="1" min="1" style="width: 100%;" onchange="calcularTotal()"></td>
         <td><input type="text" name="descripcion[]" required placeholder="Servicio o refacción" style="width: 100%;"></td>
         <td><input type="number" step="0.01" name="precio[]" required placeholder="0.00" class="input-precio" style="width: 100%;" oninput="calcularTotal()"></td>
         <td style="text-align: center;"><button type="button" class="btn-del" onclick="eliminarFila(this)">✕</button></td>
     `;
-    tbody.appendChild(tr);
-}
-
-function eliminarFila(btn) {
-    const filas = document.querySelectorAll('#cuerpo-items tr');
-    if (filas.length > 1) {
-        btn.closest('tr').remove();
-        calcularTotal();
-    }
-}
-
-function calcularTotal() {
-    let total = 0;
-    const filas = document.querySelectorAll('#cuerpo-items tr');
-    filas.forEach(f => {
-        const cant = parseFloat(f.querySelector('input[name="cantidad[]"]').value) || 0;
-        const precio = parseFloat(f.querySelector('.input-precio').value) || 0;
-        total += cant * precio;
-    });
-    document.getElementById('lblTotal').innerText = total.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
-
-function autoCompletarPresupuesto(select) {
-    const opt = select.options[select.selectedIndex];
-    const nombre = opt.value;
-    const tel = opt.getAttribute('data-tel') || '';
-    const email = opt.getAttribute('data-email') || '';
-    const equipo = opt.getAttribute('data-equipo') || '';
-
-    if (nombre) {
-        document.getElementById('in_cliente').value = nombre;
-        if (document.getElementById('in_telefono')) document.getElementById('in_telefono').value = tel;
-        if (document.getElementById('in_email')) document.getElementById('in_email').value = email;
-        if (document.getElementById('in_equipo')) document.getElementById('in_equipo').value = equipo;
-    }
-}
-
-window.addEventListener('DOMContentLoaded', () => {
-    const params = new URLSearchParams(window.location.search);
-    const clienteParam = params.get('cliente');
-    const telParam = params.get('telefono');
-    const emailParam = params.get('email');
-    const equipoParam = params.get('equipo');
-    const servicioParam = params.get('servicio');
-
-    if (clienteParam) document.getElementById('in_cliente').value = clienteParam;
-    if (telParam && document.getElementById('in_telefono')) document.getElementById('in_telefono').value = telParam;
-    if (emailParam && document.getElementById('in_email')) document.getElementById('in_email').value = emailParam;
-    if (equipoParam && document.getElementById('in_equipo')) document.getElementById('in_equipo').value = equipoParam;
-
-    // Si viene un concepto de servicio sugerido, ponerlo en la primera fila
-    if (servicioParam) {
-        const primerConcepto = document.querySelector('input[name="descripcion[]"]');
-        if (primerConcepto && !primerConcepto.value) {
-            primerConcepto.value = servicioParam;
+            tbody.appendChild(tr);
         }
-    }
-});
 
-</script>
+        function eliminarFila(btn) {
+            const filas = document.querySelectorAll('#cuerpo-items tr');
+            if (filas.length > 1) {
+                btn.closest('tr').remove();
+                calcularTotal();
+            }
+        }
+
+        function calcularTotal() {
+            let total = 0;
+            const filas = document.querySelectorAll('#cuerpo-items tr');
+            filas.forEach(f => {
+                const cant = parseFloat(f.querySelector('input[name="cantidad[]"]').value) || 0;
+                const precio = parseFloat(f.querySelector('.input-precio').value) || 0;
+                total += cant * precio;
+            });
+            document.getElementById('lblTotal').innerText = total.toLocaleString('es-MX', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        function autoCompletarPresupuesto(select) {
+            const opt = select.options[select.selectedIndex];
+            const nombre = opt.value;
+            const tel = opt.getAttribute('data-tel') || '';
+            const email = opt.getAttribute('data-email') || '';
+            const equipo = opt.getAttribute('data-equipo') || '';
+
+            if (nombre) {
+                document.getElementById('in_cliente').value = nombre;
+                if (document.getElementById('in_telefono')) document.getElementById('in_telefono').value = tel;
+                if (document.getElementById('in_email')) document.getElementById('in_email').value = email;
+                if (document.getElementById('in_equipo')) document.getElementById('in_equipo').value = equipo;
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const params = new URLSearchParams(window.location.search);
+            const clienteParam = params.get('cliente');
+            const telParam = params.get('telefono');
+            const emailParam = params.get('email');
+            const equipoParam = params.get('equipo');
+            const servicioParam = params.get('servicio');
+
+            if (clienteParam) document.getElementById('in_cliente').value = clienteParam;
+            if (telParam && document.getElementById('in_telefono')) document.getElementById('in_telefono').value = telParam;
+            if (emailParam && document.getElementById('in_email')) document.getElementById('in_email').value = emailParam;
+            if (equipoParam && document.getElementById('in_equipo')) document.getElementById('in_equipo').value = equipoParam;
+
+            // Si viene un concepto de servicio sugerido, ponerlo en la primera fila
+            if (servicioParam) {
+                const primerConcepto = document.querySelector('input[name="descripcion[]"]');
+                if (primerConcepto && !primerConcepto.value) {
+                    primerConcepto.value = servicioParam;
+                }
+            }
+        });
+
+    </script>
 </body>
+
 </html>
