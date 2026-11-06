@@ -334,7 +334,7 @@ CATALOGO_DETALLE = {
             'Configuración de dominio propio (.com, .mx) y hosting seguro',
             'Opciones de cotizadores interactivos y catálogos de productos'
         ],
-        'servicio_param': ''
+        'servicio_param': 'web'
     },
     'ssd': {
         'titulo': 'Instalación y Migración a Disco Sólido (SSD)',
@@ -1413,13 +1413,17 @@ def crear_nota():
                         items_precargados.append({'cant': 1, 'desc': serv, 'precio': precio_p, 'p_unit': precio_p})
 
     clientes_registrados = db.execute("""
-        SELECT cliente, 
-               MAX(direccion) AS direccion, 
-               MAX(telefono) AS telefono, 
+        SELECT cliente,
+               MAX(direccion) AS direccion,
+               MAX(telefono) AS telefono,
                MAX(id) AS id
-        FROM notas_venta 
-        WHERE cliente IS NOT NULL AND TRIM(cliente) != '' 
-        GROUP BY cliente 
+        FROM (
+            SELECT cliente, direccion, telefono, id FROM notas_venta
+            UNION
+            SELECT cliente, '' AS direccion, telefono, id FROM presupuestos
+        )
+        WHERE cliente IS NOT NULL AND TRIM(cliente) != ''
+        GROUP BY cliente
         ORDER BY MAX(id) DESC
     """).fetchall()
     db.close()
