@@ -7,24 +7,23 @@
 
     <meta property="og:type" content="website">
     <meta property="og:title" content="🍸 Emily & Emiliano are A 'Tini Bit Older">
-    <meta property="og:description" content="Acompáñanos a celebrar nuestro cumpleaños con café y cocteles. Confirma tu asistencia aquí.">
+    <meta property="og:description" content="Acompáñanos a celebrar nuestro cumpleaños. Confirma tu asistencia aquí.">
     <meta property="og:image" content="https://gtek-soluciones.com/static/img/invitacion_preview.jpg">
     <meta property="og:url" content="https://gtek-soluciones.com/invitacion">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital@1&family=Pinyon+Script&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
     <style>
         :root {
-            --bg-card: #f8f4ee;
-            --espresso-dark: #2c1d16;
+            --espresso-dark: #20130d;
             --espresso-mid: #4a3328;
             --caramel: #8c5835;
             --line-border: #dcd2c4;
-            --text-sub: #7a6a5e;
+            --text-sub: #635347;
         }
 
         * {
@@ -34,8 +33,8 @@
         }
 
         body {
-            background: linear-gradient(rgba(10, 6, 5, 0.65), rgba(10, 6, 5, 0.82)),
-                        url("{{ url_for('static', filename='img/background_texture.jpg') }}?v=2") no-repeat center center fixed;
+            background: linear-gradient(rgba(10, 6, 5, 0.4), rgba(10, 6, 5, 0.7)),
+                        url("{{ url_for('static', filename='img/background_texture.jpg') }}?v=4") no-repeat center center fixed;
             background-size: cover;
             color: var(--espresso-dark);
             font-family: 'Montserrat', sans-serif;
@@ -43,7 +42,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 30px 14px;
+            padding: 30px 16px;
             position: relative;
         }
 
@@ -57,16 +56,13 @@
             pointer-events: none;
         }
 
-        /* Tarjeta central proporcionada */
-        .phone-frame {
-            background-color: var(--bg-card);
-            border: 1px solid var(--line-border);
-            border-radius: 26px;
-            max-width: 380px;
-            width: 100%;
-            padding: 34px 22px 28px 22px;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.7);
-            text-align: center;
+        /* Contenedor tipo tarjeta vertical con márgenes para ver el fondo */
+        .poster-card {
+            background-color: #f7f3ed;
+            border-radius: 24px;
+            max-width: 360px;
+            width: 90%;
+            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), 0 0 20px rgba(212, 175, 55, 0.15);
             position: relative;
             z-index: 1;
             overflow: hidden;
@@ -76,7 +72,7 @@
         @keyframes fadeInCard {
             from {
                 opacity: 0;
-                transform: translateY(22px);
+                transform: translateY(20px);
             }
             to {
                 opacity: 1;
@@ -84,111 +80,27 @@
             }
         }
 
-        .header-names {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.45rem;
-            letter-spacing: 3.5px;
-            text-transform: uppercase;
-            font-weight: 700;
-            color: var(--espresso-dark);
-            line-height: 1.25;
-            margin-bottom: 4px;
-        }
-
-        .subtitle-are {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: 1.1rem;
-            color: var(--caramel);
-            margin-bottom: 12px;
-        }
-
-        .image-header-container {
-            width: 100%;
-            max-width: 280px;
-            margin: 0 auto 10px auto;
-        }
-
-        .image-header {
+        .poster-image {
             width: 100%;
             height: auto;
-            max-height: 240px;
-            object-fit: contain;
             display: block;
-            margin: 0 auto;
         }
 
-        .tini-script {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: 3rem;
-            color: var(--caramel);
-            line-height: 0.95;
-            margin-top: 4px;
-            display: inline-block;
-            transform: rotate(-2deg);
+        /* Sección de acciones y ubicación */
+        .actions-panel {
+            padding: 16px 20px 24px 20px;
+            background-color: #f7f3ed;
+            text-align: center;
         }
 
-        .older-label {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.5rem;
-            letter-spacing: 5px;
-            text-transform: uppercase;
-            font-weight: 700;
-            color: var(--espresso-dark);
-            margin-top: 4px;
+        .location-box {
             margin-bottom: 18px;
-        }
-
-        /* Bloque Fecha Editorial */
-        .date-box {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin: 18px 0;
-            border-top: 1px solid var(--line-border);
-            border-bottom: 1px solid var(--line-border);
-            padding: 10px 0;
-        }
-
-        .date-col {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 0.95rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-weight: 600;
-            color: var(--espresso-dark);
-        }
-
-        .date-col.highlight {
-            font-size: 1.85rem;
-            font-weight: 700;
-            color: var(--caramel);
-            border-left: 1.5px solid var(--line-border);
-            border-right: 1.5px solid var(--line-border);
-            padding: 0 14px;
-            line-height: 1;
-        }
-
-        .highlight span {
-            display: block;
-            font-size: 0.68rem;
-            letter-spacing: 2px;
-            font-weight: 600;
-            color: var(--espresso-mid);
-            margin-top: 2px;
-        }
-
-        /* Bloque Ubicación */
-        .location-section {
-            margin: 18px 0 24px 0;
-            font-size: 0.85rem;
-            line-height: 1.45;
+            font-size: 0.82rem;
+            line-height: 1.4;
             color: var(--espresso-mid);
         }
 
-        .location-section strong {
+        .location-box strong {
             display: block;
             font-family: 'Cormorant Garamond', serif;
             font-size: 1.15rem;
@@ -202,58 +114,58 @@
             display: inline-flex;
             align-items: center;
             gap: 4px;
-            margin-top: 8px;
-            font-size: 0.75rem;
+            margin-top: 6px;
+            font-size: 0.72rem;
             text-transform: uppercase;
-            letter-spacing: 1.5px;
+            letter-spacing: 1.2px;
             color: var(--caramel);
             text-decoration: none;
             font-weight: 600;
             border-bottom: 1px solid var(--caramel);
-            padding-bottom: 2px;
+            padding-bottom: 1px;
         }
 
-        /* Formulario RSVP */
-        .rsvp-card {
-            background-color: #f0e8dc;
-            border-radius: 16px;
-            padding: 20px 16px;
-            text-align: left;
+        /* Tarjeta de Confirmación */
+        .rsvp-container {
+            background: rgba(255, 255, 255, 0.7);
             border: 1px dashed var(--line-border);
+            border-radius: 14px;
+            padding: 16px 14px;
+            text-align: left;
         }
 
-        .rsvp-header {
+        .rsvp-title {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1.15rem;
+            font-size: 1.1rem;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 1.8px;
             font-weight: 700;
             text-align: center;
             color: var(--espresso-dark);
-            margin-bottom: 12px;
+            margin-bottom: 10px;
         }
 
         .form-item {
-            margin-bottom: 11px;
+            margin-bottom: 10px;
         }
 
         label {
             display: block;
-            font-size: 0.68rem;
+            font-size: 0.65rem;
             text-transform: uppercase;
-            letter-spacing: 1.2px;
+            letter-spacing: 1px;
             color: var(--text-sub);
-            margin-bottom: 4px;
+            margin-bottom: 3px;
             font-weight: 600;
         }
 
         input, select {
             width: 100%;
-            background-color: #fff;
+            background: #fff;
             border: 1px solid var(--line-border);
-            border-radius: 8px;
-            padding: 10px 11px;
-            font-size: 0.88rem;
+            border-radius: 6px;
+            padding: 9px 10px;
+            font-size: 0.85rem;
             color: var(--espresso-dark);
             font-family: inherit;
             outline: none;
@@ -266,21 +178,21 @@
         .btn-submit {
             width: 100%;
             background: var(--espresso-dark);
-            color: #f9f6f0;
+            color: #f7f3ed;
             border: none;
             border-radius: 8px;
             padding: 13px;
             font-family: 'Montserrat', sans-serif;
-            font-size: 0.85rem;
+            font-size: 0.82rem;
             font-weight: 600;
             letter-spacing: 1.2px;
             text-transform: uppercase;
             cursor: pointer;
-            margin-top: 8px;
+            margin-top: 6px;
             display: flex;
             align-items: center;
             justify-content: center;
-            gap: 8px;
+            gap: 6px;
             transition: background 0.2s ease;
         }
 
@@ -293,70 +205,54 @@
 
     <canvas id="particleCanvas"></canvas>
 
-    <div class="phone-frame">
-        <div class="header-names">Emily & Emiliano</div>
-        <div class="subtitle-are">are</div>
+    <div class="poster-card">
+        <!-- El póster ilustrado completo -->
+        <img src="{{ url_for('static', filename='img/espresso_header.jpg') }}?v=4" alt="Invitación Emily & Emiliano" class="poster-image">
 
-        <div class="image-header-container">
-            <img src="{{ url_for('static', filename='img/espresso_header.jpg') }}?v=2" alt="A 'Tini Bit Older" class="image-header">
+        <div class="actions-panel">
+            <div class="location-box">
+                <strong>San Nicolás</strong>
+                <p>Tacario 166, Centro</p>
+                <p>Maravatío de Ocampo, Michoacán</p>
+                <a class="map-btn" href="https://www.google.com/maps/search/?api=1&query=Tacario+166+San+Nicolas+Centro+Maravatio+de+Ocampo+Michoacan" target="_blank" rel="noopener">
+                    📍 Abrir en Google Maps
+                </a>
+            </div>
+
+            <!-- Confirmación -->
+            <section class="rsvp-container">
+                <h2 class="rsvp-title">Confirmar Asistencia</h2>
+
+                <div class="form-item">
+                    <label for="guestName">Nombre del Invitado</label>
+                    <input type="text" id="guestName" placeholder="Tu nombre y apellido" required>
+                </div>
+
+                <div class="form-item">
+                    <label for="guestsCount">Acompañantes</label>
+                    <select id="guestsCount">
+                        <option value="Voy solo(a)">Voy solo(a)</option>
+                        <option value="+1 Acompañante">+1 Acompañante</option>
+                        <option value="+2 Acompañantes">+2 Acompañantes</option>
+                        <option value="+3 Acompañantes">+3 Acompañantes</option>
+                    </select>
+                </div>
+
+                <div class="form-item">
+                    <label for="drinkPref">Bebida de Preferencia</label>
+                    <select id="drinkPref">
+                        <option value="Espresso Martini clásico">Espresso Martini clásico</option>
+                        <option value="Carajillo shakerato">Carajillo shakerato</option>
+                        <option value="Cóctel sin alcohol (Mocktail)">Cóctel sin alcohol</option>
+                        <option value="Cerveza / Vino / Refresco">Cerveza / Vino / Refresco</option>
+                    </select>
+                </div>
+
+                <button type="button" class="btn-submit" onclick="enviarConfirmacion()">
+                    Confirmar por WhatsApp 💬
+                </button>
+            </section>
         </div>
-
-        <div class="tini-script">A 'Tini Bit</div>
-        <div class="older-label">Older</div>
-
-        <!-- Fecha -->
-        <div class="date-box">
-            <div class="date-col">Sábado</div>
-            <div class="date-col highlight">
-                14
-                <span>NOV</span>
-            </div>
-            <div class="date-col">7:00 PM</div>
-        </div>
-
-        <!-- Ubicación -->
-        <div class="location-section">
-            <strong>San Nicolás</strong>
-            <p>Tacario 166, Centro</p>
-            <p>Maravatío de Ocampo, Michoacán</p>
-            <a class="map-btn" href="https://www.google.com/maps/search/?api=1&query=Tacario+166+San+Nicolas+Centro+Maravatio+de+Ocampo+Michoacan" target="_blank" rel="noopener">
-                📍 Ver en Google Maps
-            </a>
-        </div>
-
-        <!-- RSVP -->
-        <section class="rsvp-card">
-            <h2 class="rsvp-header">Confirmar Asistencia</h2>
-
-            <div class="form-item">
-                <label for="guestName">Nombre del Invitado</label>
-                <input type="text" id="guestName" placeholder="Tu nombre y apellido" required>
-            </div>
-
-            <div class="form-item">
-                <label for="guestsCount">Acompañantes</label>
-                <select id="guestsCount">
-                    <option value="Voy solo(a)">Voy solo(a)</option>
-                    <option value="+1 Acompañante">+1 Acompañante</option>
-                    <option value="+2 Acompañantes">+2 Acompañantes</option>
-                    <option value="+3 Acompañantes">+3 Acompañantes</option>
-                </select>
-            </div>
-
-            <div class="form-item">
-                <label for="drinkPref">Bebida de Preferencia</label>
-                <select id="drinkPref">
-                    <option value="Espresso Martini clásico">Espresso Martini clásico</option>
-                    <option value="Carajillo shakerato">Carajillo shakerato</option>
-                    <option value="Cóctel sin alcohol (Mocktail)">Cóctel sin alcohol</option>
-                    <option value="Cerveza / Vino / Refresco">Cerveza / Vino / Refresco</option>
-                </select>
-            </div>
-
-            <button type="button" class="btn-submit" onclick="enviarConfirmacion()">
-                Confirmar por WhatsApp 💬
-            </button>
-        </section>
     </div>
 
     <script>
@@ -379,14 +275,14 @@
                 this.size = Math.random() * 2 + 0.4;
                 this.speedY = -(Math.random() * 0.3 + 0.1);
                 this.speedX = (Math.random() - 0.5) * 0.2;
-                this.alpha = Math.random() * 0.4 + 0.1;
+                this.alpha = Math.random() * 0.45 + 0.15;
                 this.fade = Math.random() * 0.005 + 0.002;
             }
             update() {
                 this.y += this.speedY;
                 this.x += this.speedX;
                 this.alpha += this.fade;
-                if (this.alpha <= 0.05 || this.alpha >= 0.5) this.fade = -this.fade;
+                if (this.alpha <= 0.05 || this.alpha >= 0.55) this.fade = -this.fade;
                 if (this.y < -10) this.reset();
             }
             draw() {
@@ -400,7 +296,7 @@
             }
         }
 
-        const count = window.innerWidth < 600 ? 20 : 40;
+        const count = window.innerWidth < 600 ? 25 : 45;
         for (let i = 0; i < count; i++) particles.push(new Particle());
 
         function animate() {
