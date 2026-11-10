@@ -14,12 +14,13 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght=0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&display=swap" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
     <style>
         :root {
+            --bg-outer: #0a0605;
             --bg-card: #f9f6f0;
             --espresso-dark: #2c1d16;
             --espresso-mid: #4a3328;
@@ -35,8 +36,8 @@
         }
 
         body {
-            /* Imagen de fondo desenfocada y ambiental */
-            background: linear-gradient(rgba(10, 6, 5, 0.5), rgba(10, 6, 5, 0.7)),
+            /* Fondo de la página completo con la textura desenfocada */
+            background: linear-gradient(rgba(10, 6, 5, 0.7), rgba(10, 6, 5, 0.85)),
                         url("{{ url_for('static', filename='img/background_texture.jpg') }}") no-repeat center center fixed;
             background-size: cover;
             color: var(--espresso-dark);
@@ -45,12 +46,12 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 24px 14px;
+            padding: 16px 12px;
             position: relative;
             overflow-x: hidden;
         }
 
-        /* Partículas flotantes */
+        /* Partículas doradas de fondo */
         #particleCanvas {
             position: fixed;
             top: 0;
@@ -61,19 +62,18 @@
             pointer-events: none;
         }
 
+        /* La Tarjeta que ahora actúa como el póster vertical interactivo */
         .phone-frame {
             background-color: var(--bg-card);
             border: 1px solid var(--line-border);
             border-radius: 28px;
             max-width: 410px;
             width: 100%;
-            padding: 32px 24px;
-            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
-            text-align: center;
+            overflow: hidden;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
             position: relative;
             z-index: 1;
-            overflow: hidden;
-            animation: fadeInCard 0.9s ease-out forwards;
+            animation: fadeInCard 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
         }
 
         @keyframes fadeInCard {
@@ -87,108 +87,39 @@
             }
         }
 
-        .header-names {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.4rem;
-            letter-spacing: 3.5px;
-            text-transform: uppercase;
-            font-weight: 600;
-            color: var(--espresso-dark);
-            margin-bottom: 20px;
-        }
-
-        /* Copa Espresso Martini de estudio */
-        .image-header-container {
-            width: 220px;
-            height: 180px;
-            margin: 0 auto 10px auto;
-            position: relative;
-        }
-
-        .image-header {
+        /* Poster Ilustrado en Acuarela (Casi toda la pantalla) */
+        .poster-container {
             width: 100%;
-            height: 100%;
-            object-fit: contain;
+            position: relative;
+            line-height: 0;
         }
 
-        .tini-script {
-            font-family: 'Playfair Display', serif;
-            font-style: italic;
-            font-size: 3.3rem;
-            color: var(--caramel);
-            line-height: 0.9;
-            margin-top: -5px;
-            letter-spacing: -0.5px;
-            transform: rotate(-3deg);
-            display: inline-block;
-        }
-
-        .older-label {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 1.6rem;
-            letter-spacing: 5px;
-            text-transform: uppercase;
-            font-weight: 700;
-            color: var(--espresso-dark);
-            margin-top: 6px;
-            margin-bottom: 18px;
-        }
-
-        .invitation-phrase {
-            font-size: 0.75rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            color: var(--text-sub);
-            font-weight: 500;
-            margin-bottom: 22px;
-        }
-
-        /* Fecha */
-        .date-box {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 12px;
-            margin: 20px 0;
-            border-top: 1px solid var(--line-border);
-            border-bottom: 1px solid var(--line-border);
-            padding: 12px 0;
-        }
-
-        .date-col {
-            font-family: 'Cormorant Garamond', serif;
-            font-size: 0.95rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            font-weight: 600;
-            color: var(--espresso-dark);
-        }
-
-        .date-col.highlight {
-            font-size: 1.9rem;
-            font-weight: 700;
-            color: var(--caramel);
-            border-left: 1.5px solid var(--line-border);
-            border-right: 1.5px solid var(--line-border);
-            padding: 0 14px;
-            line-height: 1;
-        }
-
-        .highlight span {
+        .poster-image {
+            width: 100%;
+            height: auto;
             display: block;
-            font-size: 0.7rem;
-            letter-spacing: 2.5px;
-            font-weight: 600;
-            color: var(--espresso-mid);
-            margin-top: 2px;
         }
 
-        /* Ubicación */
+        /* Degradado suave para fundir el póster con la zona interactiva inferior */
+        .poster-fade {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 60px;
+            background: linear-gradient(to bottom, transparent, var(--bg-card));
+        }
+
+        /* Bloque Ubicación */
         .location-section {
-            margin: 20px 0 28px 0;
+            padding: 12px 24px 20px 24px;
             font-size: 0.85rem;
             line-height: 1.5;
             color: var(--espresso-mid);
+            background-color: var(--bg-card);
+            margin-top: -10px;
+            position: relative;
+            z-index: 2;
         }
 
         .location-section strong {
@@ -214,22 +145,32 @@
             font-weight: 600;
             border-bottom: 1px solid var(--caramel);
             padding-bottom: 2px;
+            transition: color 0.2s ease, border-color 0.2s ease;
         }
 
-        /* Formulario */
+        .map-btn:hover {
+            color: var(--espresso-dark);
+            border-color: var(--espresso-dark);
+        }
+
+        /* Formulario RSVP */
         .rsvp-card {
             background-color: #f2ebe2;
-            border-radius: 18px;
-            padding: 22px 18px;
+            border-radius: 20px;
+            margin: 0 20px 24px 20px;
+            padding: 24px 18px;
             text-align: left;
             border: 1px dashed var(--line-border);
+            position: relative;
+            z-index: 2;
+            box-shadow: inset 0 2px 4px rgba(0,0,0,0.02);
         }
 
         .rsvp-header {
             font-family: 'Cormorant Garamond', serif;
             font-size: 1.2rem;
             text-transform: uppercase;
-            letter-spacing: 2px;
+            letter-spacing: 2.5px;
             font-weight: 700;
             text-align: center;
             color: var(--espresso-dark);
@@ -255,16 +196,17 @@
             background-color: #fff;
             border: 1px solid var(--line-border);
             border-radius: 8px;
-            padding: 10px 12px;
+            padding: 11px 12px;
             font-size: 0.9rem;
             color: var(--espresso-dark);
             font-family: inherit;
             outline: none;
-            transition: border-color 0.2s ease;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
         }
 
         input:focus, select:focus {
             border-color: var(--caramel);
+            box-shadow: 0 0 8px rgba(140, 88, 53, 0.15);
         }
 
         .btn-submit {
@@ -273,7 +215,7 @@
             color: #f9f6f0;
             border: none;
             border-radius: 8px;
-            padding: 13px;
+            padding: 14px;
             font-family: 'Montserrat', sans-serif;
             font-size: 0.85rem;
             font-weight: 600;
@@ -286,6 +228,7 @@
             justify-content: center;
             gap: 8px;
             transition: background 0.2s ease, transform 0.1s ease;
+            box-shadow: 0 4px 12px rgba(44, 29, 22, 0.2);
         }
 
         .btn-submit:hover {
@@ -299,32 +242,18 @@
 </head>
 <body>
 
+    <!-- Fondo dinámico de partículas flotantes -->
     <canvas id="particleCanvas"></canvas>
 
     <div class="phone-frame">
-        <div class="header-names">Emily & Emiliano are</div>
-
-        <!-- Imagen de Cabecera en Acuarela -->
-        <div class="image-header-container">
-            <img src="{{ url_for('static', filename='img/espresso_header.jpg') }}" alt="Espresso Martini Acuarela" class="image-header">
+        
+        <!-- Sección del Póster de Acuarela -->
+        <div class="poster-container">
+            <img src="{{ url_for('static', filename='img/espresso_header.jpg') }}" alt="Emily & Emiliano | A 'Tini Bit Older" class="poster-image">
+            <div class="poster-fade"></div>
         </div>
 
-        <div class="tini-script">A 'Tini Bit</div>
-        <div class="older-label">Older</div>
-
-        <p class="invitation-phrase">Únete a nosotros para cenar y brindar</p>
-
-        <!-- Bloque Fecha -->
-        <div class="date-box">
-            <div class="date-col">Sábado</div>
-            <div class="date-col highlight">
-                14
-                <span>NOV</span>
-            </div>
-            <div class="date-col">7:00 PM</div>
-        </div>
-
-        <!-- Bloque Ubicación -->
+        <!-- Detalles de Ubicación -->
         <div class="location-section">
             <strong>San Nicolás</strong>
             <p>Tacario 166, Centro</p>
@@ -370,7 +299,7 @@
     </div>
 
     <script>
-        // Partículas doradas
+        // Animación de partículas flotantes en Canvas
         const canvas = document.getElementById('particleCanvas');
         const ctx = canvas.getContext('2d');
         let particles = [];
@@ -389,17 +318,17 @@
             reset() {
                 this.x = Math.random() * canvas.width;
                 this.y = Math.random() * canvas.height;
-                this.size = Math.random() * 2 + 0.5;
-                this.speedY = -(Math.random() * 0.35 + 0.1);
-                this.speedX = (Math.random() - 0.5) * 0.2;
-                this.alpha = Math.random() * 0.5 + 0.1;
-                this.fade = Math.random() * 0.005 + 0.002;
+                this.size = Math.random() * 1.8 + 0.4;
+                this.speedY = -(Math.random() * 0.3 + 0.1);
+                this.speedX = (Math.random() - 0.5) * 0.15;
+                this.alpha = Math.random() * 0.4 + 0.1;
+                this.fade = Math.random() * 0.004 + 0.001;
             }
             update() {
                 this.y += this.speedY;
                 this.x += this.speedX;
                 this.alpha += this.fade;
-                if (this.alpha <= 0.05 || this.alpha >= 0.6) this.fade = -this.fade;
+                if (this.alpha <= 0.05 || this.alpha >= 0.5) this.fade = -this.fade;
                 if (this.y < -10) this.reset();
             }
             draw() {
@@ -413,7 +342,7 @@
             }
         }
 
-        const particleCount = window.innerWidth < 600 ? 25 : 45;
+        const particleCount = window.innerWidth < 600 ? 20 : 40;
         for (let i = 0; i < particleCount; i++) {
             particles.push(new Particle());
         }
@@ -428,6 +357,7 @@
         }
         animate();
 
+        // Enlace para confirmaciones de WhatsApp
         const TELEFONO_WHATSAPP = '524471178214';
 
         function enviarConfirmacion() {
@@ -441,12 +371,13 @@
                 return;
             }
 
+            // Confeti de chocolate/oro
             if (typeof confetti === 'function') {
                 confetti({
-                    particleCount: 50,
-                    spread: 55,
-                    origin: { y: 0.85 },
-                    colors: ['#8c5835', '#d9be9b', '#2c1d16']
+                    particleCount: 65,
+                    spread: 60,
+                    origin: { y: 0.88 },
+                    colors: ['#8c5835', '#d9be9b', '#2c1d16', '#e5c378']
                 });
             }
 
