@@ -35,7 +35,7 @@
 
         body {
             background: linear-gradient(rgba(10, 6, 5, 0.2), rgba(10, 6, 5, 0.5)),
-                        url("{{ url_for('static', filename='img/background_texture.jpg') }}?v=7") no-repeat center center fixed;
+                        url("{{ url_for('static', filename='img/background_texture.jpg') }}?v=8") no-repeat center center fixed;
             background-size: cover;
             color: var(--espresso-dark);
             font-family: 'Montserrat', sans-serif;
@@ -48,7 +48,39 @@
             overflow-x: hidden;
         }
 
-        /* Capa contenedora de globos animados con CSS */
+        /* Botón flotante para pausar/reproducir audio */
+        .music-btn {
+            position: fixed;
+            top: 18px;
+            right: 18px;
+            z-index: 1001;
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(26, 17, 13, 0.85);
+            border: 1.5px solid rgba(212, 175, 55, 0.7);
+            color: #f7eed7;
+            font-size: 1.15rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.5);
+            transition: transform 0.2s ease, border-color 0.2s ease;
+        }
+
+        .music-btn.playing {
+            border-color: #d4af37;
+            animation: musicPulse 2.2s infinite ease-in-out;
+        }
+
+        @keyframes musicPulse {
+            0%, 100% { transform: scale(1); box-shadow: 0 0 10px rgba(212, 175, 55, 0.3); }
+            50% { transform: scale(1.08); box-shadow: 0 0 20px rgba(212, 175, 55, 0.65); }
+        }
+
+        /* Capa de globos */
         .balloons-container {
             position: fixed;
             top: 0;
@@ -70,7 +102,6 @@
             animation: fallDown linear infinite;
         }
 
-        /* Nudo del globo */
         .balloon::before {
             content: '';
             position: absolute;
@@ -83,7 +114,6 @@
             background: inherit;
         }
 
-        /* Hilo del globo */
         .balloon::after {
             content: '';
             position: absolute;
@@ -94,7 +124,6 @@
             background: rgba(220, 200, 180, 0.6);
         }
 
-        /* Brillo 3D en la parte superior izquierda */
         .balloon-shine {
             position: absolute;
             top: 7px;
@@ -106,7 +135,6 @@
             transform: rotate(-30deg);
         }
 
-        /* Variantes de color */
         .balloon.gold {
             background: radial-gradient(circle at 35% 35%, #fff1c5 0%, #d4af37 55%, #8c6d1f 100%);
             box-shadow: 0 4px 12px rgba(212, 175, 55, 0.35);
@@ -122,25 +150,12 @@
             box-shadow: 0 4px 10px rgba(175, 122, 80, 0.3);
         }
 
-        /* Animación de caída oscilante */
         @keyframes fallDown {
-            0% {
-                transform: translateY(0) rotate(0deg) translateX(0);
-                opacity: 0;
-            }
-            10% {
-                opacity: 0.85;
-            }
-            50% {
-                transform: translateY(55vh) rotate(8deg) translateX(18px);
-            }
-            90% {
-                opacity: 0.85;
-            }
-            100% {
-                transform: translateY(115vh) rotate(-10deg) translateX(-15px);
-                opacity: 0;
-            }
+            0% { transform: translateY(0) rotate(0deg) translateX(0); opacity: 0; }
+            10% { opacity: 0.85; }
+            50% { transform: translateY(55vh) rotate(8deg) translateX(18px); }
+            90% { opacity: 0.85; }
+            100% { transform: translateY(115vh) rotate(-10deg) translateX(-15px); opacity: 0; }
         }
 
         /* Tarjeta central */
@@ -158,17 +173,10 @@
         }
 
         @keyframes fadeInCard {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
         }
 
-        /* Reflejo dorado pasando por la imagen */
         .poster-wrapper {
             position: relative;
             overflow: hidden;
@@ -319,12 +327,21 @@
 </head>
 <body>
 
-    <!-- Globos cayendo generados dinámicamente -->
+    <!-- Botón flotante para la música -->
+    <button id="musicToggleBtn" class="music-btn" aria-label="Reproducir música" onclick="toggleMusic()">
+        <span id="musicIcon">🎵</span>
+    </button>
+
+    <!-- Elemento de audio en loop -->
+    <audio id="bgMusic" loop preload="auto">
+        <source src="{{ url_for('static', filename='audio/espresso_jazz.mp3') }}" type="audio/mpeg">
+    </audio>
+
     <div class="balloons-container" id="balloonsContainer"></div>
 
     <div class="poster-card">
         <div class="poster-wrapper">
-            <img src="{{ url_for('static', filename='img/espresso_header.jpg') }}?v=7" alt="Invitación Emily & Emiliano" class="poster-image">
+            <img src="{{ url_for('static', filename='img/espresso_header.jpg') }}?v=8" alt="Invitación Emily & Emiliano" class="poster-image">
         </div>
 
         <div class="actions-panel">
@@ -363,7 +380,43 @@
     </div>
 
     <script>
-        // Generador de globos HTML/CSS
+        // Control de Audio
+        const audio = document.getElementById('bgMusic');
+        const musicBtn = document.getElementById('musicToggleBtn');
+        const musicIcon = document.getElementById('musicIcon');
+        let isPlaying = false;
+
+        function toggleMusic() {
+            if (isPlaying) {
+                audio.pause();
+                musicBtn.classList.remove('playing');
+                musicIcon.textContent = '🔇';
+                isPlaying = false;
+            } else {
+                audio.play().then(() => {
+                    musicBtn.classList.add('playing');
+                    musicIcon.textContent = '🎵';
+                    isPlaying = true;
+                }).catch(e => console.log('Bloqueado por navegador:', e));
+            }
+        }
+
+        // Se activa con el primer clic/tap del invitado en la pantalla
+        function startAudioOnFirstInteraction() {
+            if (!isPlaying) {
+                audio.play().then(() => {
+                    musicBtn.classList.add('playing');
+                    musicIcon.textContent = '🎵';
+                    isPlaying = true;
+                }).catch(() => {});
+            }
+            document.removeEventListener('click', startAudioOnFirstInteraction);
+            document.removeEventListener('touchstart', startAudioOnFirstInteraction);
+        }
+        document.addEventListener('click', startAudioOnFirstInteraction);
+        document.addEventListener('touchstart', startAudioOnFirstInteraction);
+
+        // Generador de globos
         const container = document.getElementById('balloonsContainer');
         const types = ['gold', 'espresso', 'bronze'];
         const balloonCount = window.innerWidth < 600 ? 14 : 22;
@@ -373,21 +426,19 @@
             const type = types[Math.floor(Math.random() * types.length)];
             b.className = `balloon ${type}`;
 
-            // Brillo
             const shine = document.createElement('div');
             shine.className = 'balloon-shine';
             b.appendChild(shine);
 
-            // Posición y escala aleatoria
-            const left = Math.random() * 94; // Entre 0% y 94% del ancho
-            const size = Math.random() * 0.4 + 0.85; // Escala entre 85% y 125%
-            const duration = Math.random() * 5 + 6.5; // Entre 6.5s y 11.5s
-            const delay = Math.random() * 9; // Desfase para que no caigan todos al mismo tiempo
+            const left = Math.random() * 94;
+            const size = Math.random() * 0.4 + 0.85;
+            const duration = Math.random() * 5 + 6.5;
+            const delay = Math.random() * 9;
 
             b.style.left = `${left}%`;
             b.style.transform = `scale(${size})`;
             b.style.animationDuration = `${duration}s`;
-            b.style.animationDelay = `-${delay}s`; // Negativo para que ya estén cayendo al abrir
+            b.style.animationDelay = `-${delay}s`;
 
             container.appendChild(b);
         }
