@@ -35,7 +35,7 @@
 
         body {
             background: linear-gradient(rgba(10, 6, 5, 0.2), rgba(10, 6, 5, 0.5)),
-                        url("{{ url_for('static', filename='img/background_texture.jpg') }}?v=8") no-repeat center center fixed;
+                        url("{{ url_for('static', filename='img/background_texture.jpg') }}?v=9") no-repeat center center fixed;
             background-size: cover;
             color: var(--espresso-dark);
             font-family: 'Montserrat', sans-serif;
@@ -341,7 +341,7 @@
 
     <div class="poster-card">
         <div class="poster-wrapper">
-            <img src="{{ url_for('static', filename='img/espresso_header.jpg') }}?v=8" alt="Invitación Emily & Emiliano" class="poster-image">
+            <img src="{{ url_for('static', filename='img/espresso_header.jpg') }}?v=9" alt="Invitación Emily & Emiliano" class="poster-image">
         </div>
 
         <div class="actions-panel">
@@ -401,8 +401,9 @@
             }
         }
 
-        // Se activa con el primer clic/tap del invitado en la pantalla
-        function startAudioOnFirstInteraction() {
+        // Se activa con cualquier interacción inicial (scroll, swipe o clic)
+        const userEvents = ['click', 'touchstart', 'scroll', 'touchmove'];
+        function autoPlayOnGesture() {
             if (!isPlaying) {
                 audio.play().then(() => {
                     musicBtn.classList.add('playing');
@@ -410,11 +411,9 @@
                     isPlaying = true;
                 }).catch(() => {});
             }
-            document.removeEventListener('click', startAudioOnFirstInteraction);
-            document.removeEventListener('touchstart', startAudioOnFirstInteraction);
+            userEvents.forEach(evt => document.removeEventListener(evt, autoPlayOnGesture));
         }
-        document.addEventListener('click', startAudioOnFirstInteraction);
-        document.addEventListener('touchstart', startAudioOnFirstInteraction);
+        userEvents.forEach(evt => document.addEventListener(evt, autoPlayOnGesture, { passive: true }));
 
         // Generador de globos
         const container = document.getElementById('balloonsContainer');
