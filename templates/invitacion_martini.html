@@ -24,7 +24,7 @@
             --caramel: #8c5835;
             --line-border: #dcd2c4;
             --text-sub: #635347;
-            --gold-glow: rgba(212, 175, 55, 0.4);
+            --gold-glow: rgba(212, 175, 55, 0.45);
         }
 
         * {
@@ -35,7 +35,7 @@
 
         body {
             background: linear-gradient(rgba(10, 6, 5, 0.2), rgba(10, 6, 5, 0.5)),
-                        url("{{ url_for('static', filename='img/background_texture.jpg') }}?v=6") no-repeat center center fixed;
+                        url("{{ url_for('static', filename='img/background_texture.jpg') }}?v=7") no-repeat center center fixed;
             background-size: cover;
             color: var(--espresso-dark);
             font-family: 'Montserrat', sans-serif;
@@ -43,31 +43,116 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 32px 20px;
+            padding: 34px 18px;
             position: relative;
             overflow-x: hidden;
         }
 
-        /* Capa frontal para los globos animados */
-        #balloonsCanvas {
+        /* Capa contenedora de globos animados con CSS */
+        .balloons-container {
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            z-index: 10;
             pointer-events: none;
+            z-index: 999;
+            overflow: hidden;
         }
 
+        .balloon {
+            position: absolute;
+            top: -120px;
+            width: 38px;
+            height: 48px;
+            border-radius: 50% 50% 50% 50% / 40% 40% 60% 60%;
+            opacity: 0.85;
+            animation: fallDown linear infinite;
+        }
+
+        /* Nudo del globo */
+        .balloon::before {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 6px;
+            height: 5px;
+            border-radius: 3px;
+            background: inherit;
+        }
+
+        /* Hilo del globo */
+        .balloon::after {
+            content: '';
+            position: absolute;
+            bottom: -32px;
+            left: 50%;
+            width: 1px;
+            height: 28px;
+            background: rgba(220, 200, 180, 0.6);
+        }
+
+        /* Brillo 3D en la parte superior izquierda */
+        .balloon-shine {
+            position: absolute;
+            top: 7px;
+            left: 8px;
+            width: 8px;
+            height: 13px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.55);
+            transform: rotate(-30deg);
+        }
+
+        /* Variantes de color */
+        .balloon.gold {
+            background: radial-gradient(circle at 35% 35%, #fff1c5 0%, #d4af37 55%, #8c6d1f 100%);
+            box-shadow: 0 4px 12px rgba(212, 175, 55, 0.35);
+        }
+
+        .balloon.espresso {
+            background: radial-gradient(circle at 35% 35%, #8a5a40 0%, #422618 60%, #1f1008 100%);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.4);
+        }
+
+        .balloon.bronze {
+            background: radial-gradient(circle at 35% 35%, #ebd1b5 0%, #af7a50 55%, #664124 100%);
+            box-shadow: 0 4px 10px rgba(175, 122, 80, 0.3);
+        }
+
+        /* Animación de caída oscilante */
+        @keyframes fallDown {
+            0% {
+                transform: translateY(0) rotate(0deg) translateX(0);
+                opacity: 0;
+            }
+            10% {
+                opacity: 0.85;
+            }
+            50% {
+                transform: translateY(55vh) rotate(8deg) translateX(18px);
+            }
+            90% {
+                opacity: 0.85;
+            }
+            100% {
+                transform: translateY(115vh) rotate(-10deg) translateX(-15px);
+                opacity: 0;
+            }
+        }
+
+        /* Tarjeta central */
         .poster-card {
             background-color: #f7f3ed;
             border: 1px solid rgba(212, 175, 55, 0.4);
             border-radius: 24px;
             max-width: 340px;
             width: 86%;
-            box-shadow: 0 25px 65px rgba(0, 0, 0, 0.8), 0 0 25px var(--gold-glow);
+            box-shadow: 0 25px 65px rgba(0, 0, 0, 0.85), 0 0 25px var(--gold-glow);
             position: relative;
-            z-index: 1;
+            z-index: 10;
             overflow: hidden;
             animation: fadeInCard 0.8s ease-out forwards;
         }
@@ -83,7 +168,7 @@
             }
         }
 
-        /* Contenedor de la ilustración con reflejo de luz sutil */
+        /* Reflejo dorado pasando por la imagen */
         .poster-wrapper {
             position: relative;
             overflow: hidden;
@@ -234,12 +319,12 @@
 </head>
 <body>
 
-    <!-- Globos cayendo y flotando -->
-    <canvas id="balloonsCanvas"></canvas>
+    <!-- Globos cayendo generados dinámicamente -->
+    <div class="balloons-container" id="balloonsContainer"></div>
 
     <div class="poster-card">
         <div class="poster-wrapper">
-            <img src="{{ url_for('static', filename='img/espresso_header.jpg') }}?v=6" alt="Invitación Emily & Emiliano" class="poster-image">
+            <img src="{{ url_for('static', filename='img/espresso_header.jpg') }}?v=7" alt="Invitación Emily & Emiliano" class="poster-image">
         </div>
 
         <div class="actions-panel">
@@ -278,108 +363,34 @@
     </div>
 
     <script>
-        const canvas = document.getElementById('balloonsCanvas');
-        const ctx = canvas.getContext('2d');
+        // Generador de globos HTML/CSS
+        const container = document.getElementById('balloonsContainer');
+        const types = ['gold', 'espresso', 'bronze'];
+        const balloonCount = window.innerWidth < 600 ? 14 : 22;
 
-        function resize() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
+        for (let i = 0; i < balloonCount; i++) {
+            const b = document.createElement('div');
+            const type = types[Math.floor(Math.random() * types.length)];
+            b.className = `balloon ${type}`;
+
+            // Brillo
+            const shine = document.createElement('div');
+            shine.className = 'balloon-shine';
+            b.appendChild(shine);
+
+            // Posición y escala aleatoria
+            const left = Math.random() * 94; // Entre 0% y 94% del ancho
+            const size = Math.random() * 0.4 + 0.85; // Escala entre 85% y 125%
+            const duration = Math.random() * 5 + 6.5; // Entre 6.5s y 11.5s
+            const delay = Math.random() * 9; // Desfase para que no caigan todos al mismo tiempo
+
+            b.style.left = `${left}%`;
+            b.style.transform = `scale(${size})`;
+            b.style.animationDuration = `${duration}s`;
+            b.style.animationDelay = `-${delay}s`; // Negativo para que ya estén cayendo al abrir
+
+            container.appendChild(b);
         }
-        window.addEventListener('resize', resize);
-        resize();
-
-        // Paleta elegante de globos
-        const balloonPalettes = [
-            { main: '#d4af37', light: '#faeed1', dark: '#91711c' }, // Dorado metálico
-            { main: '#4a2f20', light: '#85593e', dark: '#24140b' }, // Café espresso
-            { main: '#b8860b', light: '#f7de94', dark: '#6e4f04' }, // Ámbar tostado
-            { main: '#966e51', light: '#cbac93', dark: '#523725' }  // Moka suave
-        ];
-
-        class Balloon {
-            constructor(initial = false) {
-                this.reset(initial);
-            }
-            reset(initial = false) {
-                this.radiusX = Math.random() * 10 + 13;
-                this.radiusY = this.radiusX * 1.25;
-                this.x = Math.random() * canvas.width;
-                this.y = initial ? Math.random() * canvas.height : -60;
-                this.speedY = Math.random() * 0.7 + 0.45;
-                this.swingSpeed = Math.random() * 0.025 + 0.015;
-                this.swingDistance = Math.random() * 1.4 + 0.6;
-                this.angle = Math.random() * Math.PI * 2;
-                this.palette = balloonPalettes[Math.floor(Math.random() * balloonPalettes.length)];
-                this.alpha = Math.random() * 0.35 + 0.45;
-            }
-            update() {
-                this.y += this.speedY;
-                this.angle += this.swingSpeed;
-                this.x += Math.sin(this.angle) * this.swingDistance;
-                if (this.y > canvas.height + 70) this.reset(false);
-            }
-            draw() {
-                ctx.save();
-                ctx.globalAlpha = this.alpha;
-                ctx.translate(this.x, this.y);
-                ctx.rotate(Math.sin(this.angle) * 0.15);
-
-                // Hilo del globo
-                ctx.strokeStyle = 'rgba(180, 160, 140, 0.45)';
-                ctx.lineWidth = 1;
-                ctx.beginPath();
-                ctx.moveTo(0, this.radiusY);
-                ctx.quadraticCurveTo(Math.sin(this.angle) * 8, this.radiusY + 14, Math.cos(this.angle) * 5, this.radiusY + 30);
-                ctx.stroke();
-
-                // Nudo del globo
-                ctx.fillStyle = this.palette.dark;
-                ctx.beginPath();
-                ctx.moveTo(-2.5, this.radiusY);
-                ctx.lineTo(2.5, this.radiusY);
-                ctx.lineTo(0, this.radiusY + 3.5);
-                ctx.closePath();
-                ctx.fill();
-
-                // Cuerpo del globo con degradado 3D
-                const grad = ctx.createRadialGradient(
-                    -this.radiusX * 0.3, -this.radiusY * 0.35, this.radiusX * 0.1,
-                    0, 0, this.radiusY
-                );
-                grad.addColorStop(0, this.palette.light);
-                grad.addColorStop(0.5, this.palette.main);
-                grad.addColorStop(1, this.palette.dark);
-
-                ctx.fillStyle = grad;
-                ctx.beginPath();
-                ctx.ellipse(0, 0, this.radiusX, this.radiusY, 0, 0, Math.PI * 2);
-                ctx.fill();
-
-                // Reflejo blanco curvo en la esquina superior izquierda
-                ctx.fillStyle = 'rgba(255, 255, 255, 0.45)';
-                ctx.beginPath();
-                ctx.ellipse(-this.radiusX * 0.35, -this.radiusY * 0.35, this.radiusX * 0.22, this.radiusY * 0.15, -0.6, 0, Math.PI * 2);
-                ctx.fill();
-
-                ctx.restore();
-            }
-        }
-
-        const totalBalloons = window.innerWidth < 600 ? 12 : 20;
-        const balloons = [];
-        for (let i = 0; i < totalBalloons; i++) {
-            balloons.push(new Balloon(true));
-        }
-
-        function animate() {
-            ctx.clearRect(0, 0, canvas.width, canvas.height);
-            balloons.forEach(b => {
-                b.update();
-                b.draw();
-            });
-            requestAnimationFrame(animate);
-        }
-        animate();
 
         const TELEFONO_WHATSAPP = '524471178214';
 
