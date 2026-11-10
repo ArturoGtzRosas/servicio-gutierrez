@@ -1,415 +1,248 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>G-Tek Soluciones Digitales - Expertos en Computación</title>
     <link rel="shortcut icon" href="{{ url_for('static', filename='img/unam.png') }}" type="image/x-icon">
-
+    
     <style>
-        :root {
-            --azul: #0a192f;
-            --azul-claro: #172a45;
-            --oro: #c5a059;
-            --blanco: #ffffff;
-            --texto-oscuro: #333333;
-            --fondo-gris: #f4f6f9;
+        :root { --azul: #1f3a5f; --oro: #c5a356; }
+        
+        html, body { height: 100%; margin: 0; }
+        body { font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; background-color: #f4f4f4; }
+        .main-content { flex: 1; }
+
+        /* NAVEGACIÓN */
+        nav { 
+            background: var(--azul); 
+            padding: 15px; 
+            text-align: center; 
+            position: sticky; 
+            top: 0; 
+            z-index: 1000; 
+            border-bottom: 4px solid var(--oro);
+        }
+        nav a { color: white; margin: 0 10px; text-decoration: none; font-weight: bold; font-size: 0.9em; transition: 0.3s; }
+        nav a:hover { color: var(--oro); }
+
+        /* SECCIÓN HERO */
+        .hero { 
+            background: linear-gradient(rgba(31,58,95,0.7), rgba(31,58,95,0.7)), 
+                        url('https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'); 
+            min-height: 500px; 
+            background-size: cover; 
+            background-position: center; 
+            color: white; 
+            display: flex; 
+            flex-direction: column; 
+            justify-content: center; 
+            align-items: center; 
+            text-align: center; 
+            padding: 40px 20px; 
         }
 
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
-
-        body {
-            background-color: var(--fondo-gris);
-            color: var(--texto-oscuro);
-            display: flex;
-            flex-direction: column;
-            min-height: 100vh;
-        }
-
-        /* Marquesina Animada de Reparaciones a Domicilio */
-        .marquesina-wrapper {
-            width: 100%;
-            overflow: hidden;
-            background: linear-gradient(135deg, #102a45, #0a192f);
-            border-bottom: 2px solid var(--oro);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
-            display: flex;
-            align-items: center;
-        }
-
-        @keyframes marquesinaContinua {
-            0% {
-                transform: translateX(100%);
-            }
-            100% {
-                transform: translateX(-100%);
-            }
-        }
-
-        .banner-marquesina {
-            display: inline-flex;
-            align-items: center;
-            gap: 20px;
-            color: var(--blanco);
-            padding: 12px 24px;
-            white-space: nowrap;
-            animation: marquesinaContinua 22s linear infinite;
-        }
-
-        .banner-marquesina:hover {
-            animation-play-state: paused;
-        }
-
-        .btn-whatsapp-banner {
-            background-color: #25D366;
-            color: #ffffff !important;
-            padding: 7px 16px;
-            border-radius: 6px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 0.9rem;
-            margin-left: 12px;
-            transition: transform 0.2s ease, background-color 0.2s ease;
-        }
-
-        .btn-whatsapp-banner:hover {
-            background-color: #1ebc59;
-            transform: scale(1.05);
-        }
-
-        /* Menú de Navegación */
-        nav {
-            background-color: var(--azul);
-            display: flex;
-            justify-content: center;
-            flex-wrap: wrap;
-            gap: 20px;
-            padding: 14px 20px;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
-            position: sticky;
-            top: 0;
-            z-index: 100;
-        }
-
-        nav a {
-            color: var(--blanco);
-            text-decoration: none;
-            font-size: 0.9rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            transition: color 0.3s ease;
-        }
-
-        nav a:hover {
-            color: var(--oro);
-        }
-
-        .main-content {
-            flex: 1;
-            max-width: 1200px;
-            width: 100%;
-            margin: 0 auto;
-            padding: 20px 15px;
-        }
-
-        /* Sección Hero */
-        .hero {
-            text-align: center;
-            padding: 40px 20px;
-            margin-bottom: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .hero h1 {
-            color: var(--azul);
-            font-size: 2.2rem;
-            margin-top: 15px;
-            letter-spacing: 1px;
-        }
-
-        .hero p {
-            color: #555;
-            font-size: 1.15rem;
-            margin-top: 10px;
-            max-width: 650px;
-        }
-
-        .btn-container {
-            display: flex;
-            gap: 15px;
-            margin-top: 25px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .btn-cta {
-            padding: 12px 25px;
-            border-radius: 8px;
-            text-decoration: none;
-            font-weight: bold;
-            font-size: 1rem;
-            transition: transform 0.2s, box-shadow 0.2s;
-        }
-
-        .btn-cta:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-        }
-
-        .btn-agenda {
-            background-color: var(--azul);
-            color: var(--blanco);
-        }
-
-        .btn-calcula {
-            background-color: var(--oro);
-            color: var(--azul);
-        }
-
-        /* Sección Servicios */
-        .servicios {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 25px;
-            margin: 40px 0;
-        }
-
-        .card {
-            background: var(--blanco);
+        .logo-hero {
+            max-width: 160px;
+            height: auto;
+            background: white;
+            padding: 12px;
             border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
-            display: flex;
-            flex-direction: column;
-            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            margin-bottom: 25px;
+            transition: 0.3s;
         }
 
-        .card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+        .hero h1 { color: var(--oro); font-size: 3.5em; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); text-transform: uppercase; }
+        .hero p { max-width: 700px; font-size: 1.3em; line-height: 1.6; margin-top: 15px; }
+        
+        .btn-container { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
+        
+        .btn-cta { 
+            padding: 15px 30px; 
+            text-decoration: none; 
+            border-radius: 6px; 
+            font-weight: bold; 
+            transition: 0.3s; 
+            min-width: 200px; 
+            display: inline-block;
         }
+        .btn-agenda { background: var(--oro); color: var(--azul); }
+        .btn-calcula { background: white; color: var(--azul); }
+        .btn-cta:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
 
-        .card img {
-            width: 100%;
-            height: 180px;
-            object-fit: cover;
-        }
+        /* SECCIÓN SERVICIOS */
+        .servicios { display: flex; justify-content: center; padding: 50px 10px; flex-wrap: wrap; gap: 30px; }
+        .card { background: white; width: 300px; border-radius: 12px; overflow: hidden; box-shadow: 0 6px 12px rgba(0,0,0,0.1); transition: 0.3s; border-bottom: 5px solid transparent; }
+        .card:hover { transform: translateY(-10px); border-color: var(--oro); }
+        .card img { width: 100%; height: 200px; object-fit: cover; }
+        .card-info { padding: 25px; text-align: center; }
+        .card-info h3 { color: var(--azul); margin: 0 0 10px 0; }
+        .card-info p { color: #666; font-size: 0.95em; margin-bottom: 20px; min-height: 45px; }
 
-        .card-info {
-            padding: 20px;
-            display: flex;
-            flex-direction: column;
-            flex: 1;
-        }
-
-        .card-info h3 {
-            color: var(--azul);
-            font-size: 1.2rem;
-            margin-bottom: 10px;
-        }
-
-        .card-info p {
-            color: #666;
-            font-size: 0.95rem;
-            line-height: 1.4;
-            margin-bottom: 20px;
-            flex: 1;
-        }
-
+        /* BOTONES DE LAS TARJETAS - CORRECCIÓN DE CLIC */
         .btn-card {
-            align-self: flex-start;
             background: var(--azul);
-            color: var(--blanco);
-            text-decoration: none;
-            padding: 8px 16px;
-            border-radius: 6px;
-            font-size: 0.9rem;
-            font-weight: 600;
-            transition: background 0.2s;
+            color: white;
+            text-decoration: none !important;
+            padding: 12px 25px;
+            border-radius: 5px;
+            font-weight: bold;
+            display: inline-block;
+            transition: 0.3s;
+            border: 2px solid var(--azul);
+            cursor: pointer;
+            position: relative;
+            z-index: 10;
         }
-
         .btn-card:hover {
-            background: var(--oro);
+            background: white;
             color: var(--azul);
         }
 
-        /* Sección Admin Footer */
         .admin-footer-section {
+            background: #eee;
+            padding: 40px 20px;
             text-align: center;
-            padding: 30px 20px;
-            margin-top: 20px;
+            border-top: 1px solid #ddd;
         }
-
-        .admin-footer-section p {
-            color: #777;
-            margin-bottom: 10px;
-        }
-
         .btn-admin {
+            display: inline-block;
+            margin-top: 10px;
             color: var(--azul);
             text-decoration: none;
             font-weight: bold;
-            font-size: 0.9rem;
+            border: 2px solid var(--azul);
+            padding: 10px 25px;
+            border-radius: 5px;
+            transition: 0.3s;
         }
+        .btn-admin:hover { background: var(--azul); color: var(--oro); }
 
-        .btn-admin:hover {
-            text-decoration: underline;
-        }
+        footer { background: var(--azul); color: white; text-align: center; padding: 25px; border-top: 3px solid var(--oro); }
 
-        /* Footer */
-        footer {
-            background-color: var(--azul);
-            color: var(--blanco);
-            text-align: center;
-            padding: 20px;
-            font-size: 0.9rem;
-            border-top: 3px solid var(--oro);
+        @media (max-width: 600px) {
+            .hero h1 { font-size: 2.2em; }
+            .card { width: 95%; }
         }
     </style>
 </head>
-
 <body>
 
-    <!-- Marquesina Continua Superior -->
-    <div class="marquesina-wrapper">
-        <div class="banner-marquesina">
-            <span style="font-size: 1.7rem;">🚗</span>
-            <span style="color: var(--oro); font-weight: bold; font-size: 1.1rem;">¡Contamos con reparaciones a domicilio!</span>
-            <span style="opacity: 0.95; font-size: 0.95rem;">Vamos hasta tu casa o negocio en CDMX y Zona Oriente con diagnóstico y soporte garantizado.</span>
-            <a href="https://wa.me/521XXXXXXXXXX?text=Hola,%20me%20interesa%20una%20reparación%20a%20domicilio"
-               target="_blank" class="btn-whatsapp-banner">
-                Solicitar por WhatsApp
-            </a>
-        </div>
-    </div>
-
-    <!-- Menú de Navegación -->
+<div class="main-content">
     <nav>
         <a href="{{ url_for('index') }}">INICIO</a>
         <a href="{{ url_for('cotizar_cliente') }}">COTIZA</a>
         <a href="{{ url_for('servicios') }}">NUESTROS SERVICIOS</a>
         <a href="{{ url_for('cotizador') }}">PRESUPUESTO</a>
         <a href="{{ url_for('contacto') }}">CONTACTO</a>
-        <a href="{{ url_for('rastreo') }}" class="btn-rastreo" style="color: var(--oro); font-weight: bold;">🔍 RASTREAR EQUIPO</a>
+        <a href="{{ url_for('rastreo') }}" class="btn-rastreo" style="color: #c5a059; font-weight: bold;">🔍 RASTREAR EQUIPO</a>
         <a href="{{ url_for('login') }}" style="color: var(--oro);">ADMIN</a>
         <a href="{{ url_for('equipos') }}">EQUIPOS NUEVOS</a>
         <a href="{{ url_for('cctv') }}">VIDEOVIGILANCIA (CCTV)</a>
     </nav>
 
-    <!-- Contenido Principal -->
-    <div class="main-content">
-        <section class="hero">
-            <img src="{{ url_for('static', filename='img/logo_nuevo.jpg') }}" alt="Logo G-Tek Soluciones Digitales"
-                style="max-width: 530px; width: 100%; height: auto; background: white; padding: 16px 22px; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); margin-bottom: 22px;">
-            <h1>G-Tek SOLUCIONES DIGITALES</h1>
-            <p>Innovación, soporte y soluciones tecnológicas integrales para cada necesidad.</p>
-            <div class="btn-container">
-                <a href="{{ url_for('cotizar_cliente') }}" class="btn-cta btn-agenda">Solicitar Reparación</a>
-                <a href="{{ url_for('cotizador') }}" class="btn-cta btn-calcula">Calcular Costo Rápido</a>
+    <section class="hero">
+        <img src="{{ url_for('static', filename='img/logo_nuevo.jpg') }}" alt="Logo G-Tek Soluciones Digitales" style="max-width: 530px; width: 100%; height: auto; background: white; padding: 16px 22px; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); margin-bottom: 22px;">
+        <h1>G-Tek SOLUCIONES DIGITALES</h1>
+        <p>Innovación, soporte y soluciones tecnológicas integrales para cada necesidad.</p>
+        <div class="btn-container">
+            <a href="{{ url_for('cotizar_cliente') }}" class="btn-cta btn-agenda">Solicitar Reparación</a>
+            <a href="{{ url_for('cotizador') }}" class="btn-cta btn-calcula">Calcular Costo Rápido</a>
+        </div>
+    </section>
+
+    <h2 style="text-align: center; color: var(--azul); margin-top: 50px; font-size: 2em;">Soluciones Tecnológicas a tu Medida</h2>
+    
+    <section class="servicios" id="servicios">
+        <!-- 1. Aumento de RAM y SSD -->
+        <div class="card">
+            <img src="{{ url_for('static', filename='img/ssd_upgrade.jpg') }}" alt="Actualización a Disco SSD">
+            <div class="card-info">
+                <h3>Actualización a Disco SSD</h3>
+                <p>Mejora la velocidad de tu equipo hasta 10 veces más con discos de estado sólido.</p>
+                <a href="{{ url_for('servicio_detalle', servicio_id='ssd') }}" class="btn-card">Ver Detalles</a>
             </div>
-        </section>
+        </div>
 
-        <h2 style="text-align: center; color: var(--azul); margin-top: 30px; font-size: 2rem;">Soluciones Tecnológicas a tu Medida</h2>
-
-        <section class="servicios" id="servicios">
-            <!-- 1. Aumento de RAM y SSD -->
-            <div class="card">
-                <img src="{{ url_for('static', filename='img/ssd_upgrade.jpg') }}" alt="Actualización a Disco SSD">
-                <div class="card-info">
-                    <h3>Actualización a Disco SSD</h3>
-                    <p>Mejora la velocidad de tu equipo hasta 10 veces más con discos de estado sólido.</p>
-                    <a href="{{ url_for('servicio_detalle', servicio_id='ssd') }}" class="btn-card">Ver Detalles</a>
-                </div>
+        <!-- 2. Diseño y Desarrollo Web -->
+        <div class="card">
+            <img src="{{ url_for('static', filename='img/diseno_web.jpg') }}" alt="Diseño y Desarrollo Web">
+            <div class="card-info">
+                <h3>Diseño y Desarrollo Web</h3>
+                <p>Sitios web corporativos, catálogos en línea y páginas adaptadas a móviles.</p>
+                <a href="{{ url_for('servicio_detalle', servicio_id='diseno-web') }}" class="btn-card">Ver Detalles</a>
             </div>
+        </div>
 
-            <!-- 2. Diseño y Desarrollo Web -->
-            <div class="card">
-                <img src="{{ url_for('static', filename='img/diseno_web.jpg') }}" alt="Diseño y Desarrollo Web">
-                <div class="card-info">
-                    <h3>Diseño y Desarrollo Web</h3>
-                    <p>Sitios web corporativos, catálogos en línea y páginas adaptadas a móviles.</p>
-                    <a href="{{ url_for('servicio_detalle', servicio_id='diseno-web') }}" class="btn-card">Ver Detalles</a>
-                </div>
+        <!-- 3. Cambio de Pantalla -->
+        <div class="card">
+            <img src="{{ url_for('static', filename='img/pantalla_laptop.jpg') }}" alt="Cambio de Pantalla">
+            <div class="card-info">
+                <h3>Cambio de Pantalla</h3>
+                <p>Reparación de displays, paneles rotos y solución a fallas de imagen en laptops.</p>
+                <a href="{{ url_for('servicio_detalle', servicio_id='pantalla') }}" class="btn-card">Ver Detalles</a>
             </div>
+        </div>
 
-            <!-- 3. Cambio de Pantalla -->
-            <div class="card">
-                <img src="{{ url_for('static', filename='img/pantalla_laptop.jpg') }}" alt="Cambio de Pantalla">
-                <div class="card-info">
-                    <h3>Cambio de Pantalla</h3>
-                    <p>Reparación de displays, paneles rotos y solución a fallas de imagen en laptops.</p>
-                    <a href="{{ url_for('servicio_detalle', servicio_id='pantalla') }}" class="btn-card">Ver Detalles</a>
-                </div>
+        <!-- 4. Limpieza y Pasta Térmica -->
+        <div class="card">
+            <img src="{{ url_for('static', filename='img/mantenimiento_pc.jpg') }}" alt="Limpieza y Pasta">
+            <div class="card-info">
+                <h3>Limpieza y Pasta</h3>
+                <p>Evita sobrecalentamientos y alarga la vida de tu procesador con servicio profundo.</p>
+                <a href="{{ url_for('servicio_detalle', servicio_id='mantenimiento') }}" class="btn-card">Ver Detalles</a>
             </div>
+        </div>
 
-            <!-- 4. Limpieza y Pasta Térmica -->
-            <div class="card">
-                <img src="{{ url_for('static', filename='img/mantenimiento_pc.jpg') }}" alt="Limpieza y Pasta">
-                <div class="card-info">
-                    <h3>Limpieza y Pasta</h3>
-                    <p>Evita sobrecalentamientos y alarga la vida de tu procesador con servicio profundo.</p>
-                    <a href="{{ url_for('servicio_detalle', servicio_id='mantenimiento') }}" class="btn-card">Ver Detalles</a>
-                </div>
+        <!-- 5. Instalación de Software -->
+        <div class="card">
+            <img src="{{ url_for('static', filename='img/sistema_operativo.jpg') }}" alt="Instalación de Software">
+            <div class="card-info">
+                <h3>Instalación de Software</h3>
+                <p>Sistemas operativos limpios, paquetería Office, antivirus y optimización general.</p>
+                <a href="{{ url_for('servicio_detalle', servicio_id='software') }}" class="btn-card">Ver Detalles</a>
             </div>
+        </div>
 
-            <!-- 5. Instalación de Software -->
-            <div class="card">
-                <img src="{{ url_for('static', filename='img/sistema_operativo.jpg') }}" alt="Instalación de Software">
-                <div class="card-info">
-                    <h3>Instalación de Software</h3>
-                    <p>Sistemas operativos limpios, paquetería Office, antivirus y optimización general.</p>
-                    <a href="{{ url_for('servicio_detalle', servicio_id='software') }}" class="btn-card">Ver Detalles</a>
-                </div>
+        <!-- 6. Ampliación de Memoria RAM -->
+        <div class="card">
+            <img src="{{ url_for('static', filename='img/memoria_ram.jpg') }}" alt="Memoria RAM">
+            <div class="card-info">
+                <h3>Memoria RAM</h3>
+                <p>Fluidez multitarea para trabajar con múltiples pestañas y programas sin congelamientos.</p>
+                <a href="{{ url_for('servicio_detalle', servicio_id='ram') }}" class="btn-card">Ver Detalles</a>
             </div>
+        </div>
 
-            <!-- 6. Ampliación de Memoria RAM -->
-            <div class="card">
-                <img src="{{ url_for('static', filename='img/memoria_ram.jpg') }}" alt="Memoria RAM">
-                <div class="card-info">
-                    <h3>Memoria RAM</h3>
-                    <p>Fluidez multitarea para trabajar con múltiples pestañas y programas sin congelamientos.</p>
-                    <a href="{{ url_for('servicio_detalle', servicio_id='ram') }}" class="btn-card">Ver Detalles</a>
-                </div>
+        <!-- 7. Venta de Equipos Nuevos -->
+        <div class="card">
+            <img src="{{ url_for('static', filename='img/equipos_banner.jpg') }}" alt="Venta de Equipos Nuevos">
+            <div class="card-info">
+                <h3>Equipos Nuevos</h3>
+                <p>Laptops, computadoras de escritorio y ensambles a medida con garantía por escrito.</p>
+                <a href="{{ url_for('equipos') }}" class="btn-card">Ver Equipos</a>
             </div>
+        </div>
 
-            <!-- 7. Venta de Equipos Nuevos -->
-            <div class="card">
-                <img src="{{ url_for('static', filename='img/equipos_banner.jpg') }}" alt="Venta de Equipos Nuevos">
-                <div class="card-info">
-                    <h3>Equipos Nuevos</h3>
-                    <p>Laptops, computadoras de escritorio y ensambles a medida con garantía por escrito.</p>
-                    <a href="{{ url_for('equipos') }}" class="btn-card">Ver Equipos</a>
-                </div>
+        <!-- 8. Videovigilancia (CCTV) -->
+        <div class="card">
+            <img src="{{ url_for('static', filename='img/cctv_banner.jpg') }}" alt="Videovigilancia CCTV">
+            <div class="card-info">
+                <h3>Videovigilancia (CCTV)</h3>
+                <p>Circuitos cerrados en Full HD con visión nocturna y monitoreo remoto en smartphone y PC.</p>
+                <a href="{{ url_for('cctv') }}" class="btn-card">Ver Sistemas</a>
             </div>
+        </div>
+    </section>
 
-            <!-- 8. Videovigilancia (CCTV) -->
-            <div class="card">
-                <img src="{{ url_for('static', filename='img/cctv_banner.jpg') }}" alt="Videovigilancia CCTV">
-                <div class="card-info">
-                    <h3>Videovigilancia (CCTV)</h3>
-                    <p>Circuitos cerrados en Full HD con visión nocturna y monitoreo remoto en smartphone y PC.</p>
-                    <a href="{{ url_for('cctv') }}" class="btn-card">Ver Sistemas</a>
-                </div>
-            </div>
-        </section>
+    <section class="admin-footer-section">
+        <p>¿Eres parte del equipo?</p>
+        <a href="{{ url_for('login') }}" class="btn-admin">Inicia sesión aquí</a>
+    </section>
+</div>
 
-        <section class="admin-footer-section">
-            <p>¿Eres parte del equipo?</p>
-            <a href="{{ url_for('login') }}" class="btn-admin">Inicia sesión aquí</a>
-        </section>
-    </div>
-
-    <!-- Pie de Página -->
-    <footer>G-Tek Soluciones Digitales &copy; 2026 | Orgullosamente UNAM</footer>
+<footer>G-Tek Soluciones Digitales &copy; 2026 | Orgullosamente UNAM</footer>
 
 </body>
-
 </html>
