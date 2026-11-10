@@ -1,183 +1,62 @@
 <!DOCTYPE html>
 <html lang="es">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>G-Tek Soluciones Digitales - Expertos en Computación</title>
     <link rel="shortcut icon" href="{{ url_for('static', filename='img/unam.png') }}" type="image/x-icon">
-    
+
+    <!-- Banner en Balanceo Horizontal -->
     <style>
-        :root { --azul: #1f3a5f; --oro: #c5a356; }
-        
-        html, body { height: 100%; margin: 0; }
-        body { font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; background-color: #f4f4f4; }
-        .main-content { flex: 1; }
+        @keyframes vaivenBanner {
+            0% {
+                transform: translateX(0);
+            }
 
-        /* NAVEGACIÓN */
-        nav { 
-            background: var(--azul); 
-            padding: 15px; 
-            text-align: center; 
-            position: sticky; 
-            top: 0; 
-            z-index: 1000; 
-            border-bottom: 4px solid var(--oro);
-        }
-        nav a { color: white; margin: 0 10px; text-decoration: none; font-weight: bold; font-size: 0.9em; transition: 0.3s; }
-        nav a:hover { color: var(--oro); }
+            25% {
+                transform: translateX(-12px);
+            }
 
-        /* SECCIÓN HERO */
-        .hero { 
-            background: linear-gradient(rgba(31,58,95,0.7), rgba(31,58,95,0.7)), 
-                        url('https://images.unsplash.com/photo-1518770660439-4636190af475?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80'); 
-            min-height: 500px; 
-            background-size: cover; 
-            background-position: center; 
-            color: white; 
-            display: flex; 
-            flex-direction: column; 
-            justify-content: center; 
-            align-items: center; 
-            text-align: center; 
-            padding: 40px 20px; 
+            75% {
+                transform: translateX(12px);
+            }
+
+            100% {
+                transform: translateX(0);
+            }
         }
 
-        .logo-hero {
-            max-width: 160px;
-            height: auto;
-            background: white;
-            padding: 12px;
+        .banner-domicilio-vaiven {
+            background: linear-gradient(135deg, #1f3a5f, #162a45);
+            color: #ffffff;
+            padding: 18px 22px;
             border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            margin-bottom: 25px;
-            transition: 0.3s;
-        }
-
-        .hero h1 { color: var(--oro); font-size: 3.5em; margin: 0; text-shadow: 2px 2px 4px rgba(0,0,0,0.5); text-transform: uppercase; }
-        .hero p { max-width: 700px; font-size: 1.3em; line-height: 1.6; margin-top: 15px; }
-        
-        .btn-container { display: flex; gap: 20px; justify-content: center; flex-wrap: wrap; margin-top: 30px; }
-        
-        .btn-cta { 
-            padding: 15px 30px; 
-            text-decoration: none; 
-            border-radius: 6px; 
-            font-weight: bold; 
-            transition: 0.3s; 
-            min-width: 200px; 
-            display: inline-block;
-        }
-        .btn-agenda { background: var(--oro); color: var(--azul); }
-        .btn-calcula { background: white; color: var(--azul); }
-        .btn-cta:hover { transform: translateY(-3px); box-shadow: 0 5px 15px rgba(0,0,0,0.2); }
-
-        /* SECCIÓN SERVICIOS */
-        .servicios { display: flex; justify-content: center; padding: 50px 10px; flex-wrap: wrap; gap: 30px; }
-        .card { background: white; width: 300px; border-radius: 12px; overflow: hidden; box-shadow: 0 6px 12px rgba(0,0,0,0.1); transition: 0.3s; border-bottom: 5px solid transparent; }
-        .card:hover { transform: translateY(-10px); border-color: var(--oro); }
-        .card img { width: 100%; height: 200px; object-fit: cover; }
-        .card-info { padding: 25px; text-align: center; }
-        .card-info h3 { color: var(--azul); margin: 0 0 10px 0; }
-        .card-info p { color: #666; font-size: 0.95em; margin-bottom: 20px; min-height: 45px; }
-
-        /* BOTONES DE LAS TARJETAS - CORRECCIÓN DE CLIC */
-        .btn-card {
-            background: var(--azul);
-            color: white;
-            text-decoration: none !important;
-            padding: 12px 25px;
-            border-radius: 5px;
-            font-weight: bold;
-            display: inline-block;
-            transition: 0.3s;
-            border: 2px solid var(--azul);
-            cursor: pointer;
-            position: relative;
-            z-index: 10;
-        }
-        .btn-card:hover {
-            background: white;
-            color: var(--azul);
-        }
-
-        .admin-footer-section {
-            background: #eee;
-            padding: 40px 20px;
-            text-align: center;
-            border-top: 1px solid #ddd;
-        }
-        .btn-admin {
-            display: inline-block;
-            margin-top: 10px;
-            color: var(--azul);
-            text-decoration: none;
-            font-weight: bold;
-            border: 2px solid var(--azul);
-            padding: 10px 25px;
-            border-radius: 5px;
-            transition: 0.3s;
-        }
-        .btn-admin:hover { background: var(--azul); color: var(--oro); }
-
-        footer { background: var(--azul); color: white; text-align: center; padding: 25px; border-top: 3px solid var(--oro); }
-
-        @media (max-width: 600px) {
-            .hero h1 { font-size: 2.2em; }
-            .card { width: 95%; }
+            margin: 20px 0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+            border-left: 5px solid #c5a356;
+            animation: vaivenBanner 4s ease-in-out infinite;
         }
     </style>
-</head>
-<body>
 
-<!-- Banner Marquesina Completa -->
-<style>
-  .marquesina-wrapper {
-    width: 100%;
-    overflow: hidden;
-    margin: 15px 0;
-    position: relative;
-  }
-
-  @keyframes marquesinaCompleta {
-    0% {
-      transform: translateX(100%);
-    }
-    100% {
-      transform: translateX(-100%);
-    }
-  }
-
-  .banner-marquesina {
-    display: inline-flex;
-    align-items: center;
-    gap: 20px;
-    background: linear-gradient(135deg, #1f3a5f, #162a45);
-    color: #ffffff;
-    padding: 14px 28px;
-    border-radius: 12px;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-    border-left: 5px solid #c5a356;
-    white-space: nowrap;
-    animation: marquesinaCompleta 22s linear infinite;
-  }
-
-  .banner-marquesina:hover {
-    animation-play-state: paused;
-  }
-</style>
-
-<div class="marquesina-wrapper">
-  <div class="banner-marquesina">
-    <span style="font-size: 1.8rem;">🚗</span>
-    <div>
-      <strong style="color: #c5a356; font-size: 1.15rem;">¡Contamos con reparaciones a domicilio!</strong>
-      <span style="margin-left: 10px; opacity: 0.9; font-size: 0.95rem;">Vamos hasta tu casa o negocio en CDMX y Zona Oriente con diagnóstico y soporte garantizado.</span>
+    <div class="banner-domicilio-vaiven">
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <span style="font-size: 2.2rem;">🚗</span>
+            <div>
+                <h3 style="margin: 0; color: #c5a356; font-size: 1.25rem;">¡Contamos con reparaciones a domicilio!</h3>
+                <p style="margin: 4px 0 0; font-size: 0.95rem; opacity: 0.9;">Vamos hasta tu casa o negocio en CDMX y
+                    Zona Oriente con diagnóstico y soporte garantizado.</p>
+            </div>
+        </div>
+        <a href="https://wa.me/521XXXXXXXXXX?text=Hola,%20me%20interesa%20una%20reparación%20a%20domicilio"
+            target="_blank"
+            style="background-color: #25D366; color: white; padding: 11px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; white-space: nowrap;">
+            Solicitar por WhatsApp
+        </a>
     </div>
-    <a href="https://wa.me/521XXXXXXXXXX?text=Hola,%20me%20interesa%20una%20reparación%20a%20domicilio" target="_blank" style="background-color: #25D366; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-left: 15px;">
-      Solicitar por WhatsApp
-    </a>
-  </div>
-</div>
 
     <nav>
         <a href="{{ url_for('index') }}">INICIO</a>
@@ -185,14 +64,16 @@
         <a href="{{ url_for('servicios') }}">NUESTROS SERVICIOS</a>
         <a href="{{ url_for('cotizador') }}">PRESUPUESTO</a>
         <a href="{{ url_for('contacto') }}">CONTACTO</a>
-        <a href="{{ url_for('rastreo') }}" class="btn-rastreo" style="color: #c5a059; font-weight: bold;">🔍 RASTREAR EQUIPO</a>
+        <a href="{{ url_for('rastreo') }}" class="btn-rastreo" style="color: #c5a059; font-weight: bold;">🔍 RASTREAR
+            EQUIPO</a>
         <a href="{{ url_for('login') }}" style="color: var(--oro);">ADMIN</a>
         <a href="{{ url_for('equipos') }}">EQUIPOS NUEVOS</a>
         <a href="{{ url_for('cctv') }}">VIDEOVIGILANCIA (CCTV)</a>
     </nav>
 
     <section class="hero">
-        <img src="{{ url_for('static', filename='img/logo_nuevo.jpg') }}" alt="Logo G-Tek Soluciones Digitales" style="max-width: 530px; width: 100%; height: auto; background: white; padding: 16px 22px; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); margin-bottom: 22px;">
+        <img src="{{ url_for('static', filename='img/logo_nuevo.jpg') }}" alt="Logo G-Tek Soluciones Digitales"
+            style="max-width: 530px; width: 100%; height: auto; background: white; padding: 16px 22px; border-radius: 16px; box-shadow: 0 8px 24px rgba(0,0,0,0.3); margin-bottom: 22px;">
         <h1>G-Tek SOLUCIONES DIGITALES</h1>
         <p>Innovación, soporte y soluciones tecnológicas integrales para cada necesidad.</p>
         <div class="btn-container">
@@ -201,8 +82,9 @@
         </div>
     </section>
 
-    <h2 style="text-align: center; color: var(--azul); margin-top: 50px; font-size: 2em;">Soluciones Tecnológicas a tu Medida</h2>
-    
+    <h2 style="text-align: center; color: var(--azul); margin-top: 50px; font-size: 2em;">Soluciones Tecnológicas a tu
+        Medida</h2>
+
     <section class="servicios" id="servicios">
         <!-- 1. Aumento de RAM y SSD -->
         <div class="card">
@@ -240,7 +122,8 @@
             <div class="card-info">
                 <h3>Limpieza y Pasta</h3>
                 <p>Evita sobrecalentamientos y alarga la vida de tu procesador con servicio profundo.</p>
-                <a href="{{ url_for('servicio_detalle', servicio_id='mantenimiento') }}" class="btn-card">Ver Detalles</a>
+                <a href="{{ url_for('servicio_detalle', servicio_id='mantenimiento') }}" class="btn-card">Ver
+                    Detalles</a>
             </div>
         </div>
 
@@ -289,9 +172,10 @@
         <p>¿Eres parte del equipo?</p>
         <a href="{{ url_for('login') }}" class="btn-admin">Inicia sesión aquí</a>
     </section>
-</div>
+    </div>
 
-<footer>G-Tek Soluciones Digitales &copy; 2026 | Orgullosamente UNAM</footer>
+    <footer>G-Tek Soluciones Digitales &copy; 2026 | Orgullosamente UNAM</footer>
 
-</body>
+    </body>
+
 </html>
