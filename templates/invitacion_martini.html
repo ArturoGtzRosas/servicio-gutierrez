@@ -14,13 +14,12 @@
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&family=Reenie+Beanie&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght=0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
     
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
     <style>
         :root {
-            --bg-outer: #e8e2d8;
             --bg-card: #f9f6f0;
             --espresso-dark: #2c1d16;
             --espresso-mid: #4a3328;
@@ -36,14 +35,30 @@
         }
 
         body {
-            background-color: var(--bg-outer);
+            /* Imagen de fondo desenfocada y ambiental */
+            background: linear-gradient(rgba(10, 6, 5, 0.5), rgba(10, 6, 5, 0.7)),
+                        url("{{ url_for('static', filename='img/background_texture.jpg') }}") no-repeat center center fixed;
+            background-size: cover;
             color: var(--espresso-dark);
             font-family: 'Montserrat', sans-serif;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 20px 14px;
+            padding: 24px 14px;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        /* Partículas flotantes */
+        #particleCanvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+            pointer-events: none;
         }
 
         .phone-frame {
@@ -52,10 +67,12 @@
             border-radius: 28px;
             max-width: 410px;
             width: 100%;
-            padding: 40px 24px 32px 24px;
-            box-shadow: 0 18px 45px rgba(50, 32, 20, 0.12);
+            padding: 32px 24px;
+            box-shadow: 0 18px 50px rgba(0, 0, 0, 0.5);
             text-align: center;
             position: relative;
+            z-index: 1;
+            overflow: hidden;
             animation: fadeInCard 0.9s ease-out forwards;
         }
 
@@ -72,28 +89,35 @@
 
         .header-names {
             font-family: 'Cormorant Garamond', serif;
-            font-size: 1.55rem;
-            letter-spacing: 4px;
+            font-size: 1.4rem;
+            letter-spacing: 3.5px;
             text-transform: uppercase;
             font-weight: 600;
             color: var(--espresso-dark);
-            margin-bottom: 8px;
+            margin-bottom: 20px;
         }
 
-        .martini-illu-container {
-            width: 180px;
+        /* Copa Espresso Martini de estudio */
+        .image-header-container {
+            width: 220px;
             height: 180px;
-            margin: 0 auto;
+            margin: 0 auto 10px auto;
             position: relative;
+        }
+
+        .image-header {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
         }
 
         .tini-script {
             font-family: 'Playfair Display', serif;
             font-style: italic;
-            font-size: 3.4rem;
+            font-size: 3.3rem;
             color: var(--caramel);
             line-height: 0.9;
-            margin-top: -10px;
+            margin-top: -5px;
             letter-spacing: -0.5px;
             transform: rotate(-3deg);
             display: inline-block;
@@ -119,7 +143,7 @@
             margin-bottom: 22px;
         }
 
-        /* Bloque Editorial de Fecha */
+        /* Fecha */
         .date-box {
             display: flex;
             align-items: center;
@@ -192,7 +216,7 @@
             padding-bottom: 2px;
         }
 
-        /* Formulario Limpio */
+        /* Formulario */
         .rsvp-card {
             background-color: #f2ebe2;
             border-radius: 18px;
@@ -275,60 +299,14 @@
 </head>
 <body>
 
+    <canvas id="particleCanvas"></canvas>
+
     <div class="phone-frame">
         <div class="header-names">Emily & Emiliano are</div>
 
-        <!-- Ilustración Coupe & Espresso Martini SVG -->
-        <div class="martini-illu-container">
-            <svg viewBox="0 0 200 200" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
-                <!-- Base de la copa -->
-                <ellipse cx="100" cy="182" rx="34" ry="5" fill="#cfc2b2" opacity="0.4" />
-                <path d="M 66 182 C 66 180, 134 180, 134 182 C 134 184, 66 184, 66 182 Z" fill="#b09f8c" />
-                <!-- Tallo de cristal -->
-                <line x1="100" y1="108" x2="100" y2="182" stroke="#b09f8c" stroke-width="3" stroke-linecap="round" opacity="0.8" />
-                <line x1="99" y1="114" x2="99" y2="178" stroke="#ffffff" stroke-width="1.2" opacity="0.9" />
-                
-                <!-- Cuenco Coupe -->
-                <path d="M 40 56 C 40 108, 160 108, 160 56 Z" fill="none" stroke="#a49382" stroke-width="2.5" />
-                
-                <!-- Líquido Espresso Oscuro -->
-                <path d="M 43 62 C 45 103, 155 103, 157 62 Z" fill="url(#espressoGrad)" />
-                
-                <!-- Crema Espumosa Superior -->
-                <ellipse cx="100" cy="60" rx="57" ry="11" fill="url(#cremaGrad)" />
-                <ellipse cx="100" cy="58" rx="55" ry="9" fill="#d9be9b" />
-
-                <!-- 3 Granos de Café -->
-                <!-- Grano 1 -->
-                <g transform="translate(93, 56) rotate(-20) scale(0.7)">
-                    <ellipse cx="0" cy="0" rx="5.5" ry="3.5" fill="#2b1a11" />
-                    <path d="M -5 0 Q 0 -1.5 5 0" stroke="#dfcbb5" stroke-width="0.8" fill="none" />
-                </g>
-                <!-- Grano 2 -->
-                <g transform="translate(103, 54) rotate(25) scale(0.68)">
-                    <ellipse cx="0" cy="0" rx="5.5" ry="3.5" fill="#2b1a11" />
-                    <path d="M -5 0 Q 0 -1.5 5 0" stroke="#dfcbb5" stroke-width="0.8" fill="none" />
-                </g>
-                <!-- Grano 3 -->
-                <g transform="translate(100, 60) rotate(85) scale(0.65)">
-                    <ellipse cx="0" cy="0" rx="5.5" ry="3.5" fill="#2b1a11" />
-                    <path d="M -5 0 Q 0 -1.5 5 0" stroke="#dfcbb5" stroke-width="0.8" fill="none" />
-                </g>
-
-                <!-- Brillo del cristal -->
-                <path d="M 46 64 C 47 88, 70 100, 70 100" stroke="#ffffff" stroke-width="2" fill="none" opacity="0.6" stroke-linecap="round" />
-
-                <defs>
-                    <linearGradient id="espressoGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stop-color="#462c1e" />
-                        <stop offset="100%" stop-color="#1b100a" />
-                    </linearGradient>
-                    <linearGradient id="cremaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
-                        <stop offset="0%" stop-color="#ecd9c3" />
-                        <stop offset="100%" stop-color="#c4a582" />
-                    </linearGradient>
-                </defs>
-            </svg>
+        <!-- Imagen de Cabecera en Acuarela -->
+        <div class="image-header-container">
+            <img src="{{ url_for('static', filename='img/espresso_header.jpg') }}" alt="Espresso Martini Acuarela" class="image-header">
         </div>
 
         <div class="tini-script">A 'Tini Bit</div>
@@ -392,6 +370,64 @@
     </div>
 
     <script>
+        // Partículas doradas
+        const canvas = document.getElementById('particleCanvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.reset();
+            }
+            reset() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedY = -(Math.random() * 0.35 + 0.1);
+                this.speedX = (Math.random() - 0.5) * 0.2;
+                this.alpha = Math.random() * 0.5 + 0.1;
+                this.fade = Math.random() * 0.005 + 0.002;
+            }
+            update() {
+                this.y += this.speedY;
+                this.x += this.speedX;
+                this.alpha += this.fade;
+                if (this.alpha <= 0.05 || this.alpha >= 0.6) this.fade = -this.fade;
+                if (this.y < -10) this.reset();
+            }
+            draw() {
+                ctx.save();
+                ctx.globalAlpha = Math.max(0, this.alpha);
+                ctx.fillStyle = '#d4af37';
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+                ctx.restore();
+            }
+        }
+
+        const particleCount = window.innerWidth < 600 ? 25 : 45;
+        for (let i = 0; i < particleCount; i++) {
+            particles.push(new Particle());
+        }
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animate);
+        }
+        animate();
+
         const TELEFONO_WHATSAPP = '524471178214';
 
         function enviarConfirmacion() {
@@ -409,7 +445,7 @@
                 confetti({
                     particleCount: 50,
                     spread: 55,
-                    origin: { y: 0.8 },
+                    origin: { y: 0.85 },
                     colors: ['#8c5835', '#d9be9b', '#2c1d16']
                 });
             }
@@ -424,7 +460,7 @@
 
             setTimeout(() => {
                 window.open(url, '_blank');
-            }, 400);
+            }, 450);
         }
     </script>
 </body>
