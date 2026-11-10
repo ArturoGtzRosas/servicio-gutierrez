@@ -250,6 +250,28 @@
             padding-bottom: 1px;
         }
 
+        .download-video-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.72rem;
+            text-transform: uppercase;
+            letter-spacing: 1.2px;
+            color: var(--espresso-dark);
+            text-decoration: none;
+            font-weight: 600;
+            background: rgba(212, 175, 55, 0.15);
+            border: 1px solid rgba(212, 175, 55, 0.45);
+            border-radius: 20px;
+            padding: 5px 12px;
+            transition: all 0.2s ease;
+        }
+
+        .download-video-btn:hover {
+            background: rgba(212, 175, 55, 0.3);
+            border-color: var(--caramel);
+        }
+
         .rsvp-container {
             background: rgba(255, 255, 255, 0.75);
             border: 1px dashed var(--line-border);
@@ -346,13 +368,21 @@
 
         <div class="actions-panel">
             <div class="location-box">
-                <strong>San Nicolás</strong>
-                <p>Tacario 166, Centro</p>
-                <p>Maravatío de Ocampo, Michoacán</p>
-                <a class="map-btn" href="https://www.google.com/maps/search/?api=1&query=Tacario+166+San+Nicolas+Centro+Maravatio+de+Ocampo+Michoacan" target="_blank" rel="noopener">
-                    📍 Abrir en Google Maps
-                </a>
-            </div>
+                    <strong>San Nicolás</strong>
+                    <p>Tacario 166, Centro</p>
+                    <p>Maravatío de Ocampo, Michoacán</p>
+                    
+                    <div style="display: flex; flex-direction: column; align-items: center; gap: 8px; margin-top: 8px;">
+                        <a class="map-btn" href="https://www.google.com/maps/search/?api=1&query=Tacario+166+San+Nicolas+Centro+Maravatio+de+Ocampo+Michoacan" target="_blank" rel="noopener">
+                            📍 Abrir en Google Maps
+                        </a>
+
+                        <!-- Botón de Descarga del Video -->
+                        <a class="download-video-btn" href="{{ url_for('descargar_video_invitacion') }}">
+                            🎬 Descargar Video Invitación
+                        </a>
+                    </div>
+                </div>
 
             <section class="rsvp-container">
                 <h2 class="rsvp-title">Confirmar Asistencia</h2>
