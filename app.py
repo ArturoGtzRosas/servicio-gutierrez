@@ -1977,5 +1977,9 @@ def deploy_webhook():
 
     return jsonify({'status': 'Ignored'}), 200
 
+@app.route('/invitacion')
+def invitacion_martini():
+    return render_template('invitacion_martini.html')
+
 if __name__ == '__main__':
     app.run(debug=False, threaded=False)
