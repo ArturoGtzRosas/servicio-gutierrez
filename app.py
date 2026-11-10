@@ -1,8 +1,10 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, abort
 import sqlite3
 import math
 from fpdf import FPDF
 import os
+import subprocess
+import hmac
 import hashlib
 import smtplib
 from email.mime.base import MIMEBase
@@ -1941,6 +1943,39 @@ def equipos():
     return render_template('equipos.html')
 
 asegurar_admin_en_arranque()
+
+# ==========================================
+# WEBHOOK DE AUTO-DESPLIEGUE (TIPO RENDER)
+# ==========================================
+DEPLOY_SECRET = os.environ.get('DEPLOY_SECRET', 'gtek_deploy_secure_key_2026')
+
+@app.route('/api/deploy-webhook', methods=['POST'])
+def deploy_webhook():
+    signature = request.headers.get('X-Hub-Signature-256')
+    token_param = request.args.get('token')
+    
+    authorized = False
+    if token_param and hmac.compare_digest(token_param, DEPLOY_SECRET):
+        authorized = True
+    elif signature:
+        expected_sig = 'sha256=' + hmac.new(DEPLOY_SECRET.encode(), request.data, hashlib.sha256).hexdigest()
+        if hmac.compare_digest(signature, expected_sig):
+            authorized = True
+
+    if not authorized:
+        abort(403)
+
+    event = request.headers.get('X-GitHub-Event', 'push')
+    if event == 'push':
+        payload = request.get_json(silent=True) or {}
+        ref = payload.get('ref', '')
+        if ref == 'refs/heads/main' or not ref:
+            script_path = os.path.expanduser('~/gteksrv/deploy.sh')
+            if os.path.exists(script_path):
+                subprocess.Popen(['bash', script_path])
+            return jsonify({'status': 'Deployment triggered successfully'}), 200
+
+    return jsonify({'status': 'Ignored'}), 200
 
 if __name__ == '__main__':
     app.run(debug=False, threaded=False)
