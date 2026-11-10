@@ -3,30 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Espresso Martini Night | Emily & Emiliano</title>
+    <title>Emily & Emiliano | A 'Tini Bit Older</title>
 
-    <!-- Metaetiquetas para vista previa en WhatsApp -->
+    <!-- Metaetiquetas para WhatsApp -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="🍸 Celebración de Cumpleaños: Emily & Emiliano">
-    <meta property="og:description" content="Acompáñanos a una noche especial de café, cocteles y buenos momentos. Confirma tu asistencia aquí.">
+    <meta property="og:title" content="🍸 Emily & Emiliano are A 'Tini Bit Older">
+    <meta property="og:description" content="Acompáñanos a celebrar nuestro cumpleaños con cócteles y café. Confirma aquí.">
     <meta property="og:image" content="https://gtek-soluciones.com/static/img/invitacion_preview.jpg">
     <meta property="og:url" content="https://gtek-soluciones.com/invitacion">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,500;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,400&family=Montserrat:wght@300;400;500;600&family=Reenie+Beanie&family=Playfair+Display:ital@1&display=swap" rel="stylesheet">
+    
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.2/dist/confetti.browser.min.js"></script>
 
     <style>
         :root {
-            --bg-body: #0a0605;
-            --card-surface: #140d0a;
-            --card-inner: #1c130e;
-            --gold: #d4af37;
-            --gold-light: #f5e7b8;
-            --gold-gradient: linear-gradient(135deg, #e5c378 0%, #b8860b 100%);
-            --text-main: #fbf8f5;
-            --text-secondary: #c5b8ae;
-            --input-border: #3b2a20;
+            --bg-outer: #e8e2d8;
+            --bg-card: #f9f6f0;
+            --espresso-dark: #2c1d16;
+            --espresso-mid: #4a3328;
+            --caramel: #8c5835;
+            --line-border: #d8cebe;
+            --text-sub: #7a6a5e;
         }
 
         * {
@@ -36,251 +36,336 @@
         }
 
         body {
-            background: linear-gradient(rgba(10, 6, 5, 0.88), rgba(10, 6, 5, 0.94)),
-                        url("{{ url_for('static', filename='img/background_texture.jpg') }}") no-repeat center center fixed;
-            background-size: cover;
-            color: var(--text-main);
-            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: var(--bg-outer);
+            color: var(--espresso-dark);
+            font-family: 'Montserrat', sans-serif;
             min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 24px 16px;
+            padding: 20px 14px;
         }
 
-        .invitation-card {
-            background-color: var(--card-surface);
-            border: 1px solid rgba(212, 175, 55, 0.25);
-            border-radius: 24px;
-            max-width: 440px;
+        .phone-frame {
+            background-color: var(--bg-card);
+            border: 1px solid var(--line-border);
+            border-radius: 28px;
+            max-width: 410px;
             width: 100%;
-            padding: 36px 24px;
-            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.8), 0 0 30px rgba(212, 175, 55, 0.05);
+            padding: 40px 24px 32px 24px;
+            box-shadow: 0 18px 45px rgba(50, 32, 20, 0.12);
             text-align: center;
-            overflow: hidden;
-        }
-
-        .header-image-container {
             position: relative;
-            width: calc(100% + 48px);
-            height: 200px;
-            margin: -36px -24px 20px -24px;
-            overflow: hidden;
-            border-top-left-radius: 24px;
-            border-top-right-radius: 24px;
+            animation: fadeInCard 0.9s ease-out forwards;
         }
 
-        .header-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
+        @keyframes fadeInCard {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .image-gradient-overlay {
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            width: 100%;
-            height: 70%;
-            background: linear-gradient(to bottom, transparent, var(--card-surface));
-        }
-
-        .theme-tag {
-            font-size: 0.75rem;
-            letter-spacing: 3px;
+        .header-names {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.55rem;
+            letter-spacing: 4px;
             text-transform: uppercase;
-            color: var(--gold);
             font-weight: 600;
+            color: var(--espresso-dark);
             margin-bottom: 8px;
         }
 
-        h1 {
-            font-family: 'Playfair Display', serif;
-            font-size: 2.1rem;
-            color: var(--gold-light);
-            font-weight: 700;
-            line-height: 1.2;
-            margin-bottom: 6px;
+        .martini-illu-container {
+            width: 180px;
+            height: 180px;
+            margin: 0 auto;
+            position: relative;
         }
 
-        .subtitle {
+        .tini-script {
+            font-family: 'Playfair Display', serif;
             font-style: italic;
-            font-size: 1rem;
-            color: var(--text-secondary);
-            margin-bottom: 24px;
-        }
-
-        .info-panel {
-            background-color: var(--card-inner);
-            border: 1px solid var(--input-border);
-            border-radius: 16px;
-            padding: 20px 16px;
-            margin-bottom: 28px;
-            text-align: left;
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
-        }
-
-        .info-row {
-            display: flex;
-            align-items: flex-start;
-            gap: 12px;
-        }
-
-        .info-icon {
-            font-size: 1.2rem;
-            line-height: 1.4;
-        }
-
-        .info-content strong {
-            display: block;
-            font-size: 0.8rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            color: var(--gold);
-            margin-bottom: 2px;
-        }
-
-        .info-content p {
-            font-size: 0.95rem;
-            color: var(--text-main);
-            line-height: 1.35;
-        }
-
-        .maps-link {
+            font-size: 3.4rem;
+            color: var(--caramel);
+            line-height: 0.9;
+            margin-top: -10px;
+            letter-spacing: -0.5px;
+            transform: rotate(-3deg);
             display: inline-block;
+        }
+
+        .older-label {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.6rem;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            font-weight: 700;
+            color: var(--espresso-dark);
             margin-top: 6px;
-            font-size: 0.8rem;
-            color: var(--gold-light);
-            text-decoration: underline;
-            text-underline-offset: 3px;
+            margin-bottom: 18px;
         }
 
-        .rsvp-section {
+        .invitation-phrase {
+            font-size: 0.75rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-sub);
+            font-weight: 500;
+            margin-bottom: 22px;
+        }
+
+        /* Bloque Editorial de Fecha */
+        .date-box {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 12px;
+            margin: 20px 0;
+            border-top: 1px solid var(--line-border);
+            border-bottom: 1px solid var(--line-border);
+            padding: 12px 0;
+        }
+
+        .date-col {
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 0.95rem;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            font-weight: 600;
+            color: var(--espresso-dark);
+        }
+
+        .date-col.highlight {
+            font-size: 1.9rem;
+            font-weight: 700;
+            color: var(--caramel);
+            border-left: 1.5px solid var(--line-border);
+            border-right: 1.5px solid var(--line-border);
+            padding: 0 14px;
+            line-height: 1;
+        }
+
+        .highlight span {
+            display: block;
+            font-size: 0.7rem;
+            letter-spacing: 2.5px;
+            font-weight: 600;
+            color: var(--espresso-mid);
+            margin-top: 2px;
+        }
+
+        /* Ubicación */
+        .location-section {
+            margin: 20px 0 28px 0;
+            font-size: 0.85rem;
+            line-height: 1.5;
+            color: var(--espresso-mid);
+        }
+
+        .location-section strong {
+            display: block;
+            font-family: 'Cormorant Garamond', serif;
+            font-size: 1.15rem;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
+            color: var(--espresso-dark);
+            margin-bottom: 4px;
+        }
+
+        .map-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 4px;
+            margin-top: 8px;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--caramel);
+            text-decoration: none;
+            font-weight: 600;
+            border-bottom: 1px solid var(--caramel);
+            padding-bottom: 2px;
+        }
+
+        /* Formulario Limpio */
+        .rsvp-card {
+            background-color: #f2ebe2;
+            border-radius: 18px;
+            padding: 22px 18px;
             text-align: left;
+            border: 1px dashed var(--line-border);
         }
 
-        .rsvp-title {
-            font-family: 'Playfair Display', serif;
+        .rsvp-header {
+            font-family: 'Cormorant Garamond', serif;
             font-size: 1.2rem;
-            color: var(--gold-light);
-            margin-bottom: 14px;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            font-weight: 700;
             text-align: center;
+            color: var(--espresso-dark);
+            margin-bottom: 14px;
         }
 
-        .form-group {
-            margin-bottom: 14px;
+        .form-item {
+            margin-bottom: 12px;
         }
 
         label {
             display: block;
-            font-size: 0.8rem;
-            color: var(--text-secondary);
-            margin-bottom: 6px;
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: var(--text-sub);
+            margin-bottom: 5px;
+            font-weight: 600;
         }
 
         input, select {
             width: 100%;
-            background-color: var(--card-inner);
-            border: 1px solid var(--input-border);
-            border-radius: 10px;
-            padding: 12px 14px;
-            color: var(--text-main);
-            font-size: 0.95rem;
+            background-color: #fff;
+            border: 1px solid var(--line-border);
+            border-radius: 8px;
+            padding: 10px 12px;
+            font-size: 0.9rem;
+            color: var(--espresso-dark);
             font-family: inherit;
             outline: none;
             transition: border-color 0.2s ease;
         }
 
         input:focus, select:focus {
-            border-color: var(--gold);
+            border-color: var(--caramel);
         }
 
-        .btn-whatsapp {
+        .btn-submit {
             width: 100%;
-            background: var(--gold-gradient);
-            color: #0b0704;
-            font-weight: 700;
-            font-size: 1rem;
-            padding: 15px;
+            background: var(--espresso-dark);
+            color: #f9f6f0;
             border: none;
-            border-radius: 12px;
+            border-radius: 8px;
+            padding: 13px;
+            font-family: 'Montserrat', sans-serif;
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 1.5px;
+            text-transform: uppercase;
             cursor: pointer;
-            margin-top: 8px;
+            margin-top: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            transition: transform 0.15s ease, filter 0.2s ease;
+            transition: background 0.2s ease, transform 0.1s ease;
         }
 
-        .btn-whatsapp:active {
+        .btn-submit:hover {
+            background: var(--espresso-mid);
+        }
+
+        .btn-submit:active {
             transform: scale(0.98);
-        }
-
-        .btn-whatsapp:hover {
-            filter: brightness(1.08);
         }
     </style>
 </head>
 <body>
 
-    <main class="invitation-card">
-        <div class="header-image-container">
-            <img src="{{ url_for('static', filename='img/espresso_header.jpg') }}" alt="Espresso Martini Night" class="header-image">
-            <div class="image-gradient-overlay"></div>
+    <div class="phone-frame">
+        <div class="header-names">Emily & Emiliano are</div>
+
+        <!-- Ilustración Coupe & Espresso Martini SVG -->
+        <div class="martini-illu-container">
+            <svg viewBox="0 0 200 200" width="100%" height="100%" xmlns="http://www.w3.org/2000/svg">
+                <!-- Base de la copa -->
+                <ellipse cx="100" cy="182" rx="34" ry="5" fill="#cfc2b2" opacity="0.4" />
+                <path d="M 66 182 C 66 180, 134 180, 134 182 C 134 184, 66 184, 66 182 Z" fill="#b09f8c" />
+                <!-- Tallo de cristal -->
+                <line x1="100" y1="108" x2="100" y2="182" stroke="#b09f8c" stroke-width="3" stroke-linecap="round" opacity="0.8" />
+                <line x1="99" y1="114" x2="99" y2="178" stroke="#ffffff" stroke-width="1.2" opacity="0.9" />
+                
+                <!-- Cuenco Coupe -->
+                <path d="M 40 56 C 40 108, 160 108, 160 56 Z" fill="none" stroke="#a49382" stroke-width="2.5" />
+                
+                <!-- Líquido Espresso Oscuro -->
+                <path d="M 43 62 C 45 103, 155 103, 157 62 Z" fill="url(#espressoGrad)" />
+                
+                <!-- Crema Espumosa Superior -->
+                <ellipse cx="100" cy="60" rx="57" ry="11" fill="url(#cremaGrad)" />
+                <ellipse cx="100" cy="58" rx="55" ry="9" fill="#d9be9b" />
+
+                <!-- 3 Granos de Café -->
+                <!-- Grano 1 -->
+                <g transform="translate(93, 56) rotate(-20) scale(0.7)">
+                    <ellipse cx="0" cy="0" rx="5.5" ry="3.5" fill="#2b1a11" />
+                    <path d="M -5 0 Q 0 -1.5 5 0" stroke="#dfcbb5" stroke-width="0.8" fill="none" />
+                </g>
+                <!-- Grano 2 -->
+                <g transform="translate(103, 54) rotate(25) scale(0.68)">
+                    <ellipse cx="0" cy="0" rx="5.5" ry="3.5" fill="#2b1a11" />
+                    <path d="M -5 0 Q 0 -1.5 5 0" stroke="#dfcbb5" stroke-width="0.8" fill="none" />
+                </g>
+                <!-- Grano 3 -->
+                <g transform="translate(100, 60) rotate(85) scale(0.65)">
+                    <ellipse cx="0" cy="0" rx="5.5" ry="3.5" fill="#2b1a11" />
+                    <path d="M -5 0 Q 0 -1.5 5 0" stroke="#dfcbb5" stroke-width="0.8" fill="none" />
+                </g>
+
+                <!-- Brillo del cristal -->
+                <path d="M 46 64 C 47 88, 70 100, 70 100" stroke="#ffffff" stroke-width="2" fill="none" opacity="0.6" stroke-linecap="round" />
+
+                <defs>
+                    <linearGradient id="espressoGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#462c1e" />
+                        <stop offset="100%" stop-color="#1b100a" />
+                    </linearGradient>
+                    <linearGradient id="cremaGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+                        <stop offset="0%" stop-color="#ecd9c3" />
+                        <stop offset="100%" stop-color="#c4a582" />
+                    </linearGradient>
+                </defs>
+            </svg>
         </div>
 
-        <div class="theme-tag">Espresso Martini Night</div>
-        <h1>Emily & Emiliano</h1>
-        <p class="subtitle">Shake, sip & celebrate our birthday</p>
+        <div class="tini-script">A 'Tini Bit</div>
+        <div class="older-label">Older</div>
 
-        <section class="info-panel">
-            <div class="info-row">
-                <span class="info-icon">📅</span>
-                <div class="info-content">
-                    <strong>Fecha</strong>
-                    <p>Sábado, 14 de Noviembre</p>
-                </div>
+        <p class="invitation-phrase">Únete a nosotros para cenar y brindar</p>
+
+        <!-- Bloque Fecha -->
+        <div class="date-box">
+            <div class="date-col">Sábado</div>
+            <div class="date-col highlight">
+                14
+                <span>NOV</span>
+            </div>
+            <div class="date-col">7:00 PM</div>
+        </div>
+
+        <!-- Bloque Ubicación -->
+        <div class="location-section">
+            <strong>San Nicolás</strong>
+            <p>Tacario 166, Centro</p>
+            <p>Maravatío de Ocampo, Michoacán</p>
+            <a class="map-btn" href="https://www.google.com/maps/search/?api=1&query=Tacario+166+San+Nicolas+Centro+Maravatio+de+Ocampo+Michoacan" target="_blank" rel="noopener">
+                📍 Ver en Google Maps
+            </a>
+        </div>
+
+        <!-- Formulario RSVP -->
+        <section class="rsvp-card">
+            <h2 class="rsvp-header">Confirmar Asistencia</h2>
+
+            <div class="form-item">
+                <label for="guestName">Nombre del Invitado</label>
+                <input type="text" id="guestName" placeholder="Tu nombre y apellido" required>
             </div>
 
-            <div class="info-row">
-                <span class="info-icon">⏰</span>
-                <div class="info-content">
-                    <strong>Hora</strong>
-                    <p>7:00 PM</p>
-                </div>
-            </div>
-
-            <div class="info-row">
-                <span class="info-icon">📍</span>
-                <div class="info-content">
-                    <strong>Lugar</strong>
-                    <p>Tacario 166, San Nicolás, Centro, Maravatío de Ocampo, Michoacán.</p>
-                    <a class="maps-link" href="https://www.google.com/maps/search/?api=1&query=Tacario+166+San+Nicolas+Centro+Maravatio+de+Ocampo+Michoacan" target="_blank" rel="noopener">Abrir en Google Maps</a>
-                </div>
-            </div>
-
-            <div class="info-row">
-                <span class="info-icon">✨</span>
-                <div class="info-content">
-                    <strong>Dress Code</strong>
-                    <p>Smart Casual / Cocktail Chic</p>
-                </div>
-            </div>
-        </section>
-
-        <section class="rsvp-section">
-            <h2 class="rsvp-title">Confirma tu Asistencia</h2>
-            
-            <div class="form-group">
-                <label for="guestName">Tu Nombre Completo</label>
-                <input type="text" id="guestName" placeholder="Ej. Roberto Sánchez" required>
-            </div>
-
-            <div class="form-group">
+            <div class="form-item">
                 <label for="guestsCount">Acompañantes</label>
                 <select id="guestsCount">
                     <option value="Voy solo(a)">Voy solo(a)</option>
@@ -290,21 +375,21 @@
                 </select>
             </div>
 
-            <div class="form-group">
+            <div class="form-item">
                 <label for="drinkPref">Bebida de Preferencia</label>
                 <select id="drinkPref">
                     <option value="Espresso Martini clásico">Espresso Martini clásico</option>
                     <option value="Carajillo shakerato">Carajillo shakerato</option>
-                    <option value="Cóctel sin alcohol (Mocktail)">Cóctel sin alcohol (Mocktail)</option>
-                    <option value="Otra bebida">Cerveza / Vino / Refresco</option>
+                    <option value="Cóctel sin alcohol (Mocktail)">Cóctel sin alcohol</option>
+                    <option value="Cerveza / Vino / Refresco">Cerveza / Vino / Refresco</option>
                 </select>
             </div>
 
-            <button type="button" class="btn-whatsapp" onclick="enviarConfirmacion()">
+            <button type="button" class="btn-submit" onclick="enviarConfirmacion()">
                 Confirmar por WhatsApp 💬
             </button>
         </section>
-    </main>
+    </div>
 
     <script>
         const TELEFONO_WHATSAPP = '524471178214';
@@ -315,19 +400,31 @@
             const bebida = document.getElementById('drinkPref').value;
 
             if (!nombre) {
-                alert('Por favor ingresa tu nombre antes de confirmar.');
+                alert('Por favor escribe tu nombre antes de enviar la confirmación.');
                 document.getElementById('guestName').focus();
                 return;
             }
 
-            const mensaje = `¡Hola! Confirmo mi asistencia al cumpleaños de Emily y Emiliano 🍸✨%0A%0A` +
+            if (typeof confetti === 'function') {
+                confetti({
+                    particleCount: 50,
+                    spread: 55,
+                    origin: { y: 0.8 },
+                    colors: ['#8c5835', '#d9be9b', '#2c1d16']
+                });
+            }
+
+            const mensaje = `¡Hola! Confirmo mi asistencia al cumpleaños de Emily y Emiliano 🍸☕%0A%0A` +
                             `👤 *Invitado:* ${encodeURIComponent(nombre)}%0A` +
                             `👥 *Acompañantes:* ${encodeURIComponent(acompanantes)}%0A` +
-                            `☕ *Preferencia:* ${encodeURIComponent(bebida)}%0A%0A` +
-                            `¡Nos vemos el 14 de noviembre a las 7:00 PM!`;
+                            `🍸 *Bebida preferida:* ${encodeURIComponent(bebida)}%0A%0A` +
+                            `¡Nos vemos el sábado 14 de noviembre a las 7:00 PM!`;
 
             const url = `https://wa.me/${TELEFONO_WHATSAPP}?text=${mensaje}`;
-            window.open(url, '_blank');
+
+            setTimeout(() => {
+                window.open(url, '_blank');
+            }, 400);
         }
     </script>
 </body>
