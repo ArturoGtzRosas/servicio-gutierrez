@@ -1981,5 +1981,11 @@ def deploy_webhook():
 def invitacion_martini():
     return render_template('invitacion_martini.html')
 
+from flask import send_from_directory
+
+@app.route('/invitacion/video')
+def descargar_video_invitacion():
+    return send_from_directory('static', 'invitacion_emily_emiliano.mp4', as_attachment=True)
+
 if __name__ == '__main__':
     app.run(debug=False, threaded=False)
