@@ -13,6 +13,58 @@
         body { font-family: 'Segoe UI', sans-serif; display: flex; flex-direction: column; background-color: #f4f4f4; }
         .main-content { flex: 1; }
 
+        /* MARQUESINA CONTINUA DE REPARACIONES */
+        .marquesina-wrapper {
+            width: 100%;
+            overflow: hidden;
+            background: linear-gradient(135deg, #102a45, #0a192f);
+            border-bottom: 2px solid var(--oro);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.25);
+            display: flex;
+            align-items: center;
+        }
+
+        @keyframes marquesinaSlide {
+            0% {
+                transform: translateX(100vw);
+            }
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        .banner-marquesina {
+            display: inline-flex;
+            align-items: center;
+            gap: 18px;
+            color: #ffffff;
+            padding: 10px 20px;
+            white-space: nowrap;
+            animation: marquesinaSlide 22s linear infinite;
+        }
+
+        .banner-marquesina:hover {
+            animation-play-state: paused;
+        }
+
+        .btn-whatsapp-banner {
+            background-color: #25D366;
+            color: #ffffff !important;
+            padding: 6px 14px;
+            border-radius: 6px;
+            text-decoration: none !important;
+            font-weight: bold;
+            font-size: 0.85rem;
+            margin-left: 10px;
+            transition: transform 0.2s, background-color 0.2s;
+            display: inline-block;
+        }
+
+        .btn-whatsapp-banner:hover {
+            background-color: #1ebc59;
+            transform: scale(1.05);
+        }
+
         /* NAVEGACIÓN */
         nav { 
             background: var(--azul); 
@@ -80,7 +132,7 @@
         .card-info h3 { color: var(--azul); margin: 0 0 10px 0; }
         .card-info p { color: #666; font-size: 0.95em; margin-bottom: 20px; min-height: 45px; }
 
-        /* BOTONES DE LAS TARJETAS - CORRECCIÓN DE CLIC */
+        /* BOTONES DE LAS TARJETAS */
         .btn-card {
             background: var(--azul);
             color: white;
@@ -130,6 +182,19 @@
 <body>
 
 <div class="main-content">
+    <!-- Marquesina Animada Superior -->
+    <div class="marquesina-wrapper">
+        <div class="banner-marquesina">
+            <span style="font-size: 1.6rem;">🚗</span>
+            <span style="color: var(--oro); font-weight: bold; font-size: 1.05rem;">¡Contamos con reparaciones a domicilio!</span>
+            <span style="opacity: 0.95; font-size: 0.95rem;">Vamos hasta tu casa o negocio en CDMX y Zona Oriente con diagnóstico y soporte garantizado.</span>
+            <a href="https://wa.me/521XXXXXXXXXX?text=Hola,%20me%20interesa%20una%20reparación%20a%20domicilio"
+               target="_blank" class="btn-whatsapp-banner">
+                Solicitar por WhatsApp
+            </a>
+        </div>
+    </div>
+
     <nav>
         <a href="{{ url_for('index') }}">INICIO</a>
         <a href="{{ url_for('cotizar_cliente') }}">COTIZA</a>
