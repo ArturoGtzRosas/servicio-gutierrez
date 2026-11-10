@@ -129,92 +129,54 @@
 </head>
 <body>
 
-<!-- Banner Dinámico de Reparaciones a Domicilio -->
+<!-- Banner Marquesina Completa -->
 <style>
-  @keyframes conducirCarro {
-    0% { transform: translateX(0); }
-    50% { transform: translateX(8px); }
-    100% { transform: translateX(0); }
+  .marquesina-wrapper {
+    width: 100%;
+    overflow: hidden;
+    margin: 15px 0;
+    position: relative;
   }
 
-  @keyframes pulsoBoton {
-    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.6); }
-    70% { transform: scale(1.04); box-shadow: 0 0 0 10px rgba(37, 211, 102, 0); }
-    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
+  @keyframes marquesinaCompleta {
+    0% {
+      transform: translateX(100%);
+    }
+    100% {
+      transform: translateX(-100%);
+    }
   }
 
-  .carro-animado {
-    display: inline-block;
-    animation: conducirCarro 1.6s ease-in-out infinite;
+  .banner-marquesina {
+    display: inline-flex;
+    align-items: center;
+    gap: 20px;
+    background: linear-gradient(135deg, #1f3a5f, #162a45);
+    color: #ffffff;
+    padding: 14px 28px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    border-left: 5px solid #c5a356;
+    white-space: nowrap;
+    animation: marquesinaCompleta 22s linear infinite;
   }
 
-  .btn-whatsapp-animado {
-    animation: pulsoBoton 2s infinite;
-    display: inline-block;
+  .banner-marquesina:hover {
+    animation-play-state: paused;
   }
 </style>
 
-<!-- Banner Dinámico de Reparaciones a Domicilio -->
-<style>
-  @keyframes conducirCarro {
-    0% { transform: translateX(0); }
-    50% { transform: translateX(8px); }
-    100% { transform: translateX(0); }
-  }
-
-  @keyframes pulsoBoton {
-    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.6); }
-    70% { transform: scale(1.04); box-shadow: 0 0 0 10px rgba(37, 211, 102, 0); }
-    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
-  }
-
-  .carro-animado {
-    display: inline-block;
-    animation: conducirCarro 1.6s ease-in-out infinite;
-  }
-
-  .btn-whatsapp-animado {
-    animation: pulsoBoton 2s infinite;
-    display: inline-block;
-  }
-</style>
-
-<!-- Banner Dinámico de Reparaciones a Domicilio -->
-<style>
-  @keyframes conducirCarro {
-    0% { transform: translateX(0); }
-    50% { transform: translateX(8px); }
-    100% { transform: translateX(0); }
-  }
-
-  @keyframes pulsoBoton {
-    0% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0.6); }
-    70% { transform: scale(1.04); box-shadow: 0 0 0 10px rgba(37, 211, 102, 0); }
-    100% { transform: scale(1); box-shadow: 0 0 0 0 rgba(37, 211, 102, 0); }
-  }
-
-  .carro-animado {
-    display: inline-block;
-    animation: conducirCarro 1.6s ease-in-out infinite;
-  }
-
-  .btn-whatsapp-animado {
-    animation: pulsoBoton 2s infinite;
-    display: inline-block;
-  }
-</style>
-
-<div class="banner-domicilio" style="background: linear-gradient(135deg, #1f3a5f, #162a45); color: #ffffff; padding: 18px 22px; border-radius: 12px; margin: 20px 0; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 4px 15px rgba(0,0,0,0.15); border-left: 5px solid #c5a356;">
-    <div style="display: flex; align-items: center; gap: 15px;">
-        <span class="carro-animado" style="font-size: 2.2rem;">🚗</span>
-        <div>
-            <h3 style="margin: 0; color: #c5a356; font-size: 1.25rem;">¡Contamos con reparaciones a domicilio!</h3>
-            <p style="margin: 4px 0 0; font-size: 0.95rem; opacity: 0.9;">Vamos hasta tu casa o negocio en CDMX y Zona Oriente con diagnóstico y soporte garantizado.</p>
-        </div>
+<div class="marquesina-wrapper">
+  <div class="banner-marquesina">
+    <span style="font-size: 1.8rem;">🚗</span>
+    <div>
+      <strong style="color: #c5a356; font-size: 1.15rem;">¡Contamos con reparaciones a domicilio!</strong>
+      <span style="margin-left: 10px; opacity: 0.9; font-size: 0.95rem;">Vamos hasta tu casa o negocio en CDMX y Zona Oriente con diagnóstico y soporte garantizado.</span>
     </div>
-    <a href="https://wa.me/521XXXXXXXXXX?text=Hola,%20me%20interesa%20una%20reparación%20a%20domicilio" target="_blank" class="btn-whatsapp-animado" style="background-color: #25D366; color: white; padding: 11px 20px; border-radius: 8px; text-decoration: none; font-weight: bold; white-space: nowrap; transition: transform 0.2s;">
-        Solicitar por WhatsApp
+    <a href="https://wa.me/521XXXXXXXXXX?text=Hola,%20me%20interesa%20una%20reparación%20a%20domicilio" target="_blank" style="background-color: #25D366; color: white; padding: 8px 16px; border-radius: 6px; text-decoration: none; font-weight: bold; margin-left: 15px;">
+      Solicitar por WhatsApp
     </a>
+  </div>
 </div>
 
     <nav>
