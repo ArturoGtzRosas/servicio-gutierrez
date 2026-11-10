@@ -24,6 +24,7 @@
             --caramel: #8c5835;
             --line-border: #dcd2c4;
             --text-sub: #635347;
+            --gold-glow: rgba(212, 175, 55, 0.4);
         }
 
         * {
@@ -33,8 +34,9 @@
         }
 
         body {
-            background: linear-gradient(rgba(10, 6, 5, 0.4), rgba(10, 6, 5, 0.7)),
-                        url("{{ url_for('static', filename='img/background_texture.jpg') }}?v=4") no-repeat center center fixed;
+            /* Filtro oscuro mucho más suave para que el fondo resalte con viveza */
+            background: linear-gradient(rgba(10, 6, 5, 0.15), rgba(10, 6, 5, 0.45)),
+                        url("{{ url_for('static', filename='img/background_texture.jpg') }}?v=5") no-repeat center center fixed;
             background-size: cover;
             color: var(--espresso-dark);
             font-family: 'Montserrat', sans-serif;
@@ -42,7 +44,7 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            padding: 30px 16px;
+            padding: 32px 24px;
             position: relative;
         }
 
@@ -56,13 +58,14 @@
             pointer-events: none;
         }
 
-        /* Contenedor tipo tarjeta vertical con márgenes para ver el fondo */
+        /* Tarjeta más compacta y esbelta para dar amplio espacio al fondo */
         .poster-card {
             background-color: #f7f3ed;
+            border: 1px solid rgba(212, 175, 55, 0.4);
             border-radius: 24px;
-            max-width: 360px;
-            width: 90%;
-            box-shadow: 0 25px 60px rgba(0, 0, 0, 0.75), 0 0 20px rgba(212, 175, 55, 0.15);
+            max-width: 340px;
+            width: 84%;
+            box-shadow: 0 25px 65px rgba(0, 0, 0, 0.8), 0 0 25px var(--gold-glow);
             position: relative;
             z-index: 1;
             overflow: hidden;
@@ -86,16 +89,15 @@
             display: block;
         }
 
-        /* Sección de acciones y ubicación */
         .actions-panel {
-            padding: 16px 20px 24px 20px;
+            padding: 14px 18px 22px 18px;
             background-color: #f7f3ed;
             text-align: center;
         }
 
         .location-box {
-            margin-bottom: 18px;
-            font-size: 0.82rem;
+            margin-bottom: 16px;
+            font-size: 0.8rem;
             line-height: 1.4;
             color: var(--espresso-mid);
         }
@@ -125,9 +127,9 @@
             padding-bottom: 1px;
         }
 
-        /* Tarjeta de Confirmación */
+        /* Formulario sin bebida */
         .rsvp-container {
-            background: rgba(255, 255, 255, 0.7);
+            background: rgba(255, 255, 255, 0.75);
             border: 1px dashed var(--line-border);
             border-radius: 14px;
             padding: 16px 14px;
@@ -206,8 +208,7 @@
     <canvas id="particleCanvas"></canvas>
 
     <div class="poster-card">
-        <!-- El póster ilustrado completo -->
-        <img src="{{ url_for('static', filename='img/espresso_header.jpg') }}?v=4" alt="Invitación Emily & Emiliano" class="poster-image">
+        <img src="{{ url_for('static', filename='img/espresso_header.jpg') }}?v=5" alt="Invitación Emily & Emiliano" class="poster-image">
 
         <div class="actions-panel">
             <div class="location-box">
@@ -219,7 +220,6 @@
                 </a>
             </div>
 
-            <!-- Confirmación -->
             <section class="rsvp-container">
                 <h2 class="rsvp-title">Confirmar Asistencia</h2>
 
@@ -235,16 +235,6 @@
                         <option value="+1 Acompañante">+1 Acompañante</option>
                         <option value="+2 Acompañantes">+2 Acompañantes</option>
                         <option value="+3 Acompañantes">+3 Acompañantes</option>
-                    </select>
-                </div>
-
-                <div class="form-item">
-                    <label for="drinkPref">Bebida de Preferencia</label>
-                    <select id="drinkPref">
-                        <option value="Espresso Martini clásico">Espresso Martini clásico</option>
-                        <option value="Carajillo shakerato">Carajillo shakerato</option>
-                        <option value="Cóctel sin alcohol (Mocktail)">Cóctel sin alcohol</option>
-                        <option value="Cerveza / Vino / Refresco">Cerveza / Vino / Refresco</option>
                     </select>
                 </div>
 
@@ -311,7 +301,6 @@
         function enviarConfirmacion() {
             const nombre = document.getElementById('guestName').value.trim();
             const acompanantes = document.getElementById('guestsCount').value;
-            const bebida = document.getElementById('drinkPref').value;
 
             if (!nombre) {
                 alert('Por favor escribe tu nombre antes de enviar la confirmación.');
@@ -330,8 +319,7 @@
 
             const mensaje = `¡Hola! Confirmo mi asistencia al cumpleaños de Emily y Emiliano 🍸☕%0A%0A` +
                             `👤 *Invitado:* ${encodeURIComponent(nombre)}%0A` +
-                            `👥 *Acompañantes:* ${encodeURIComponent(acompanantes)}%0A` +
-                            `🍸 *Bebida preferida:* ${encodeURIComponent(bebida)}%0A%0A` +
+                            `👥 *Acompañantes:* ${encodeURIComponent(acompanantes)}%0A%0A` +
                             `¡Nos vemos el sábado 14 de noviembre a las 7:00 PM!`;
 
             const url = `https://wa.me/${TELEFONO_WHATSAPP}?text=${mensaje}`;
