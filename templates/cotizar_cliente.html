@@ -212,7 +212,7 @@
                         <option value="Pantalla">Cambio de Pantalla / Display</option>
                         <option value="Bateria">Cambio de Batería</option>
                         <option value="SO">Instalación de Sistema Operativo</option>
-                        <option value="Software">Instalación de Software / Programas</option>
+                        <option value="web" {% if request.args.get('servicio')=='web' %}selected{% endif %}>Diseño y Desarrollo Web</option>
                         <option value="Mantenimiento">Limpieza Interna y Pasta Térmica</option>
                         <option value="equipos" {% if request.args.get('servicio')=='equipos' %}selected{% endif %}>Venta de Equipos de Cómputo Nuevos</option>
                         <option value="cctv" {% if request.args.get('servicio')=='cctv' %}selected{% endif %}>Instalación de Videovigilancia (CCTV)</option>
@@ -230,6 +230,26 @@
                             <option value="2TB">2 TB (Profesional / Gaming)</option>
                         </select>
                     </div>
+                    <!-- Opciones para Diseño y Desarrollo Web -->
+                <div id="opc_web" class="campo-especifico">
+                    <div class="sub-row">
+                        <label>Paquete o Tipo de Proyecto:</label>
+                        <select id="web_paquete">
+                            <option value="Landing Page One-Page">Landing Page One-Page (Negocio / Campaña)</option>
+                            <option value="Sitio Web Corporativo">Sitio Web Corporativo (Multi-sección)</option>
+                            <option value="Catálogo Digital / Tienda">Catálogo Digital / Tienda en Línea</option>
+                            <option value="Sistema Web a Medida">Sistema Web a Medida / Panel Administrativo</option>
+                        </select>
+                    </div>
+                    <div class="sub-row">
+                        <label>Dominio y Hospedaje:</label>
+                        <select id="web_hosting">
+                            <option value="Requiere Dominio y Hosting">Requiero que incluyan Dominio (.com / .mx) y Hosting</option>
+                            <option value="Ya cuento con Dominio y Hosting">Ya cuento con mi propio Dominio y Hosting</option>
+                            <option value="Solo desarrollo y despliegue">Solo desarrollo y configuración en servidor propio</option>
+                        </select>
+                    </div>
+                </div>
                     <div class="sub-row">
                         <label>Tipo / Formato de SSD:</label>
                         <select id="ssd_tipo">
@@ -430,7 +450,7 @@
     </div>
 
     <script>
-        const contenedores = ['SSD', 'RAM', 'Pantalla', 'Bateria', 'SO', 'Software', 'Mantenimiento', 'equipos', 'cctv'];
+        const contenedores = ['web', 'SSD', 'RAM', 'Pantalla', 'Bateria', 'SO', 'Software', 'Mantenimiento', 'equipos', 'cctv'];
 
         function ocultarTodos() {
             contenedores.forEach(id => {
@@ -454,6 +474,9 @@
             if (servicioParam) {
                 const select = document.getElementById('select_servicio');
                 const mapa = {
+                    'web': 'web',
+                    'diseno': 'web',
+                    'desarrollo': 'web',
                     'ssd': 'SSD',
                     'ram': 'RAM',
                     'pantalla': 'Pantalla',
@@ -483,7 +506,11 @@
             const correoUsuario = document.getElementById('input_correo').value.trim();
             let detalleServicio = servicioBase;
 
-            if (servicioBase === 'SSD') {
+            if (servicioBase === 'web') {
+                const paq = document.getElementById('web_paquete').value;
+                const host = document.getElementById('web_hosting').value;
+                detalleServicio = "Diseño Web (" + paq + " | " + host + ")";
+            } else if (servicioBase === 'SSD') {
                 const cap = document.getElementById('ssd_capacidad').value;
                 const tipo = document.getElementById('ssd_tipo').value;
                 detalleServicio = "Disco SSD (" + cap + " - " + tipo + ")";
