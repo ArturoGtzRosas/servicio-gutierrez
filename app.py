@@ -575,15 +575,18 @@ def cotizador():
     notas_cliente = ""
     if request.method == 'POST':
         opciones = {
+            'Landing Page One-Page': 2500, 'Sitio Web Corporativo': 4500,
+            'Catálogo Digital / Tienda': 6800, 'Sistema Web a Medida': 9500,
             'Limpieza Básica': 450, 'Limpieza Profunda': 650,
             'S.O. Estándar': 400, 'S.O. + Respaldo': 600,
             'SSD 240GB': 1200, 'SSD 480GB': 1600,
             'RAM 8GB': 850, 'RAM 16GB': 1500,
             'Office/Software': 600, 'Antivirus 1 Año': 500,
             'Batería Compatible': 950, 'Batería Original': 1400,
-            'Pantalla HD': 1800, 'Pantalla FHD': 2400
+            'Pantalla HD': 1800, 'Pantalla FHD': 2400,
+            'Kit CCTV 4 Cámaras': 5800, 'Kit CCTV 8 Cámaras': 9800
         }
-        for cat in ['mantenimiento', 'sistema', 'ssd', 'ram', 'software', 'bateria', 'pantalla']:
+        for cat in ['web', 'mantenimiento', 'sistema', 'ssd', 'ram', 'cctv', 'software', 'bateria', 'pantalla']:
             val = request.form.get(cat)
             if val in opciones:
                 total += opciones[val]

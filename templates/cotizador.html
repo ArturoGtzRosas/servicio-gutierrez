@@ -45,8 +45,21 @@
 <div class="box">
     <h2>Calculadora de Servicios</h2>
     <form method="POST">
+        <!-- Diseño Web -->
         <div class="row">
-            <label>Mantenimiento:</label>
+            <label>Diseño y Desarrollo Web:</label>
+            <select name="web">
+                <option value="">-- Seleccionar Paquete --</option>
+                <option value="Landing Page One-Page">Landing Page One-Page ($2,500)</option>
+                <option value="Sitio Web Corporativo">Sitio Corporativo Completo ($4,500)</option>
+                <option value="Catálogo Digital / Tienda">Catálogo Digital / Tienda Online ($6,800)</option>
+                <option value="Sistema Web a Medida">Sistema Web a Medida ($9,500)</option>
+            </select>
+        </div>
+
+        <!-- Mantenimiento y Hardware -->
+        <div class="row">
+            <label>Mantenimiento Físico:</label>
             <select name="mantenimiento">
                 <option value="">-- Seleccionar --</option>
                 <option value="Limpieza Básica">Básica ($450)</option>
@@ -54,7 +67,7 @@
             </select>
         </div>
         <div class="row">
-            <label>Sistema Operativo:</label>
+            <label>Sistema Operativo y Software:</label>
             <select name="sistema">
                 <option value="">-- Seleccionar --</option>
                 <option value="S.O. Estándar">Estándar ($400)</option>
@@ -78,13 +91,23 @@
             </select>
         </div>
 
+        <!-- Videovigilancia CCTV -->
         <div class="row">
-            <label>Fallas u Observaciones:</label>
-            <textarea name="observaciones" placeholder="Describe brevemente el problema de tu equipo..."></textarea>
+            <label>Videovigilancia (CCTV):</label>
+            <select name="cctv">
+                <option value="">-- Seleccionar --</option>
+                <option value="Kit CCTV 4 Cámaras">Kit 4 Cámaras Full HD Instalado ($5,800)</option>
+                <option value="Kit CCTV 8 Cámaras">Kit 8 Cámaras Full HD Instalado ($9,800)</option>
+            </select>
+        </div>
+
+        <div class="row">
+            <label>Fallas, Requerimientos u Observaciones:</label>
+            <textarea name="observaciones" placeholder="Describe requerimientos para tu sitio web o fallas de tu equipo..."></textarea>
         </div>
 
         <div class="urgente-box">
-            <label for="urgente"><strong>¿Reparación Urgente?</strong><br><small>Prioridad express (Cargo extra $250)</small></label>
+            <label for="urgente"><strong>¿Servicio Urgente / Prioritario?</strong><br><small>Prioridad express (Cargo extra $250)</small></label>
             <input type="checkbox" name="urgente" id="urgente">
         </div>
 
@@ -127,8 +150,7 @@ function imprimirPDF(servs, total, notas) {
         <div class="total-box"><h1 style="margin:0;">TOTAL: $${total} MXN</h1></div>
         <div class="aviso">
             <strong>TÉRMINOS Y CONDICIONES:</strong> Este documento es un presupuesto preliminar basado en la información proporcionada. 
-            El costo final y el tiempo de entrega se confirmarán únicamente tras el diagnóstico físico del equipo en nuestro local. 
-            Los precios incluyen refacciones básicas según lo seleccionado.
+            El costo final y el tiempo de entrega se confirmarán tras la evaluación del proyecto o diagnóstico físico en nuestro local.
         </div>
         <script>window.print();window.close();<\/script>
     </body></html>`);
