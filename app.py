@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, abort
+from flask import Flask, render_template, request, redirect, url_for, session, flash, jsonify, abort, send_from_directory
 import sqlite3
 import math
 from fpdf import FPDF
@@ -1981,11 +1981,18 @@ def deploy_webhook():
 def invitacion_martini():
     return render_template('invitacion_martini.html')
 
-from flask import send_from_directory
-
 @app.route('/invitacion/video')
 def descargar_video_invitacion():
     return send_from_directory('static', 'invitacion_emily_emiliano.mp4', as_attachment=True)
+
+# --- Rutas SEO para Google Search Console ---
+@app.route('/robots.txt')
+def robots():
+    return send_from_directory(app.static_folder, 'robots.txt')
+
+@app.route('/sitemap.xml')
+def sitemap():
+    return send_from_directory(app.static_folder, 'sitemap.xml', mimetype='application/xml')
 
 if __name__ == '__main__':
     app.run(debug=False, threaded=False)

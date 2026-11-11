@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /login
+Disallow: /admin
+Disallow: /generar_nota
+Disallow: /generar_presupuesto
+
+Sitemap: https://gtek-soluciones.com/sitemap.xml

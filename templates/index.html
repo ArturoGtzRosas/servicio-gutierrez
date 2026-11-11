@@ -3,9 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>G-Tek Soluciones Digitales - Expertos en Computación</title>
-    <link rel="shortcut icon" href="{{ url_for('static', filename='img/unam.png') }}" type="image/x-icon">
     
+    <!-- Metaetiquetas SEO -->
+    <title>G-Tek Soluciones Digitales | Reparación de Computadoras, Redes y CCTV</title>
+    <meta name="description" content="Mantenimiento y reparación de equipo de cómputo, instalación de cableado estructurado, cámaras de videovigilancia CCTV y desarrollo web profesional.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://gtek-soluciones.com/">
+    <!-- Open Graph / Redes Sociales y WhatsApp -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://gtek-soluciones.com/">
+    <meta property="og:title" content="G-Tek Soluciones Digitales | Soporte TI, Redes y CCTV">
+    <meta property="og:description" content="Mantenimiento y reparación de equipo de cómputo, cableado de redes y cámaras de videovigilancia a domicilio.">
+    <meta property="og:image" content="{{ url_for('static', filename='img/logo_nuevo.jpg', _external=True) }}">
+
+    <link rel="shortcut icon" href="{{ url_for('static', filename='img/unam.png') }}" type="image/x-icon">
+    <!-- Datos Estructurados para Google (Schema.org) -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "G-Tek Soluciones Digitales",
+      "image": "{{ url_for('static', filename='img/logo_nuevo.jpg', _external=True) }}",
+      "url": "https://gtek-soluciones.com",
+      "telephone": "+525540313150",
+      "priceRange": "$$",
+      "areaServed": [
+        "Ciudad de México",
+        "Ixtapaluca",
+        "Estado de México"
+      ],
+      "hasOfferCatalog": {
+        "@type": "OfferCatalog",
+        "name": "Servicios TI y Soporte Técnico",
+        "itemListElement": [
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Reparación y Mantenimiento de Computadoras"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Instalación de Videovigilancia CCTV"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Actualización de Discos SSD y Memoria RAM"
+            }
+          },
+          {
+            "@type": "Offer",
+            "itemOffered": {
+              "@type": "Service",
+              "name": "Diseño y Desarrollo Web"
+            }
+          }
+        ]
+      }
+    }
+    </script>
     <style>
         :root { --azul: #1f3a5f; --oro: #c5a356; }
         
