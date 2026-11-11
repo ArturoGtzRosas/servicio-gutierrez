@@ -206,17 +206,38 @@
                     <label>Servicio Requerido:</label>
                     <select name="servicio_base" id="select_servicio" onchange="mostrarOpcionesServicio()">
                         <option value="">-- Selecciona un servicio --</option>
+                        <option value="web" {% if request.args.get('servicio')=='web' %}selected{% endif %}>Diseño y Desarrollo Web</option>
                         <option value="SSD">Instalación / Aumento de Disco SSD</option>
-                        <option value="Diseño y Desarrollo Web">Diseño y Desarrollo Web</option>
                         <option value="RAM">Aumento de Memoria RAM</option>
                         <option value="Pantalla">Cambio de Pantalla / Display</option>
                         <option value="Bateria">Cambio de Batería</option>
                         <option value="SO">Instalación de Sistema Operativo</option>
-                        <option value="web" {% if request.args.get('servicio')=='web' %}selected{% endif %}>Diseño y Desarrollo Web</option>
+                        <option value="Software">Instalación de Software / Programas</option>
                         <option value="Mantenimiento">Limpieza Interna y Pasta Térmica</option>
                         <option value="equipos" {% if request.args.get('servicio')=='equipos' %}selected{% endif %}>Venta de Equipos de Cómputo Nuevos</option>
                         <option value="cctv" {% if request.args.get('servicio')=='cctv' %}selected{% endif %}>Instalación de Videovigilancia (CCTV)</option>
                     </select>
+                </div>
+
+                <!-- 0. Opciones para Diseño y Desarrollo Web -->
+                <div id="opc_web" class="campo-especifico">
+                    <div class="sub-row">
+                        <label>Paquete o Tipo de Proyecto:</label>
+                        <select id="web_paquete">
+                            <option value="Landing Page One-Page">Landing Page One-Page (Negocio / Campaña)</option>
+                            <option value="Sitio Web Corporativo">Sitio Web Corporativo (Multi-sección)</option>
+                            <option value="Catálogo Digital / Tienda">Catálogo Digital / Tienda en Línea</option>
+                            <option value="Sistema Web a Medida">Sistema Web a Medida / Panel Administrativo</option>
+                        </select>
+                    </div>
+                    <div class="sub-row">
+                        <label>Dominio y Hospedaje:</label>
+                        <select id="web_hosting">
+                            <option value="Requiere Dominio y Hosting">Requiero que incluyan Dominio (.com / .mx) y Hosting</option>
+                            <option value="Ya cuento con Dominio y Hosting">Ya cuento con mi propio Dominio y Hosting</option>
+                            <option value="Solo desarrollo y despliegue">Solo desarrollo y configuración en servidor propio</option>
+                        </select>
+                    </div>
                 </div>
 
                 <!-- 1. Opciones para SSD -->
@@ -230,17 +251,15 @@
                             <option value="2TB">2 TB (Profesional / Gaming)</option>
                         </select>
                     </div>
-                    <!-- Opciones para Diseño y Desarrollo Web -->
-                <div id="opc_web" class="campo-especifico">
                     <div class="sub-row">
-                        <label>Paquete o Tipo de Proyecto:</label>
-                        <select id="web_paquete">
-                            <option value="Landing Page One-Page">Landing Page One-Page (Negocio / Campaña)</option>
-                            <option value="Sitio Web Corporativo">Sitio Web Corporativo (Multi-sección)</option>
-                            <option value="Catálogo Digital / Tienda">Catálogo Digital / Tienda en Línea</option>
-                            <option value="Sistema Web a Medida">Sistema Web a Medida / Panel Administrativo</option>
+                        <label>Tipo / Formato de SSD:</label>
+                        <select id="ssd_tipo">
+                            <option value="SSD 2.5 SATA">SATA 2.5" (Laptop o PC convencional)</option>
+                            <option value="SSD M.2 NVMe">M.2 NVMe PCIe (Alta velocidad)</option>
+                            <option value="No estoy seguro (requiere diagnóstico)">No estoy seguro / A revisión</option>
                         </select>
                     </div>
+                </div>
                     <div class="sub-row">
                         <label>Dominio y Hospedaje:</label>
                         <select id="web_hosting">
