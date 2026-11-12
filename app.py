@@ -991,6 +991,10 @@ class PDFPresupuesto(FPDF):
         self.cell(120, 3.8, 'Cda. Águilas mz 13 lt 30 Casa D, San Buenaventura, Ixtapaluca, México. 56536', ln=True, align='L')
         self.set_xy(76, 32)
         self.cell(120, 3.8, 'Tel. 55 4031 3150 | WhatsApp | e-mail: arturogtzrosass@gmail.com', ln=True, align='L')
+        self.set_text_color(225, 185, 65)
+        self.set_font('Arial', 'B', 7.5)
+        self.set_xy(76, 36)
+        self.cell(120, 3.8, 'Sitio Web: www.gtek-soluciones.com', ln=True, align='L')
 
         # Posicionar cursor al pie del encabezado
         self.set_y(42)
@@ -1176,6 +1180,10 @@ class PDFNotaVenta(FPDF):
         self.cell(120, 3.8, 'Cda. Águilas mz 13 lt 30 Casa D, San Buenaventura, Ixtapaluca, México. 56536', ln=True, align='L')
         self.set_xy(76, 32)
         self.cell(120, 3.8, 'Tel. 55 4031 3150 | WhatsApp | e-mail: arturogtzrosass@gmail.com', ln=True, align='L')
+        self.set_text_color(225, 185, 65)
+        self.set_font('Arial', 'B', 7.5)
+        self.set_xy(76, 36)
+        self.cell(120, 3.8, 'Sitio Web: www.gtek-soluciones.com', ln=True, align='L')
         
         # Posicionar cursor al pie del banner para no arrastrar margen vacío
         self.set_y(42)
@@ -1286,19 +1294,7 @@ def generar_pdf_nota_binario(folio, cliente, direccion, telefono, equipo, servic
         pdf.cell(w_imp, alto_fila, f"${importe_item:,.2f}", border=1, ln=1, align='R')
 
     pdf.ln(4)
-    # Bloque de liquidación final
-    pdf.set_font('Arial', '', 10)
-    pdf.cell(155, 6, 'Subtotal:', 0, 0, 'R')
-    pdf.cell(35, 6, f'${subtotal:,.2f}', 0, 1, 'R')
-    
-    pdf.cell(155, 6, 'I.V.A. (16%):', 0, 0, 'R')
-    pdf.cell(35, 6, f'${iva:,.2f}', 0, 1, 'R')
-    
-    pdf.set_font('Arial', 'B', 11)
-    pdf.set_fill_color(230, 230, 230)
-    pdf.cell(155, 9, 'TOTAL A PAGAR (IVA inc):', 1, 0, 'R', True)
-    pdf.cell(35, 9, f'${total:,.2f}', 1, 1, 'R', True)
-    
+       
     # Bloque de liquidación final
     pdf.set_font('Arial', '', 10)
     pdf.cell(155, 6, 'Subtotal:', 0, 0, 'R')
