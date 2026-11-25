@@ -1993,5 +1993,12 @@ def robots():
 def sitemap():
     return send_from_directory(app.static_folder, 'sitemap.xml', mimetype='application/xml')
 
+@app.route('/admin/calculadora-resico')
+def calculadora_resico():
+    # Ajusta esta validación a la que ya usas en tu /dashboard
+    if not session.get('logged_in'):
+        return redirect(url_for('login'))
+    return render_template('calculadora_resico.html')
+
 if __name__ == '__main__':
     app.run(debug=False, threaded=False)

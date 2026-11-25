@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Precios e Impuestos RESICO | G-Tek</title>
+    <style>
+        :root {
+            --azul-gtek: #1b305b;
+            --dorado-gtek: #c5a059;
+            --fondo: #f4f6f9;
+            --blanco: #ffffff;
+            --texto: #1e293b;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--fondo);
+            color: var(--texto);
+            margin: 0;
+            padding: 20px;
+        }
+        .contenedor {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--blanco);
+            border-radius: 10px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            overflow: hidden;
+            border-top: 5px solid var(--dorado-gtek);
+        }
+        .header {
+            background-color: var(--azul-gtek);
+            color: var(--blanco);
+            padding: 18px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header h1 { margin: 0; font-size: 1.25rem; }
+        .btn-volver {
+            background: var(--dorado-gtek);
+            color: var(--azul-gtek);
+            text-decoration: none;
+            padding: 8px 14px;
+            border-radius: 6px;
+            font-weight: bold;
+            font-size: 0.9rem;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 24px;
+            padding: 25px;
+        }
+        @media (max-width: 768px) { .grid { grid-template-columns: 1fr; } }
+        .grupo-input { margin-bottom: 16px; }
+        .grupo-input label {
+            display: block;
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 0.9rem;
+        }
+        .grupo-input input, .grupo-input select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 1rem;
+            box-sizing: border-box;
+        }
+        .tarjeta-kpi {
+            background: #f8fafc;
+            border-left: 4px solid var(--azul-gtek);
+            padding: 14px 18px;
+            border-radius: 6px;
+            margin-bottom: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .tarjeta-kpi.destacada {
+            background: #eef2ff;
+            border-left-color: var(--dorado-gtek);
+        }
+        .tarjeta-kpi.utilidad {
+            background: #ecfdf5;
+            border-left-color: #10b981;
+        }
+        .kpi-valor { font-size: 1.3rem; font-weight: 700; color: var(--azul-gtek); }
+        .tarjeta-kpi.utilidad .kpi-valor { color: #047857; }
+        .tabla-desglose {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+        .tabla-desglose td {
+            padding: 8px 4px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        .tabla-desglose td:last-child { text-align: right; font-weight: 600; }
+        .acciones {
+            padding: 0 25px 25px;
+            display: flex;
+            gap: 12px;
+        }
+        .btn-accion {
+            background: var(--azul-gtek);
+            color: white;
+            border: none;
+            padding: 12px 18px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .btn-accion:hover { opacity: 0.92; }
+    </style>
+</head>
+<body>
+    <div class="contenedor">
+        <div class="header">
+            <h1>Calculadora de Precios e Impuestos RESICO — G-Tek</h1>
+            <a href="{{ url_for('dashboard') }}" class="btn-volver">← Volver al Panel</a>
+        </div>
+
+        <div class="grid">
+            <!-- Panel de Entradas -->
+            <div>
+                <div class="grupo-input">
+                    <label for="costoConIva">Costo del proveedor con IVA (MXN):</label>
+                    <input type="number" id="costoConIva" value="12199" min="0" step="1" oninput="calcular()">
+                </div>
+
+                <div class="grupo-input">
+                    <label for="margenPct">Margen de ganancia deseado sobre costo sin IVA (%):</label>
+                    <input type="number" id="margenPct" value="20" min="0" max="200" step="0.5" oninput="calcular()">
+                </div>
+
+                <div class="grupo-input">
+                    <label for="tasaIsr">Tramo ISR RESICO mensual:</label>
+                    <select id="tasaIsr" onchange="calcular()">
+                        <option value="0.01" selected>1.0% (Ingresos hasta $25,000/mes)</option>
+                        <option value="0.011">1.1% (Ingresos hasta $50,000/mes)</option>
+                        <option value="0.015">1.5% (Ingresos hasta $83,333/mes)</option>
+                        <option value="0.02">2.0% (Ingresos hasta $208,333/mes)</option>
+                    </select>
+                </div>
+
+                <div class="grupo-input">
+                    <label for="comisionTerminal">Comisión terminal bancaria + IVA (% opcional):</label>
+                    <select id="comisionTerminal" onchange="calcular()">
+                        <option value="0" selected>0% (Transferencia o Efectivo)</option>
+                        <option value="0.0406">4.06% (3.5% + IVA cobro con tarjeta)</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Panel de Resultados -->
+            <div>
+                <div class="tarjeta-kpi destacada">
+                    <span>Precio Final al Público (con IVA):</span>
+                    <span class="kpi-valor" id="resPrecioPublico">$0.00</span>
+                </div>
+
+                <div class="tarjeta-kpi utilidad">
+                    <span>Ganancia Limpia Real (en tu bolsa):</span>
+                    <span class="kpi-valor" id="resGanancia">$0.00</span>
+                </div>
+
+                <div class="tarjeta-kpi">
+                    <span>Total a apartar para el SAT (IVA + ISR):</span>
+                    <span class="kpi-valor" id="resTotalSat">$0.00</span>
+                </div>
+
+                <table class="tabla-desglose">
+                    <tr><td>Costo real sin IVA:</td><td id="detCostoSinIva">$0.00</td></tr>
+                    <tr><td>IVA acreditable de tu compra (16%):</td><td id="detIvaCompra">$0.00</td></tr>
+                    <tr><td>Subtotal venta (Base ISR):</td><td id="detSubtotalVenta">$0.00</td></tr>
+                    <tr><td>IVA trasladado al cliente (16%):</td><td id="detIvaVenta">$0.00</td></tr>
+                    <tr><td><strong>IVA neto a pagar al SAT:</strong></td><td id="detIvaNeto">$0.00</td></tr>
+                    <tr><td><strong>ISR RESICO a pagar al SAT:</strong></td><td id="detIsr">$0.00</td></tr>
+                    <tr><td>Comisión bancaria (si aplica):</td><td id="detComision">$0.00</td></tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="acciones">
+            <button class="btn-accion" onclick="copiarCotizacion()">Copiar desglose para WhatsApp</button>
+        </div>
+    </div>
+
+    <script>
+        const formatoMXN = (num) => num.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' });
+
+        function calcular() {
+            const costoConIva = parseFloat(document.getElementById('costoConIva').value) || 0;
+            const margenPct = parseFloat(document.getElementById('margenPct').value) || 0;
+            const tasaIsr = parseFloat(document.getElementById('tasaIsr').value) || 0.01;
+            const tasaComision = parseFloat(document.getElementById('comisionTerminal').value) || 0;
+
+            const costoSinIva = costoConIva / 1.16;
+            const ivaCompra = costoConIva - costoSinIva;
+
+            // Si hay comisión de terminal, se ajusta el subtotal para absorberla sin perder margen
+            const subtotalBase = costoSinIva * (1 + (margenPct / 100));
+            const subtotalVenta = tasaComision > 0 ? subtotalBase / (1 - tasaComision) : subtotalBase;
+
+            const ivaVenta = subtotalVenta * 0.16;
+            const precioPublico = subtotalVenta + ivaVenta;
+
+            const comisionMonto = precioPublico * tasaComision;
+            const ivaNetoSat = Math.max(0, ivaVenta - ivaCompra);
+            const isrSat = subtotalVenta * tasaIsr;
+            const totalSat = ivaNetoSat + isrSat;
+
+            const gananciaLimpia = precioPublico - costoConIva - totalSat - comisionMonto;
+
+            document.getElementById('resPrecioPublico').textContent = formatoMXN(precioPublico);
+            document.getElementById('resGanancia').textContent = formatoMXN(gananciaLimpia);
+            document.getElementById('resTotalSat').textContent = formatoMXN(totalSat);
+
+            document.getElementById('detCostoSinIva').textContent = formatoMXN(costoSinIva);
+            document.getElementById('detIvaCompra').textContent = formatoMXN(ivaCompra);
+            document.getElementById('detSubtotalVenta').textContent = formatoMXN(subtotalVenta);
+            document.getElementById('detIvaVenta').textContent = formatoMXN(ivaVenta);
+            document.getElementById('detIvaNeto').textContent = formatoMXN(ivaNetoSat);
+            document.getElementById('detIsr').textContent = formatoMXN(isrSat);
+            document.getElementById('detComision').textContent = formatoMXN(comisionMonto);
+        }
+
+        function copiarCotizacion() {
+            const precio = document.getElementById('resPrecioPublico').textContent;
+            const texto = `Cotización G-Tek Soluciones Digitales:\nPrecio total (IVA incluido): ${precio}\nIncluye entrega, configuración básica y garantía directa.`;
+            navigator.clipboard.writeText(texto);
+            alert('Resumen copiado al portapapeles.');
+        }
+
+        window.onload = calcular;
+    </script>
+</body>
+</html>
