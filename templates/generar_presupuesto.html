@@ -275,6 +275,7 @@
             const emailParam = params.get('email');
             const equipoParam = params.get('equipo');
             const servicioParam = params.get('servicio');
+            const precioParam = params.get('precio');
 
             if (clienteParam) document.getElementById('in_cliente').value = clienteParam;
             if (telParam && document.getElementById('in_telefono')) document.getElementById('in_telefono').value = telParam;
@@ -286,6 +287,15 @@
                 const primerConcepto = document.querySelector('input[name="descripcion[]"]');
                 if (primerConcepto && !primerConcepto.value) {
                     primerConcepto.value = servicioParam;
+                }
+            }
+
+            // Si viene un precio desde la Calculadora RESICO, cargarlo y recalcular total
+            if (precioParam) {
+                const primerPrecio = document.querySelector('.input-precio');
+                if (primerPrecio) {
+                    primerPrecio.value = parseFloat(precioParam).toFixed(2);
+                    calcularTotal();
                 }
             }
         });

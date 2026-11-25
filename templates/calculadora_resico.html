@@ -186,11 +186,13 @@
 
         <div class="acciones">
             <button class="btn-accion" onclick="copiarCotizacion()">Copiar desglose para WhatsApp</button>
+            <button class="btn-accion" style="background: #27ae60;" onclick="enviarAPresupuesto()">+ Enviar a Presupuesto PDF</button>
         </div>
     </div>
 
     <script>
         const formatoMXN = (num) => num.toLocaleString('es-MX', { style: 'currency', currency: 'MXN' });
+        let ultimoPrecioPublico = 0;
 
         function calcular() {
             const costoConIva = parseFloat(document.getElementById('costoConIva').value) || 0;
@@ -201,12 +203,12 @@
             const costoSinIva = costoConIva / 1.16;
             const ivaCompra = costoConIva - costoSinIva;
 
-            // Si hay comisión de terminal, se ajusta el subtotal para absorberla sin perder margen
             const subtotalBase = costoSinIva * (1 + (margenPct / 100));
             const subtotalVenta = tasaComision > 0 ? subtotalBase / (1 - tasaComision) : subtotalBase;
 
             const ivaVenta = subtotalVenta * 0.16;
             const precioPublico = subtotalVenta + ivaVenta;
+            ultimoPrecioPublico = precioPublico;
 
             const comisionMonto = precioPublico * tasaComision;
             const ivaNetoSat = Math.max(0, ivaVenta - ivaCompra);
@@ -233,6 +235,11 @@
             const texto = `Cotización G-Tek Soluciones Digitales:\nPrecio total (IVA incluido): ${precio}\nIncluye entrega, configuración básica y garantía directa.`;
             navigator.clipboard.writeText(texto);
             alert('Resumen copiado al portapapeles.');
+        }
+
+        function enviarAPresupuesto() {
+            const monto = ultimoPrecioPublico.toFixed(2);
+            window.location.href = `{{ url_for('crear_presupuesto') }}?precio=${monto}`;
         }
 
         window.onload = calcular;
