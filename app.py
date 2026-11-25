@@ -51,8 +51,8 @@ MAIL_SENDER = 'G-Tek Soluciones Digitales <serviciogutierrezpc@gmail.com>'
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 try:
-    import psycopg2
-    from psycopg2.extras import RealDictCursor
+    import psycopg2  # type: ignore
+    from psycopg2.extras import RealDictCursor  # type: ignore
 except ImportError:
     psycopg2 = None
     RealDictCursor = None
@@ -1996,7 +1996,7 @@ def sitemap():
 @app.route('/admin/calculadora-resico')
 def calculadora_resico():
     # Ajusta esta validación a la que ya usas en tu /dashboard
-    if not session.get('logged_in'):
+    if 'user_id' not in session:
         return redirect(url_for('login'))
     return render_template('calculadora_resico.html')
 
